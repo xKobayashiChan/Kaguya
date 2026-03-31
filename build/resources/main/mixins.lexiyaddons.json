@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "com.example.lexiyaddons.mixins",
+  "refmap": "mixins.lexiyaddons.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinMinecraft",
+    "MixinEntityPlayerSP"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+

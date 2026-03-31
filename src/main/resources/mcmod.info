@@ -1,0 +1,16 @@
+[
+{
+  "modid": "lexiyaddons",
+  "name": "LexiyAddons",
+  "description": "自分用のアドオン - ClickGUIで設定可能",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Me"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

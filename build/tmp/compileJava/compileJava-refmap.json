@@ -1,0 +1,28 @@
+{
+  "mappings": {
+    "com/example/lexiyaddons/mixins/MixinMinecraft": {
+      "startGame": "Lnet/minecraft/client/Minecraft;func_71384_a()V"
+    },
+    "com/example/lexiyaddons/mixins/MixinEntityPlayerSP": {
+      "sendChatMessage": "Lnet/minecraft/client/entity/EntityPlayerSP;func_71165_d(Ljava/lang/String;)V"
+    }
+  },
+  "data": {
+    "notch": {
+      "com/example/lexiyaddons/mixins/MixinMinecraft": {
+        "startGame": "Lave;am()V"
+      },
+      "com/example/lexiyaddons/mixins/MixinEntityPlayerSP": {
+        "sendChatMessage": "Lbew;e(Ljava/lang/String;)V"
+      }
+    },
+    "searge": {
+      "com/example/lexiyaddons/mixins/MixinMinecraft": {
+        "startGame": "Lnet/minecraft/client/Minecraft;func_71384_a()V"
+      },
+      "com/example/lexiyaddons/mixins/MixinEntityPlayerSP": {
+        "sendChatMessage": "Lnet/minecraft/client/entity/EntityPlayerSP;func_71165_d(Ljava/lang/String;)V"
+      }
+    }
+  }
+}

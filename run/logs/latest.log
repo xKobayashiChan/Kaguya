@@ -1,103 +1,93 @@
-[07:28:48] [main/INFO]: Extra: []
-[07:28:48] [main/INFO]: Found and added coremod: com.example.lexiyaddons.mixins.MixinLoader
-[07:28:48] [main/INFO]: Running with arguments: [--userProperties, {}, --assetsDir, C:/Users/è¨ó—óDëæ/.gradle/caches/minecraft/assets, --assetIndex, 1.8, --accessToken{REDACTED}, --version, 1.8.9, --tweakClass, net.minecraftforge.fml.common.launcher.FMLTweaker, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
-[07:28:48] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
-[07:28:48] [main/INFO]: Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
-[07:28:48] [main/INFO]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
-[07:28:48] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLTweaker
-[07:28:48] [main/INFO]: Forge Mod Loader version 11.15.1.2318 for Minecraft 1.8.9 loading
-[07:28:48] [main/INFO]: Java is OpenJDK 64-Bit Server VM, version 1.8.0_472, running on Windows 11:amd64:10.0, installed at C:\Program Files\BellSoft\LibericaJDK-8\jre
-[07:28:48] [main/INFO]: Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation
-[07:28:48] [main/INFO]: Found a command line coremod : com.example.lexiyaddons.mixins.MixinLoader
-[07:28:48] [main/WARN]: The coremod com.example.lexiyaddons.mixins.MixinLoader does not have a MCVersion annotation, it may cause issues with this version of Minecraft
-[07:28:48] [main/INFO]: [com.example.lexiyaddons.mixins.MixinLoader:<init>:12]: [LexiyAddons] Injecting with IFMLLoadingPlugin.
-[07:28:48] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.7.10 Source=file:/C:/Users/%e5%b0%8f%e6%9e%97%e5%84%aa%e5%a4%aa/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.7.10-SNAPSHOT/db99723868016630419bf62afa24109bd6236073/mixin-0.7.10-SNAPSHOT.jar Service=LaunchWrapper Env=CLIENT
-[07:28:48] [main/INFO]: Compatibility level set to JAVA_8
-[07:28:48] [main/DEBUG]: Enqueued coremod MixinLoader
-[07:28:48] [main/DEBUG]: Attempting to load commandline specified mods, relative to C:\git\LexiysAddons\run\.
-[07:28:48] [main/DEBUG]: Discovering coremods
-[07:28:48] [main/DEBUG]: Examining for coremod candidacy lexiyaddons-1.0.jar
-[07:28:48] [main/INFO]: Loading tweaker org.spongepowered.asm.launch.MixinTweaker from lexiyaddons-1.0.jar
-[07:28:48] [main/DEBUG]: Examining for coremod candidacy myaddon-1.0.jar
-[07:28:48] [main/INFO]: Loading tweaker org.spongepowered.asm.launch.MixinTweaker from myaddon-1.0.jar
-[07:28:48] [main/INFO]: Calling tweak class net.minecraftforge.gradle.tweakers.CoremodTweaker
-[07:28:48] [main/INFO]: Injecting location in coremod net.minecraftforge.fml.relauncher.FMLCorePlugin
-[07:28:48] [main/INFO]: Injecting location in coremod net.minecraftforge.classloading.FMLForgePlugin
-[07:28:48] [main/INFO]: Injecting location in coremod com.example.lexiyaddons.mixins.MixinLoader
-[07:28:48] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
-[07:28:48] [main/INFO]: Loading tweak class name org.spongepowered.asm.mixin.EnvironmentStateTweaker
-[07:28:48] [main/INFO]: Loading tweak class name org.spongepowered.asm.launch.MixinTweaker
-[07:28:48] [main/WARN]: Tweak class name org.spongepowered.asm.launch.MixinTweaker has already been visited -- skipping
-[07:28:48] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
-[07:28:48] [main/INFO]: Loading tweak class name net.minecraftforge.gradle.tweakers.AccessTransformerTweaker
-[07:28:48] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
-[07:28:48] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
-[07:28:48] [main/INFO]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
-[07:28:48] [main/DEBUG]: Injecting coremod FMLCorePlugin {net.minecraftforge.fml.relauncher.FMLCorePlugin} class transformers
-[07:28:48] [main/TRACE]: Registering transformer net.minecraftforge.fml.common.asm.transformers.BlamingTransformer
-[07:28:48] [main/TRACE]: Registering transformer net.minecraftforge.fml.common.asm.transformers.SideTransformer
-[07:28:48] [main/TRACE]: Registering transformer net.minecraftforge.fml.common.asm.transformers.EventSubscriptionTransformer
-[07:28:48] [main/TRACE]: Registering transformer net.minecraftforge.fml.common.asm.transformers.EventSubscriberTransformer
-[07:28:48] [main/DEBUG]: Injection complete
-[07:28:48] [main/DEBUG]: Running coremod plugin for FMLCorePlugin {net.minecraftforge.fml.relauncher.FMLCorePlugin}
-[07:28:48] [main/DEBUG]: Running coremod plugin FMLCorePlugin
-[07:28:48] [main/ERROR]: The binary patch set is missing. Either you are in a development environment, or things are not going to work!
-[07:28:48] [main/DEBUG]: Loading deobfuscation resource C:\Users\è¨ó—óDëæ\.gradle\caches\minecraft\de\oceanlabs\mcp\mcp_stable\22\srgs\srg-mcp.srg with 27884 records
-[07:28:48] [main/ERROR]: FML appears to be missing any signature data. This is not a good thing
-[07:28:48] [main/DEBUG]: Coremod plugin class FMLCorePlugin run successfully
-[07:28:48] [main/INFO]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
-[07:28:48] [main/DEBUG]: Injecting coremod FMLForgePlugin {net.minecraftforge.classloading.FMLForgePlugin} class transformers
-[07:28:48] [main/DEBUG]: Injection complete
-[07:28:48] [main/DEBUG]: Running coremod plugin for FMLForgePlugin {net.minecraftforge.classloading.FMLForgePlugin}
-[07:28:48] [main/DEBUG]: Running coremod plugin FMLForgePlugin
-[07:28:48] [main/DEBUG]: Coremod plugin class FMLForgePlugin run successfully
-[07:28:48] [main/INFO]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
-[07:28:48] [main/DEBUG]: Injecting coremod MixinLoader {com.example.lexiyaddons.mixins.MixinLoader} class transformers
-[07:28:48] [main/DEBUG]: Injection complete
-[07:28:48] [main/DEBUG]: Running coremod plugin for MixinLoader {com.example.lexiyaddons.mixins.MixinLoader}
-[07:28:48] [main/DEBUG]: Running coremod plugin MixinLoader
-[07:28:48] [main/DEBUG]: Coremod plugin class MixinLoader run successfully
-[07:28:48] [main/INFO]: Calling tweak class org.spongepowered.asm.mixin.EnvironmentStateTweaker
-[07:28:48] [main/INFO]: Initialised Mixin FML Remapper Adapter with net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper@1e53135d
-[07:28:48] [main/DEBUG]: Instantiating coremod class MixinLoader
-[07:28:48] [main/WARN]: The coremod com.example.myaddon.mixins.MixinLoader does not have a MCVersion annotation, it may cause issues with this version of Minecraft
-[07:28:48] [main/INFO]: [com.example.myaddon.mixins.MixinLoader:<init>:12]: [MyAddon] Injecting with IFMLLoadingPlugin.
-[07:28:48] [main/DEBUG]: Enqueued coremod MixinLoader
-[07:28:48] [main/DEBUG]: Injecting coremod MixinLoader {com.example.myaddon.mixins.MixinLoader} class transformers
-[07:28:48] [main/DEBUG]: Injection complete
-[07:28:48] [main/DEBUG]: Running coremod plugin for MixinLoader {com.example.myaddon.mixins.MixinLoader}
-[07:28:48] [main/DEBUG]: Running coremod plugin MixinLoader
-[07:28:48] [main/DEBUG]: Coremod plugin class MixinLoader run successfully
-[07:28:48] [main/INFO]: Calling tweak class org.spongepowered.asm.launch.MixinTweaker
-[07:28:48] [main/WARN]: Multiple Mixin containers present, init suppressed for 0.7.10
-[07:28:48] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
-[07:28:48] [main/DEBUG]: Loaded 165 rules from AccessTransformer config file forge_at.cfg
-[07:28:48] [main/DEBUG]: Validating minecraft
-[07:28:49] [main/INFO]: Calling tweak class net.minecraftforge.gradle.tweakers.AccessTransformerTweaker
-[07:28:49] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.TerminalTweaker
-[07:28:49] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.TerminalTweaker
-[07:28:49] [main/INFO]: Remapping refMap mixins.lexiyaddons.refmap.json using C:\Users\è¨ó—óDëæ\.gradle\caches\minecraft\de\oceanlabs\mcp\mcp_stable\22\srgs\srg-mcp.srg
-[07:28:49] [main/INFO]: Remapping refMap mixins.myaddon.refmap.json using C:\Users\è¨ó—óDëæ\.gradle\caches\minecraft\de\oceanlabs\mcp\mcp_stable\22\srgs\srg-mcp.srg
-[07:28:49] [main/INFO]: Launching wrapped minecraft {net.minecraft.client.main.Main}
-[07:28:49] [Client thread/INFO]: Setting user: Player796
-[07:28:50] [Client thread/INFO]: [net.minecraft.client.Minecraft:handler$startGame$zza000:3094]: [LexiyAddons] Mixin loaded!
-[07:28:50] [Client thread/INFO]: [net.minecraft.client.Minecraft:handler$startGame$zzc001:3594]: [MyAddon] Mixin loaded!
-[07:28:50] [Client thread/INFO]: LWJGL Version: 2.9.4
-[07:28:51] [Client thread/WARN]: =============================================================
-[07:28:51] [Client thread/WARN]: MOD HAS DIRECT REFERENCE System.exit() THIS IS NOT ALLOWED REROUTING TO FML!
-[07:28:51] [Client thread/WARN]: Offendor: com/sun/jna/Native.main([Ljava/lang/String;)V
-[07:28:51] [Client thread/WARN]: Use FMLCommonHandler.exitJava instead
-[07:28:51] [Client thread/WARN]: =============================================================
-[07:28:51] [Client thread/INFO]: [net.minecraftforge.fml.client.SplashProgress:start:246]: ---- Minecraft Crash Report ----
+[22:51:30] [main/INFO]: Extra: []
+[22:51:30] [main/INFO]: Found and added coremod: com.example.lexiyaddons.init.MixinLoader
+[22:51:30] [main/INFO]: Running with arguments: [--userProperties, {}, --assetsDir, C:/Users/Â∞èÊûóÂÑ™Â§™/.gradle/caches/minecraft/assets, --assetIndex, 1.8, --accessToken{REDACTED}, --version, 1.8.9, --tweakClass, net.minecraftforge.fml.common.launcher.FMLTweaker, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
+[22:51:30] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
+[22:51:30] [main/INFO]: Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
+[22:51:30] [main/INFO]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
+[22:51:30] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLTweaker
+[22:51:30] [main/INFO]: Forge Mod Loader version 11.15.1.2318 for Minecraft 1.8.9 loading
+[22:51:30] [main/INFO]: Java is OpenJDK 64-Bit Server VM, version 1.8.0_472, running on Windows 11:amd64:10.0, installed at C:\Program Files\BellSoft\LibericaJDK-8\jre
+[22:51:30] [main/INFO]: Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation
+[22:51:30] [main/INFO]: Found a command line coremod : com.example.lexiyaddons.init.MixinLoader
+[22:51:30] [main/WARN]: The coremod com.example.lexiyaddons.init.MixinLoader does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[22:51:30] [main/INFO]: [com.example.lexiyaddons.init.MixinLoader:<init>:12]: [LexiyAddons] Injecting with IFMLLoadingPlugin.
+[22:51:30] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.7.10 Source=file:/C:/Users/%e5%b0%8f%e6%9e%97%e5%84%aa%e5%a4%aa/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.7.10-SNAPSHOT/db99723868016630419bf62afa24109bd6236073/mixin-0.7.10-SNAPSHOT.jar Service=LaunchWrapper Env=CLIENT
+[22:51:30] [main/INFO]: Compatibility level set to JAVA_8
+[22:51:30] [main/DEBUG]: Enqueued coremod MixinLoader
+[22:51:30] [main/DEBUG]: Attempting to load commandline specified mods, relative to C:\git\LexiysAddons\run\.
+[22:51:30] [main/DEBUG]: Discovering coremods
+[22:51:30] [main/DEBUG]: Examining for coremod candidacy lexiyaddons-1.0.jar
+[22:51:30] [main/INFO]: Loading tweaker org.spongepowered.asm.launch.MixinTweaker from lexiyaddons-1.0.jar
+[22:51:30] [main/INFO]: Calling tweak class net.minecraftforge.gradle.tweakers.CoremodTweaker
+[22:51:30] [main/INFO]: Injecting location in coremod net.minecraftforge.fml.relauncher.FMLCorePlugin
+[22:51:30] [main/INFO]: Injecting location in coremod net.minecraftforge.classloading.FMLForgePlugin
+[22:51:30] [main/INFO]: Injecting location in coremod com.example.lexiyaddons.init.MixinLoader
+[22:51:30] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[22:51:30] [main/INFO]: Loading tweak class name org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[22:51:30] [main/INFO]: Loading tweak class name org.spongepowered.asm.launch.MixinTweaker
+[22:51:30] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[22:51:30] [main/INFO]: Loading tweak class name net.minecraftforge.gradle.tweakers.AccessTransformerTweaker
+[22:51:30] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[22:51:30] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[22:51:30] [main/INFO]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[22:51:30] [main/DEBUG]: Injecting coremod FMLCorePlugin {net.minecraftforge.fml.relauncher.FMLCorePlugin} class transformers
+[22:51:30] [main/TRACE]: Registering transformer net.minecraftforge.fml.common.asm.transformers.BlamingTransformer
+[22:51:30] [main/TRACE]: Registering transformer net.minecraftforge.fml.common.asm.transformers.SideTransformer
+[22:51:30] [main/TRACE]: Registering transformer net.minecraftforge.fml.common.asm.transformers.EventSubscriptionTransformer
+[22:51:30] [main/TRACE]: Registering transformer net.minecraftforge.fml.common.asm.transformers.EventSubscriberTransformer
+[22:51:30] [main/DEBUG]: Injection complete
+[22:51:30] [main/DEBUG]: Running coremod plugin for FMLCorePlugin {net.minecraftforge.fml.relauncher.FMLCorePlugin}
+[22:51:30] [main/DEBUG]: Running coremod plugin FMLCorePlugin
+[22:51:30] [main/ERROR]: The binary patch set is missing. Either you are in a development environment, or things are not going to work!
+[22:51:30] [main/DEBUG]: Loading deobfuscation resource C:\Users\Â∞èÊûóÂÑ™Â§™\.gradle\caches\minecraft\de\oceanlabs\mcp\mcp_stable\22\srgs\srg-mcp.srg with 27884 records
+[22:51:30] [main/ERROR]: FML appears to be missing any signature data. This is not a good thing
+[22:51:30] [main/DEBUG]: Coremod plugin class FMLCorePlugin run successfully
+[22:51:30] [main/INFO]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[22:51:30] [main/DEBUG]: Injecting coremod FMLForgePlugin {net.minecraftforge.classloading.FMLForgePlugin} class transformers
+[22:51:30] [main/DEBUG]: Injection complete
+[22:51:30] [main/DEBUG]: Running coremod plugin for FMLForgePlugin {net.minecraftforge.classloading.FMLForgePlugin}
+[22:51:30] [main/DEBUG]: Running coremod plugin FMLForgePlugin
+[22:51:30] [main/DEBUG]: Coremod plugin class FMLForgePlugin run successfully
+[22:51:30] [main/INFO]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[22:51:30] [main/DEBUG]: Injecting coremod MixinLoader {com.example.lexiyaddons.init.MixinLoader} class transformers
+[22:51:30] [main/DEBUG]: Injection complete
+[22:51:30] [main/DEBUG]: Running coremod plugin for MixinLoader {com.example.lexiyaddons.init.MixinLoader}
+[22:51:30] [main/DEBUG]: Running coremod plugin MixinLoader
+[22:51:30] [main/DEBUG]: Coremod plugin class MixinLoader run successfully
+[22:51:30] [main/INFO]: Calling tweak class org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[22:51:30] [main/INFO]: Initialised Mixin FML Remapper Adapter with net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper@3bb9efbc
+[22:51:30] [main/INFO]: Calling tweak class org.spongepowered.asm.launch.MixinTweaker
+[22:51:30] [main/WARN]: Multiple Mixin containers present, init suppressed for 0.7.10
+[22:51:30] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[22:51:30] [main/DEBUG]: Loaded 165 rules from AccessTransformer config file forge_at.cfg
+[22:51:30] [main/DEBUG]: Validating minecraft
+[22:51:31] [main/INFO]: Calling tweak class net.minecraftforge.gradle.tweakers.AccessTransformerTweaker
+[22:51:31] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.TerminalTweaker
+[22:51:31] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.TerminalTweaker
+[22:51:31] [main/INFO]: Remapping refMap mixins.lexiyaddons.refmap.json using C:\Users\Â∞èÊûóÂÑ™Â§™\.gradle\caches\minecraft\de\oceanlabs\mcp\mcp_stable\22\srgs\srg-mcp.srg
+[22:51:31] [main/INFO]: [com.example.lexiyaddons.init.FMLLoadingPlugin:getMixins:75]: Found classes at jar:file:/C:/git/LexiysAddons/build/libs/lexiyaddons-1.0.jar!/com/example/lexiyaddons/init/FMLLoadingPlugin.class
+[22:51:31] [main/INFO]: [com.example.lexiyaddons.init.FMLLoadingPlugin:getMixins:82]: Base directory found at C:\git\LexiysAddons\build\libs\lexiyaddons-1.0.jar
+[22:51:31] [main/INFO]: [com.example.lexiyaddons.init.FMLLoadingPlugin:walkJar:103]: Trying to find mixins from jar file
+[22:51:31] [main/INFO]: [com.example.lexiyaddons.init.FMLLoadingPlugin:getMixins:88]: Found mixins: [IAccessorC03PacketPlayer, IAccessorC0DPacketCloseWindow, IAccessorEntity, IAccessorEntityLivingBase, IAccessorEntityPlayer, IAccessorEntityRenderer, IAccessorGuiChat, IAccessorGuiScreen, IAccessorItemSword, IAccessorKeyBinding, IAccessorMinecraft, IAccessorPlayerControllerMP, IAccessorRenderManager, MixinAbstractClientPlayer, MixinBlock, MixinBlockBush, MixinBlockGrass, MixinBlockLadder, MixinBlockLeaves, MixinBlockModelRenderer, MixinBlockPane, MixinBlockRendererDispatcher, MixinBlockWeb, MixinEntity, MixinEntityLivingBase, MixinEntityPlayer, MixinEntityPlayerSP, MixinEntityRenderer, MixinFontRenderer, MixinFovHandler, MixinGuiIngame, MixinGuiIngameForge, MixinItemStack, MixinKeyBinding, MixinMinecraft, MixinNetworkManager, MixinPlayerControllerMP, MixinRendererLivingEntity, MixinRenderManager, MixinVisGraph, MixinWorld, MixinWorldRenderer]
+[22:51:31] [main/WARN]: Error loading class: club/sk1er/patcher/util/fov/FovHandler (java.lang.ClassNotFoundException: The specified class 'club.sk1er.patcher.util.fov.FovHandler' was not found)
+[22:51:31] [main/INFO]: Launching wrapped minecraft {net.minecraft.client.main.Main}
+[22:51:32] [Client thread/INFO]: Setting user: Player843
+[22:51:33] [Client thread/INFO]: [com.example.lexiyaddons.init.Initializer:<init>:5]: Meow!
+[22:51:33] [Client thread/INFO]: LWJGL Version: 2.9.4
+[22:51:34] [Client thread/WARN]: =============================================================
+[22:51:34] [Client thread/WARN]: MOD HAS DIRECT REFERENCE System.exit() THIS IS NOT ALLOWED REROUTING TO FML!
+[22:51:34] [Client thread/WARN]: Offendor: com/sun/jna/Native.main([Ljava/lang/String;)V
+[22:51:34] [Client thread/WARN]: Use FMLCommonHandler.exitJava instead
+[22:51:34] [Client thread/WARN]: =============================================================
+[22:51:34] [Client thread/INFO]: [net.minecraftforge.fml.client.SplashProgress:start:246]: ---- Minecraft Crash Report ----
 
 WARNING: coremods are present:
-  MixinLoader (myaddon-1.0.jar)
   MixinLoader (lexiyaddons-1.0.jar)
 Contact their authors BEFORE contacting forge
 
-// Don't do that.
+// Uh... Did I do that?
 
-Time: 26/03/30 7:28
+Time: 26/04/01 22:51
 Description: Loading screen debug info
 
 This is just a prompt for computer specs to be printed. THIS IS NOT A ERROR
@@ -112,92 +102,100 @@ Details:
 	Operating System: Windows 11 (amd64) version 10.0
 	Java Version: 1.8.0_472, BellSoft
 	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode), BellSoft
-	Memory: 210385152 bytes (200 MB) / 667418624 bytes (636 MB) up to 3758096384 bytes (3584 MB)
+	Memory: 650386536 bytes (620 MB) / 1146093568 bytes (1093 MB) up to 3758096384 bytes (3584 MB)
 	JVM Flags: 0 total; 
 	IntCache: cache: 0, tcache: 0, allocated: 0, tallocated: 0
 	FML: 
 	Loaded coremods (and transformers): 
-MixinLoader (myaddon-1.0.jar)
-  
 MixinLoader (lexiyaddons-1.0.jar)
   
 	GL info: ' Vendor: 'NVIDIA Corporation' Version: '4.6.0 NVIDIA 581.42' Renderer: 'NVIDIA GeForce RTX 3070/PCIe/SSE2'
-[07:28:51] [Client thread/INFO]: MinecraftForge v11.15.1.2318 Initialized
-[07:28:51] [Client thread/INFO]: Replaced 229 ore recipies
-[07:28:51] [Client thread/INFO]: Found 0 mods from the command line. Injecting into mod discoverer
-[07:28:51] [Client thread/INFO]: Searching C:\git\LexiysAddons\run\mods for mods
-[07:28:52] [Client thread/INFO]: Forge Mod Loader has identified 5 mods to load
-[07:28:52] [Client thread/INFO]: Attempting connection with missing mods [mcp, FML, Forge, lexiyaddons, myaddon] at CLIENT
-[07:28:52] [Client thread/INFO]: Attempting connection with missing mods [mcp, FML, Forge, lexiyaddons, myaddon] at SERVER
-[07:28:52] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:LexiyAddons, FMLFileResourcePack:MyAddon
-[07:28:52] [Client thread/INFO]: Processing ObjectHolder annotations
-[07:28:52] [Client thread/INFO]: Found 384 ObjectHolder annotations
-[07:28:52] [Client thread/INFO]: Identifying ItemStackHolder annotations
-[07:28:52] [Client thread/INFO]: Found 0 ItemStackHolder annotations
-[07:28:52] [Client thread/INFO]: Configured a dormant chunk cache size of 0
-[07:28:52] [Forge Version Check/INFO]: [Forge] Starting version check at http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json
-[07:28:52] [Client thread/INFO]: Applying holder lookups
-[07:28:52] [Client thread/INFO]: Holder lookups applied
-[07:28:52] [Client thread/INFO]: Injecting itemstacks
-[07:28:52] [Client thread/INFO]: Itemstack injection complete
-[07:28:52] [Sound Library Loader/INFO]: Starting up SoundSystem...
-[07:28:52] [Thread-9/INFO]: Initializing LWJGL OpenAL
-[07:28:52] [Thread-9/INFO]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
-[07:28:53] [Thread-9/INFO]: OpenAL initialized.
-[07:28:53] [Sound Library Loader/INFO]: Sound engine started
-[07:28:54] [Client thread/INFO]: Max texture size: 16384
-[07:28:54] [Client thread/INFO]: Created: 16x16 textures-atlas
-[07:28:55] [Client thread/INFO]: [com.example.lexiyaddons.LexiyAddons:init:35]: [LexiyAddons] Initialized!
-[07:28:55] [Client thread/INFO]: [com.example.myaddon.MyAddon:init:35]: [MyAddon] Initialized!
-[07:28:55] [Client thread/INFO]: Injecting itemstacks
-[07:28:55] [Client thread/INFO]: Itemstack injection complete
-[07:28:55] [Client thread/INFO]: Forge Mod Loader has successfully loaded 5 mods
-[07:28:55] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:LexiyAddons, FMLFileResourcePack:MyAddon
-[07:28:55] [Client thread/INFO]: SoundSystem shutting down...
-[07:28:55] [Client thread/WARN]: Author: Paul Lamb, www.paulscode.com
-[07:28:55] [Sound Library Loader/INFO]: Starting up SoundSystem...
-[07:28:55] [Thread-11/INFO]: Initializing LWJGL OpenAL
-[07:28:55] [Thread-11/INFO]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
-[07:28:55] [Thread-11/INFO]: OpenAL initialized.
-[07:28:56] [Sound Library Loader/INFO]: Sound engine started
-[07:28:57] [Client thread/INFO]: Max texture size: 16384
-[07:28:57] [Client thread/INFO]: Created: 512x512 textures-atlas
-[07:30:17] [Server thread/INFO]: Starting integrated minecraft server version 1.8.9
-[07:30:17] [Server thread/INFO]: Generating keypair
-[07:30:17] [Server thread/INFO]: Injecting existing block and item data into this server instance
-[07:30:17] [Server thread/INFO]: Applying holder lookups
-[07:30:17] [Server thread/INFO]: Holder lookups applied
-[07:30:18] [Server thread/INFO]: Loading dimension 0 (aaaaa) (net.minecraft.server.integrated.IntegratedServer@d3e6b61)
-[07:30:18] [Server thread/INFO]: Loading dimension 1 (aaaaa) (net.minecraft.server.integrated.IntegratedServer@d3e6b61)
-[07:30:18] [Server thread/INFO]: Loading dimension -1 (aaaaa) (net.minecraft.server.integrated.IntegratedServer@d3e6b61)
-[07:30:18] [Server thread/INFO]: Preparing start region for level 0
-[07:30:18] [Server thread/INFO]: Changing view distance to 12, from 10
-[07:30:19] [Netty Local Client IO #0/INFO]: Server protocol version 2
-[07:30:19] [Netty Server IO #1/INFO]: Client protocol version 2
-[07:30:19] [Netty Server IO #1/INFO]: Client attempting to join with 5 mods : myaddon@1.0,FML@8.0.99.99,Forge@11.15.1.2318,mcp@9.19,lexiyaddons@1.0
-[07:30:19] [Netty Local Client IO #0/INFO]: [Netty Local Client IO #0] Client side modded connection established
-[07:30:19] [Server thread/INFO]: [Server thread] Server side modded connection established
-[07:30:19] [Server thread/INFO]: Player796[local:E:dfc60345] logged in with entity id 98 at (-29.982022865753244, 90.0, 82.13129423889912)
-[07:30:19] [Server thread/INFO]: Player796 joined the game
-[07:30:37] [Server thread/INFO]: Saving and pausing game...
-[07:30:37] [Server thread/INFO]: Saving chunks for level 'aaaaa'/Overworld
-[07:30:37] [Server thread/INFO]: Saving chunks for level 'aaaaa'/Nether
-[07:30:37] [Server thread/INFO]: Saving chunks for level 'aaaaa'/The End
-[07:30:48] [Server thread/INFO]: Saving and pausing game...
-[07:30:48] [Server thread/INFO]: Saving chunks for level 'aaaaa'/Overworld
-[07:30:49] [Server thread/INFO]: Saving chunks for level 'aaaaa'/Nether
-[07:30:49] [Server thread/INFO]: Saving chunks for level 'aaaaa'/The End
-[07:30:49] [Server thread/INFO]: Stopping server
-[07:30:49] [Server thread/INFO]: Saving players
-[07:30:49] [Server thread/INFO]: Saving worlds
-[07:30:49] [Server thread/INFO]: Saving chunks for level 'aaaaa'/Overworld
-[07:30:49] [Server thread/INFO]: Saving chunks for level 'aaaaa'/Nether
-[07:30:49] [Server thread/INFO]: Saving chunks for level 'aaaaa'/The End
-[07:30:49] [Server thread/INFO]: Unloading dimension 0
-[07:30:49] [Server thread/INFO]: Unloading dimension -1
-[07:30:49] [Server thread/INFO]: Unloading dimension 1
-[07:30:49] [Server thread/INFO]: Applying holder lookups
-[07:30:49] [Server thread/INFO]: Holder lookups applied
-[07:30:50] [Client thread/INFO]: Stopping!
-[07:30:50] [Client thread/INFO]: SoundSystem shutting down...
-[07:30:50] [Client thread/WARN]: Author: Paul Lamb, www.paulscode.com
+[22:51:34] [Client thread/INFO]: MinecraftForge v11.15.1.2318 Initialized
+[22:51:34] [Client thread/INFO]: Replaced 229 ore recipies
+[22:51:34] [Client thread/INFO]: Found 0 mods from the command line. Injecting into mod discoverer
+[22:51:34] [Client thread/INFO]: Searching C:\git\LexiysAddons\run\mods for mods
+[22:51:35] [Client thread/INFO]: Forge Mod Loader has identified 4 mods to load
+[22:51:35] [Client thread/INFO]: Attempting connection with missing mods [mcp, FML, Forge, lexiyaddons] at CLIENT
+[22:51:35] [Client thread/INFO]: Attempting connection with missing mods [mcp, FML, Forge, lexiyaddons] at SERVER
+[22:51:35] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:LexiyAddons
+[22:51:35] [Client thread/INFO]: Processing ObjectHolder annotations
+[22:51:35] [Client thread/INFO]: Found 384 ObjectHolder annotations
+[22:51:35] [Client thread/INFO]: Identifying ItemStackHolder annotations
+[22:51:35] [Client thread/INFO]: Found 0 ItemStackHolder annotations
+[22:51:35] [Client thread/INFO]: Configured a dormant chunk cache size of 0
+[22:51:35] [Client thread/INFO]: Applying holder lookups
+[22:51:35] [Forge Version Check/INFO]: [Forge] Starting version check at http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json
+[22:51:35] [Client thread/INFO]: Holder lookups applied
+[22:51:35] [Client thread/INFO]: Injecting itemstacks
+[22:51:35] [Client thread/INFO]: Itemstack injection complete
+[22:51:35] [Sound Library Loader/INFO]: Starting up SoundSystem...
+[22:51:35] [Thread-9/INFO]: Initializing LWJGL OpenAL
+[22:51:35] [Thread-9/INFO]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
+[22:51:35] [Thread-9/ERROR]: Error in class 'LibraryLWJGLOpenAL'
+[22:51:35] [Thread-9/ERROR]: Unable to initialize OpenAL.  Probable cause: OpenAL not supported.
+[22:51:35] [Thread-9/WARN]: ERROR MESSAGE:
+[22:51:35] [Thread-9/INFO]: Could not locate OpenAL library.
+[22:51:35] [Thread-9/WARN]: STACK TRACE:
+[22:51:35] [Thread-9/INFO]: org.lwjgl.openal.AL.create(AL.java:156)
+[22:51:35] [Thread-9/INFO]: org.lwjgl.openal.AL.create(AL.java:102)
+[22:51:35] [Thread-9/INFO]: org.lwjgl.openal.AL.create(AL.java:206)
+[22:51:35] [Thread-9/INFO]: paulscode.sound.libraries.LibraryLWJGLOpenAL.init(LibraryLWJGLOpenAL.java:164)
+[22:51:35] [Thread-9/INFO]: paulscode.sound.SoundSystem.CommandNewLibrary(SoundSystem.java:1576)
+[22:51:35] [Thread-9/INFO]: paulscode.sound.SoundSystem.CommandQueue(SoundSystem.java:2572)
+[22:51:35] [Thread-9/INFO]: paulscode.sound.CommandThread.run(CommandThread.java:121)
+[22:51:36] [Sound Library Loader/WARN]: ERROR MESSAGE:
+[22:51:36] [Sound Library Loader/INFO]: Could not locate OpenAL library.
+[22:51:36] [Sound Library Loader/INFO]: Starting up SoundSystem...
+[22:51:36] [Thread-11/INFO]: Switching to No Sound
+[22:51:36] [Thread-11/INFO]: (Silent Mode)
+[22:51:36] [Sound Library Loader/INFO]: Sound engine started
+[22:51:37] [Client thread/INFO]: Max texture size: 16384
+[22:51:37] [Client thread/INFO]: Created: 16x16 textures-atlas
+[22:51:38] [Client thread/INFO]: [com.example.lexiyaddons.LexiyAddons:init:18]: [LexiyAddons] Initialized!
+[22:51:38] [Client thread/INFO]: Injecting itemstacks
+[22:51:38] [Client thread/INFO]: Itemstack injection complete
+[22:51:38] [Client thread/INFO]: Forge Mod Loader has successfully loaded 4 mods
+[22:51:38] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:LexiyAddons
+[22:51:38] [Client thread/INFO]: SoundSystem shutting down...
+[22:51:38] [Client thread/WARN]: Author: Paul Lamb, www.paulscode.com
+[22:51:38] [Sound Library Loader/INFO]: Starting up SoundSystem...
+[22:51:38] [Thread-13/INFO]: Initializing LWJGL OpenAL
+[22:51:38] [Thread-13/INFO]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
+[22:51:38] [Thread-13/ERROR]: Error in class 'LibraryLWJGLOpenAL'
+[22:51:38] [Thread-13/ERROR]: Unable to initialize OpenAL.  Probable cause: OpenAL not supported.
+[22:51:38] [Thread-13/WARN]: ERROR MESSAGE:
+[22:51:38] [Thread-13/INFO]: Could not locate OpenAL library.
+[22:51:38] [Thread-13/WARN]: STACK TRACE:
+[22:51:38] [Thread-13/INFO]: org.lwjgl.openal.AL.create(AL.java:156)
+[22:51:38] [Thread-13/INFO]: org.lwjgl.openal.AL.create(AL.java:102)
+[22:51:38] [Thread-13/INFO]: org.lwjgl.openal.AL.create(AL.java:206)
+[22:51:38] [Thread-13/INFO]: paulscode.sound.libraries.LibraryLWJGLOpenAL.init(LibraryLWJGLOpenAL.java:164)
+[22:51:38] [Thread-13/INFO]: paulscode.sound.SoundSystem.CommandNewLibrary(SoundSystem.java:1576)
+[22:51:38] [Thread-13/INFO]: paulscode.sound.SoundSystem.CommandQueue(SoundSystem.java:2572)
+[22:51:38] [Thread-13/INFO]: paulscode.sound.CommandThread.run(CommandThread.java:121)
+[22:51:39] [Sound Library Loader/WARN]: ERROR MESSAGE:
+[22:51:39] [Sound Library Loader/INFO]: Could not locate OpenAL library.
+[22:51:39] [Sound Library Loader/INFO]: Starting up SoundSystem...
+[22:51:39] [Thread-15/INFO]: Switching to No Sound
+[22:51:39] [Thread-15/INFO]: (Silent Mode)
+[22:51:39] [Sound Library Loader/INFO]: Sound engine started
+[22:51:40] [Client thread/INFO]: Max texture size: 16384
+[22:51:40] [Client thread/INFO]: Created: 512x512 textures-atlas
+[22:51:41] [Realms Notification Availability checker #1/ERROR]: Could not parse RealmsError: com.google.gson.stream.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 1 column 12
+[22:51:41] [Realms Notification Availability checker #1/ERROR]: Realms http code: 404 -  error code: 0 -  message: null
+[22:51:41] [Client thread/INFO]: Created: default.json
+[22:51:43] [Client thread/INFO]: Connecting to spectrum.anticheat-test.com., 24524
+[22:51:48] [Client thread/INFO]: Connecting to spectrum.anticheat-test.com., 24524
+[22:51:50] [Netty Client IO #2/INFO]: Unexpected packet during modded negotiation - assuming vanilla or keepalives : net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter
+[22:51:50] [Netty Client IO #2/INFO]: Aborting client handshake "VANILLA"
+[22:51:50] [Netty Client IO #2/INFO]: [Netty Client IO #2] Client side vanilla connection established
+[22:51:50] [Client thread/INFO]: [CHAT]                                       ¬ßf[C]
+[22:51:51] [Client thread/INFO]: [CHAT] [ACTest] ¬ª You joined with the client brand: fml,forge ¬ßf[C]
+[22:51:53] [Client thread/INFO]: [CHAT] [ACTest] ¬ª Your current language is: English use /language to change it ¬ßf[C]
+[22:52:10] [Client thread/INFO]: Applying holder lookups
+[22:52:10] [Client thread/INFO]: Holder lookups applied
+[22:52:11] [Realms Notification Availability checker #1/ERROR]: Could not parse RealmsError: com.google.gson.stream.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 1 column 12
+[22:52:11] [Realms Notification Availability checker #1/ERROR]: Realms http code: 404 -  error code: 0 -  message: null
+[22:52:12] [Client thread/INFO]: Stopping!
+[22:52:12] [Client thread/INFO]: SoundSystem shutting down...
+[22:52:12] [Client thread/WARN]: Author: Paul Lamb, www.paulscode.com

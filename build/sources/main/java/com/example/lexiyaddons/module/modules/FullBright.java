@@ -1,29 +1,67 @@
 package com.example.lexiyaddons.module.modules;
 
-import com.example.lexiyaddons.module.Category;
+import com.example.lexiyaddons.event.EventTarget;
+import com.example.lexiyaddons.event.types.EventType;
+import com.example.lexiyaddons.events.TickEvent;
 import com.example.lexiyaddons.module.Module;
+import com.example.lexiyaddons.property.properties.ModeProperty;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 
-/**
- * フルブライト — ガンマ値を最大にして暗い場所でも見えるようにする
- */
 public class FullBright extends Module {
-    private float previousGamma = 1.0f;
+    private static final Minecraft mc = Minecraft.getMinecraft();
+    private float prevGamma = Float.NaN;
+    private boolean appliedNightVision = false;
+    public final ModeProperty mode = new ModeProperty("mode", 0, new String[]{"GAMMA", "EFFECT"});
 
     public FullBright() {
-        super("FullBright", "画面を明るくする", Category.RENDER, Keyboard.KEY_NONE);
+        super("Fullbright", true, true);
+    }
+
+    @EventTarget
+    public void onTick(TickEvent event) {
+        if (this.isEnabled() && event.getType() == EventType.POST) {
+            switch (this.mode.getValue()) {
+                case 0:
+                    mc.gameSettings.gammaSetting = 1000.0F;
+                    break;
+                case 1:
+                    mc.thePlayer.addPotionEffect(new PotionEffect(Potion.nightVision.id, 25940, 0));
+            }
+        }
     }
 
     @Override
-    public void onEnable() {
-        previousGamma = Minecraft.getMinecraft().gameSettings.gammaSetting;
-        Minecraft.getMinecraft().gameSettings.gammaSetting = 100.0f;
+    public void onEnabled() {
+        switch (this.mode.getValue()) {
+            case 0:
+                this.prevGamma = mc.gameSettings.gammaSetting;
+                break;
+            case 1:
+                this.appliedNightVision = true;
+        }
     }
 
     @Override
-    public void onDisable() {
-        Minecraft.getMinecraft().gameSettings.gammaSetting = previousGamma;
+    public void onDisabled() {
+        if (!Float.isNaN(this.prevGamma)) {
+            mc.gameSettings.gammaSetting = this.prevGamma;
+            this.prevGamma = Float.NaN;
+        }
+        if (this.appliedNightVision) {
+            if (mc.thePlayer != null) {
+                mc.thePlayer.removePotionEffectClient(Potion.nightVision.id);
+            }
+            this.appliedNightVision = false;
+        }
+    }
+
+    @Override
+    public void verifyValue(String mode) {
+        if (this.isEnabled()) {
+            this.onDisabled();
+            this.onEnabled();
+        }
     }
 }
-

@@ -1,72 +1,96 @@
 package com.example.lexiyaddons.module;
 
-import org.lwjgl.input.Keyboard;
+import com.example.lexiyaddons.Myau;
+import com.example.lexiyaddons.module.modules.HUD;
+import com.example.lexiyaddons.util.KeyBindUtil;
 
 public abstract class Module {
-    private final String name;
-    private final String description;
-    private final Category category;
-    private int keyBind;
-    private boolean enabled;
+    protected final String name;
+    protected final boolean defaultEnabled;
+    protected final int defaultKey;
+    protected final boolean defaultHidden;
+    protected boolean enabled;
+    protected int key;
+    protected boolean hidden;
 
-    public Module(String name, String description, Category category, int keyBind) {
-        this.name = name;
-        this.description = description;
-        this.category = category;
-        this.keyBind = keyBind;
-        this.enabled = false;
+    public Module(String name, boolean enabled) {
+        this(name, enabled, false);
     }
 
-    /** モジュール有効時に呼ばれる */
-    public void onEnable() {}
+    public Module(String name, boolean enabled, boolean hidden) {
+        this.name = name;
+        this.enabled = this.defaultEnabled = enabled;
+        this.key = this.defaultKey = 0;
+        this.hidden = this.defaultHidden = hidden;
+    }
 
-    /** モジュール無効時に呼ばれる */
-    public void onDisable() {}
+    public String getName() {
+        return this.name;
+    }
 
-    /** 毎ティック呼ばれる（有効時のみ） */
-    public void onTick() {}
+    public String formatModule() {
+        return String.format(
+                "%s%s &r(%s&r)",
+                this.key == 0 ? "" : String.format("&l[%s] &r", KeyBindUtil.getKeyName(this.key)),
+                this.name,
+                this.enabled ? "&a&lON" : "&c&lOFF"
+        );
+    }
 
-    public void toggle() {
-        setEnabled(!enabled);
+    public String[] getSuffix() {
+        return new String[0];
+    }
+
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public void setEnabled(boolean enabled) {
         if (this.enabled != enabled) {
             this.enabled = enabled;
-            if (enabled) onEnable();
-            else onDisable();
+            if (enabled) {
+                this.onEnabled();
+            } else {
+                this.onDisabled();
+            }
         }
     }
 
-    /** onEnable/onDisable を呼ばずに状態だけ変更する */
-    public void setEnabledSilent(boolean enabled) {
-        this.enabled = enabled;
+    public boolean toggle() {
+        boolean enabled = !this.enabled;
+        this.setEnabled(enabled);
+        if (this.enabled == enabled) {
+            if (((HUD) Myau.moduleManager.modules.get(HUD.class)).toggleSound.getValue()) {
+                Myau.moduleManager.playSound();
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    // ── Getters / Setters ──
-
-    public String getName() {
-        return name;
+    public int getKey() {
+        return this.key;
     }
 
-    public String getDescription() {
-        return description;
+    public void setKey(int integer) {
+        this.key = integer;
     }
 
-    public Category getCategory() {
-        return category;
+    public boolean isHidden() {
+        return this.hidden;
     }
 
-    public int getKeyBind() {
-        return keyBind;
+    public void setHidden(boolean boolean1) {
+        this.hidden = boolean1;
     }
 
-    public void setKeyBind(int keyBind) {
-        this.keyBind = keyBind;
+    public void onEnabled() {
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public void onDisabled() {
+    }
+
+    public void verifyValue(String string) {
     }
 }
-

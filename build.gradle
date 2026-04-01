@@ -158,7 +158,7 @@ reobf {
 //TODO: Add your own MixinConfig(s)
 jar {
     manifest.attributes(
-        "FMLCorePlugin" : "com.example.lexiyaddons.mixins.MixinLoader",
+        "FMLCorePlugin" : "com.example.lexiyaddons.init.MixinLoader",
         "ForceLoadAsMod": true,
         "TweakOrder": 0,
         "ModSide": "CLIENT",
@@ -197,3 +197,7 @@ task buildCopyToRunModsAndRun(type: Copy, dependsOn: ['build', 'cleanRunMods']) 
     include "${archivesBaseName}*.jar"
 }
 buildCopyToRunModsAndRun.finalizedBy runClient
+
+runClient {
+    outputs.upToDateWhen { false }
+}

@@ -1,53 +1,62 @@
 package com.example.lexiyaddons.module;
 
-import com.example.lexiyaddons.module.modules.ClickGuiModule;
-import com.example.lexiyaddons.module.modules.FullBright;
-import com.example.lexiyaddons.module.modules.Sprint;
+import com.example.lexiyaddons.Myau;
+import com.example.lexiyaddons.event.EventTarget;
+import com.example.lexiyaddons.event.types.EventType;
+import com.example.lexiyaddons.events.KeyEvent;
+import com.example.lexiyaddons.events.TickEvent;
+import com.example.lexiyaddons.module.modules.GuiModule;
+import com.example.lexiyaddons.module.modules.HUD;
+import com.example.lexiyaddons.util.ChatUtil;
+import com.example.lexiyaddons.util.SoundUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 
 public class ModuleManager {
-    private final List<Module> modules = new ArrayList<>();
+    private boolean sound = false;
+    public final LinkedHashMap<Class<?>, Module> modules = new LinkedHashMap<>();
 
-    public void init() {
-        // ── Movement ──
-        modules.add(new Sprint());
-
-        // ── Render ──
-        modules.add(new FullBright());
-
-        // ── Misc ──
-        modules.add(new ClickGuiModule());
-
-        // ★ 新しいモジュールはここに追加 ★
+    public Module getModule(String string) {
+        return this.modules.values().stream().filter(mD -> mD.getName().equalsIgnoreCase(string)).findFirst().orElse(null);
     }
 
-    public List<Module> getModules() {
-        return modules;
+    public Module getModule(Class<?> clazz){
+        return this.modules.get(clazz);
     }
 
-    public List<Module> getModulesByCategory(Category category) {
-        return modules.stream()
-                .filter(m -> m.getCategory() == category)
-                .collect(Collectors.toList());
+    public void playSound() {
+        this.sound = true;
     }
 
-    public Module getModuleByName(String name) {
-        return modules.stream()
-                .filter(m -> m.getName().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
+    @EventTarget
+    public void onKey(KeyEvent event) {
+        for (Module module : this.modules.values()) {
+            if (module.getKey() != event.getKey()) {
+                continue;
+            }
+            boolean shouldNotify = module.toggle();
+            HUD hud = (HUD) this.modules.get(HUD.class);
+            if (hud != null && shouldNotify) {
+                shouldNotify = hud.toggleAlerts.getValue();
+            }
+            if(module instanceof GuiModule){
+                shouldNotify = false;
+            }
+            if (shouldNotify) {
+                String status = module.isEnabled() ? "&a&lON" : "&c&lOFF";
+                String message = String.format("%s%s: %s&r", Myau.clientName, module.getName(), status);
+                ChatUtil.sendFormatted(message);
+            }
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Module> T getModuleByClass(Class<T> clazz) {
-        return modules.stream()
-                .filter(clazz::isInstance)
-                .map(clazz::cast)
-                .findFirst()
-                .orElse(null);
+    @EventTarget
+    public void onTick(TickEvent event) {
+        if (event.getType() == EventType.PRE) {
+            if (this.sound) {
+                this.sound = false;
+                SoundUtil.playSound("random.click");
+            }
+        }
     }
 }
-

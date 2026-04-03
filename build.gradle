@@ -41,6 +41,7 @@ configurations {
 // Configures the SpongePowered Repository
 repositories {
     maven { url 'https://repo.spongepowered.org/maven/' }
+    mavenCentral()
 }
 
 def systemOs = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
@@ -71,6 +72,8 @@ dependencies {
         compile 'org.lwjgl.lwjgl:lwjgl:2.9.4-babric.1'
         compile 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-babric.1'
     }
+
+    testCompile 'junit:junit:4.13.2'
 }
 
 if (systemOs.contains("mac"))

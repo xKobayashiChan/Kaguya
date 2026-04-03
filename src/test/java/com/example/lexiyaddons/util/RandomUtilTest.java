@@ -83,13 +83,13 @@ public class RandomUtilTest {
 
     @Test
     public void nextLongWithNegativeRange() {
-        // Note: nextLong uses (max + 1) internally, so for negative ranges
-        // the actual upper bound is max + 1 (e.g., -5 becomes -4).
-        // This is a known behavior of the implementation.
+        // Known bug: nextLong uses (max + 1) internally, which means for negative
+        // ranges the effective upper bound is max + 1 instead of max.
+        // E.g., nextLong(-10, -5) can return values up to -4 instead of -5.
         for (int i = 0; i < ITERATIONS; i++) {
             long result = RandomUtil.nextLong(-10, -5);
             assertTrue("Result " + result + " should be >= -10", result >= -10);
-            assertTrue("Result " + result + " should be <= -4 (max+1 behavior)",
+            assertTrue("Result " + result + " should be <= -4 (known off-by-one bug with negative max)",
                     result <= -4);
         }
     }

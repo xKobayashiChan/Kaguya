@@ -63,9 +63,10 @@ public final class EventManager {
      */
     public static void unregister(Object object) {
         for (final List<MethodData> dataList : REGISTRY_MAP.values()) {
-            for (final MethodData data : dataList) {
-                if (data.getSource().equals(object)) {
-                    dataList.remove(data);
+            Iterator<MethodData> it = dataList.iterator();
+            while (it.hasNext()) {
+                if (it.next().getSource().equals(object)) {
+                    it.remove();
                 }
             }
         }
@@ -80,9 +81,10 @@ public final class EventManager {
      */
     public static void unregister(Object object, Class<? extends Event> eventClass) {
         if (REGISTRY_MAP.containsKey(eventClass)) {
-            for (final MethodData data : REGISTRY_MAP.get(eventClass)) {
-                if (data.getSource().equals(object)) {
-                    REGISTRY_MAP.get(eventClass).remove(data);
+            Iterator<MethodData> it = REGISTRY_MAP.get(eventClass).iterator();
+            while (it.hasNext()) {
+                if (it.next().getSource().equals(object)) {
+                    it.remove();
                 }
             }
             cleanMap(true);

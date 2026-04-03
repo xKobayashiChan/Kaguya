@@ -40,7 +40,10 @@ public class SessionManager {
 
     public static void set(Session session) {
         try {
-            getField().set(mc, session);
+            Field f = getField();
+            if (f != null) {
+                f.set(mc, session);
+            }
         } catch (Exception e) {
             //
         }

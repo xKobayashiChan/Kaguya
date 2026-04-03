@@ -44,10 +44,8 @@ public class AccountManager {
 
     public static void load() {
         accounts.clear();
-        try {
-            JsonElement json = new JsonParser().parse(
-                    new BufferedReader(new FileReader(file))
-            );
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            JsonElement json = new JsonParser().parse(reader);
             if (json instanceof JsonArray) {
                 JsonArray jsonArray = json.getAsJsonArray();
                 for (JsonElement jsonElement : jsonArray) {
@@ -64,6 +62,8 @@ public class AccountManager {
             }
         } catch (FileNotFoundException e) {
             System.err.print("Couldn't find openmyau.accounts.json!");
+        } catch (IOException e) {
+            System.err.print("Couldn't read openmyau.accounts.json!");
         }
     }
 
@@ -80,9 +80,9 @@ public class AccountManager {
                 jsonObject.addProperty("scope", account.getScope());
                 jsonArray.add(jsonObject);
             }
-            PrintWriter printWriter = new PrintWriter(new FileWriter(file));
-            printWriter.println(gson.toJson(jsonArray));
-            printWriter.close();
+            try (PrintWriter printWriter = new PrintWriter(new FileWriter(file))) {
+                printWriter.println(gson.toJson(jsonArray));
+            }
         } catch (IOException e) {
             System.err.print("Couldn't save openmyau.accounts.json!");
         }

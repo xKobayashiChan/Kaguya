@@ -88,7 +88,7 @@ public class BlinkManager {
     @EventTarget
     public void onTick(TickEvent event) {
         if (event.getType() == EventType.POST) {
-            if (mc.thePlayer.isDead) {
+            if (mc.thePlayer != null && mc.thePlayer.isDead) {
                 this.setBlinkState(false, this.blinkModule);
             }
         }

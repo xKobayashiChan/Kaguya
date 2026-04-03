@@ -130,8 +130,17 @@ public final class MicrosoftAuth {
                     }
 
                     // Send a response informing that the browser may now be closed
+                    byte[] response;
                     InputStream stream = MicrosoftAuth.class.getResourceAsStream("/callback.html");
-                    byte[] response = stream != null ? IOUtils.toByteArray(stream) : new byte[0];
+                    if (stream != null) {
+                        try {
+                            response = IOUtils.toByteArray(stream);
+                        } finally {
+                            stream.close();
+                        }
+                    } else {
+                        response = new byte[0];
+                    }
                     exchange.getResponseHeaders().add("Content-Type", "text/html");
                     exchange.sendResponseHeaders(200, response.length);
                     exchange.getResponseBody().write(response);

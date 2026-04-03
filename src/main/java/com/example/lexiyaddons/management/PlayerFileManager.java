@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 public abstract class PlayerFileManager {
@@ -55,9 +56,11 @@ public abstract class PlayerFileManager {
     }
 
     public String remove(String name) {
-        for (String player : players) {
+        Iterator<String> it = players.iterator();
+        while (it.hasNext()) {
+            String player = it.next();
             if (player.equalsIgnoreCase(name)) {
-                players.remove(player);
+                it.remove();
                 save();
                 return player;
             }

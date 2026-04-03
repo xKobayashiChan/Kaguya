@@ -7,10 +7,13 @@ import me.ksyz.accountmanager.utils.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiDisconnected;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
@@ -21,6 +24,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 /*
  * This file is derived from https://github.com/ksyzov/AccountManager.
@@ -30,12 +34,15 @@ import java.lang.reflect.Field;
  */
 public class Events {
     private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final Field BUTTON_LIST_FIELD = ReflectionHelper.findField(GuiScreen.class, "buttonList", "field_146292_n");
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event) {
         if (event.phase != TickEvent.Phase.END || mc.currentScreen == null) {
             return;
         }
+
+        normalizeCurrentScreenButtons();
 
         if (mc.currentScreen instanceof GuiSelectWorld || mc.currentScreen instanceof GuiMultiplayer) {
             String text = TextFormatting.translate(String.format(
@@ -49,6 +56,12 @@ public class Events {
 
     @SubscribeEvent
     public void initGuiEvent(InitGuiEvent.Post event) {
+        if (event.gui instanceof GuiMainMenu) {
+            for (GuiButton button : event.buttonList) {
+                button.displayString = normalizeMainMenuLabel(button.id, button.displayString);
+            }
+        }
+
         if (event.gui instanceof GuiSelectWorld || event.gui instanceof GuiMultiplayer) {
             event.buttonList.add(new GuiButton(
                     69, event.gui.width - 106, 6, 100, 20, "Accounts"
@@ -142,6 +155,68 @@ public class Events {
                 }
                 AccountManager.save();
             }
+        }
+    }
+
+    private String normalizeMainMenuLabel(int buttonId, String label) {
+        if (label != null && label.startsWith("menu.")) {
+            String translated = I18n.format(label);
+            if (!translated.equals(label)) {
+                return translated;
+            }
+        }
+
+        switch (buttonId) {
+            case 1:
+                return fallbackTranslation("menu.singleplayer", "Singleplayer");
+            case 2:
+                return fallbackTranslation("menu.multiplayer", "Multiplayer");
+            case 0:
+                return fallbackTranslation("menu.options", "Options...");
+            case 4:
+                return fallbackTranslation("menu.quit", "Quit Game");
+            case 5:
+                return fallbackTranslation("modmenu.title", "Mods");
+            case 20:
+                return fallbackTranslation("options.language", "Language...");
+            default:
+                return label;
+        }
+    }
+
+    private String fallbackTranslation(String key, String fallback) {
+        String translated = I18n.format(key);
+        return translated.equals(key) ? fallback : translated;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void normalizeCurrentScreenButtons() {
+        try {
+            List<GuiButton> buttons = (List<GuiButton>) BUTTON_LIST_FIELD.get(mc.currentScreen);
+            if (buttons == null) {
+                return;
+            }
+
+            for (GuiButton button : buttons) {
+                if (button == null || button.displayString == null) {
+                    continue;
+                }
+
+                String label = button.displayString;
+                if (label.startsWith("menu.")
+                        || label.startsWith("options.")
+                        || label.startsWith("gui.")
+                        || label.startsWith("selectWorld.")
+                        || label.startsWith("multiplayer.")
+                        || label.startsWith("disconnect.")) {
+                    String translated = I18n.format(label);
+                    if (!translated.equals(label)) {
+                        button.displayString = translated;
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // Keep UI running even if another mod mutates screen internals.
         }
     }
 }

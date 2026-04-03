@@ -36,12 +36,79 @@ public class ItemESP extends Module {
     public final BooleanProperty diamonds = new BooleanProperty("diamonds", true);
     public final BooleanProperty goldd = new BooleanProperty("gold", true);
     public final BooleanProperty iron = new BooleanProperty("iron", true);
+    public final BooleanProperty potions = new BooleanProperty("potions", true);
 
-    private boolean shouldHighlightItem(int itemId) {
-        return this.emeralds.getValue() && this.isEmeraldItem(itemId)
+    private boolean shouldHighlightItem(ItemStack stack) {
+        int itemId = Item.getIdFromItem(stack.getItem());
+        return this.potions.getValue() && this.isPotionItem(stack)
+                || this.emeralds.getValue() && this.isEmeraldItem(itemId)
                 || this.diamonds.getValue() && this.isDiamondItem(itemId)
                 || this.goldd.getValue() && this.isGoldItem(itemId)
                 || this.iron.getValue() && this.isIronItem(itemId);
+    }
+
+    private boolean isPotionItem(ItemStack stack) {
+        return stack.getItem() == Items.potionitem;
+    }
+
+    private boolean isSplashPotion(ItemStack stack) {
+        return this.isPotionItem(stack) && (stack.getMetadata() & 16384) == 16384;
+    }
+
+    private boolean isSplashPotion(ItemData data) {
+        return data.potion && data.splashPotion;
+    }
+
+    private boolean isPotionItem(ItemData data) {
+        return data.potion;
+    }
+
+    private boolean isEmeraldItem(ItemData data) {
+        return this.isEmeraldItem(data.itemId);
+    }
+
+    private boolean isDiamondItem(ItemData data) {
+        return this.isDiamondItem(data.itemId);
+    }
+
+    private boolean isGoldItem(ItemData data) {
+        return this.isGoldItem(data.itemId);
+    }
+
+    private boolean isIronItem(ItemData data) {
+        return this.isIronItem(data.itemId);
+    }
+
+    private Color getItemColor(ItemData data) {
+        if (this.isSplashPotion(data)) {
+            return new Color(ChatColors.LIGHT_PURPLE.toAwtColor());
+        } else if (this.isPotionItem(data)) {
+            return new Color(ChatColors.BLUE.toAwtColor());
+        } else if (this.isEmeraldItem(data)) {
+            return new Color(ChatColors.GREEN.toAwtColor());
+        } else if (this.isDiamondItem(data)) {
+            return new Color(ChatColors.AQUA.toAwtColor());
+        } else if (this.isGoldItem(data)) {
+            return new Color(ChatColors.YELLOW.toAwtColor());
+        } else {
+            return this.isIronItem(data) ? new Color(ChatColors.WHITE.toAwtColor()) : new Color(ChatColors.GRAY.toAwtColor());
+        }
+    }
+
+    private int getItemPriority(ItemData data) {
+        if (this.isSplashPotion(data)) {
+            return 6;
+        } else if (this.isPotionItem(data)) {
+            return 5;
+        } else if (this.isEmeraldItem(data)) {
+            return 4;
+        } else if (this.isDiamondItem(data)) {
+            return 3;
+        } else if (this.isGoldItem(data)) {
+            return 2;
+        } else {
+            return this.isIronItem(data) ? 1 : 0;
+        }
     }
 
     private boolean isEmeraldItem(int itemId) {
@@ -76,31 +143,10 @@ public class ItemESP extends Module {
     private boolean isIronItem(int itemId) {
         Item item = Item.getItemById(itemId);
         Block block = Block.getBlockFromItem(item);
-        return item == Items.iron_ingot || block == Blocks.iron_block || block == Blocks.iron_ore;
-    }
-
-    private Color getItemColor(int itemId) {
-        if (this.isEmeraldItem(itemId)) {
-            return new Color(ChatColors.GREEN.toAwtColor());
-        } else if (this.isDiamondItem(itemId)) {
-            return new Color(ChatColors.AQUA.toAwtColor());
-        } else if (this.isGoldItem(itemId)) {
-            return new Color(ChatColors.YELLOW.toAwtColor());
-        } else {
-            return this.isIronItem(itemId) ? new Color(ChatColors.WHITE.toAwtColor()) : new Color(ChatColors.GRAY.toAwtColor());
-        }
-    }
-
-    private int getItemPriority(int itemId) {
-        if (this.isEmeraldItem(itemId)) {
-            return 4;
-        } else if (this.isDiamondItem(itemId)) {
-            return 3;
-        } else if (this.isGoldItem(itemId)) {
-            return 2;
-        } else {
-            return this.isIronItem(itemId) ? 1 : 0;
-        }
+        return item == Items.iron_ingot
+                || item == Items.iron_hoe
+                || block == Blocks.iron_block
+                || block == Blocks.iron_ore;
     }
 
     public ItemESP() {
@@ -119,23 +165,23 @@ public class ItemESP extends Module {
                     ItemStack stack = entityItem.getEntityItem();
                     if (stack.stackSize > 0) {
                         int itemId = Item.getIdFromItem(stack.getItem());
-                        if (this.shouldHighlightItem(itemId)) {
+                        if (this.shouldHighlightItem(stack)) {
                             double x = RenderUtil.lerpDouble(entityItem.posX, entityItem.lastTickPosX, event.getPartialTicks());
                             double y = RenderUtil.lerpDouble(entityItem.posY, entityItem.lastTickPosY, event.getPartialTicks());
                             double z = RenderUtil.lerpDouble(entityItem.posZ, entityItem.lastTickPosZ, event.getPartialTicks());
-                            ItemData data = new ItemData(itemId, x, y, z);
+                            ItemData data = new ItemData(itemId, x, y, z, this.isPotionItem(stack), this.isSplashPotion(stack), stack.getDisplayName());
                             Integer id = itemMap.get(data);
-                            itemMap.put(new ItemData(itemId, x, y, z), stack.stackSize + (id == null ? 0 : id));
+                            itemMap.put(data, stack.stackSize + (id == null ? 0 : id));
                         }
                     }
                 }
             }
             for (Entry<ItemData, Integer> itemEntry : itemMap.entrySet().stream().sorted((entry1, entry2) -> {
-                int o = this.getItemPriority(entry1.getKey().itemId);
-                int o2 = this.getItemPriority(entry2.getKey().itemId);
+                int o = this.getItemPriority(entry1.getKey());
+                int o2 = this.getItemPriority(entry2.getKey());
                 return Integer.compare(o, o2);
             }).collect(Collectors.toList())) {
-                Color itemColor = this.getItemColor(itemEntry.getKey().itemId);
+                Color itemColor = this.getItemColor(itemEntry.getKey());
                 double x = itemEntry.getKey().x - ((IAccessorRenderManager) mc.getRenderManager()).getRenderPosX();
                 double y = itemEntry.getKey().y - ((IAccessorRenderManager) mc.getRenderManager()).getRenderPosY();
                 double z = itemEntry.getKey().z - ((IAccessorRenderManager) mc.getRenderManager()).getRenderPosZ();
@@ -163,7 +209,7 @@ public class ItemESP extends Module {
                     double fontScale = -0.04375 - 0.0328125 * ((Math.max(6.0, this.autoScale.getValue() ? distance : 6.0) - 6.0) / 28.0);
                     GlStateManager.scale(fontScale, fontScale, 1.0);
                     GlStateManager.disableDepth();
-                    String countText = String.format("%d", itemEntry.getValue());
+                    String countText = String.format("%s x%d", itemEntry.getKey().displayName, itemEntry.getValue());
                     RenderUtil.drawOutlinedString(
                             countText,
                             ((float) mc.fontRendererObj.getStringWidth(countText) / 2.0F - 0.5F) * -1.0F,
@@ -183,13 +229,19 @@ public class ItemESP extends Module {
         public final double x;
         public final double y;
         public final double z;
+        public final boolean potion;
+        public final boolean splashPotion;
+        public final String displayName;
 
-        public ItemData(int id, double x, double y, double z) {
+        public ItemData(int id, double x, double y, double z, boolean potion, boolean splashPotion, String displayName) {
             this.itemId = id;
             this.x = x;
             this.y = y;
             this.z = z;
-            this.hashCode = Objects.hash(id, (int) x, (int) y, (int) z);
+            this.potion = potion;
+            this.splashPotion = splashPotion;
+            this.displayName = displayName;
+            this.hashCode = Objects.hash(id, (int) x, (int) y, (int) z, potion, splashPotion);
         }
 
         @Override
@@ -198,7 +250,12 @@ public class ItemESP extends Module {
                 return true;
             } else if (object != null && this.getClass() == object.getClass()) {
                 ItemData itemData = (ItemData) object;
-                return this.itemId == itemData.itemId && (int) this.x == (int) itemData.x && (int) this.y == (int) itemData.y && (int) this.z == (int) itemData.z;
+                return this.itemId == itemData.itemId
+                        && (int) this.x == (int) itemData.x
+                        && (int) this.y == (int) itemData.y
+                        && (int) this.z == (int) itemData.z
+                        && this.potion == itemData.potion
+                        && this.splashPotion == itemData.splashPotion;
             } else {
                 return false;
             }

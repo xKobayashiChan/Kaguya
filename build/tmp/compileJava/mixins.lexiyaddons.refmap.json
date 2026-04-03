@@ -22,6 +22,10 @@
       "renderPosY": "field_78726_c:D",
       "renderPosZ": "field_78723_d:D"
     },
+    "com/example/lexiyaddons/mixins/MixinGuiIngameForge": {
+      "Lnet/minecraft/client/entity/EntityPlayerSP;experienceLevel:I": "Lnet/minecraft/client/entity/EntityPlayerSP;field_71068_ca:I",
+      "Lnet/minecraft/client/entity/EntityPlayerSP;experience:F": "Lnet/minecraft/client/entity/EntityPlayerSP;field_71106_cc:F"
+    },
     "com/example/lexiyaddons/mixins/IAccessorC0DPacketCloseWindow": {
       "windowId": "field_149556_a:I"
     },
@@ -94,10 +98,15 @@
     "com/example/lexiyaddons/mixins/MixinBlockPane": {
       "getBlockLayer": "Lnet/minecraft/block/BlockPane;func_180664_k()Lnet/minecraft/util/EnumWorldBlockLayer;"
     },
+    "com/example/lexiyaddons/mixins/MixinStatCollector": {
+      "translateToLocalFormatted": "Lnet/minecraft/util/StatCollector;func_74837_a(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;",
+      "translateToLocal": "Lnet/minecraft/util/StatCollector;func_74838_a(Ljava/lang/String;)Ljava/lang/String;"
+    },
     "com/example/lexiyaddons/mixins/IAccessorMinecraft": {
       "rightClickDelayTimer": "field_71467_ac:I",
       "timer": "field_71428_T:Lnet/minecraft/util/Timer;",
-      "logger": "field_147123_G:Lorg/apache/logging/log4j/Logger;"
+      "logger": "field_147123_G:Lorg/apache/logging/log4j/Logger;",
+      "leftClickCounter": "field_71429_W:I"
     },
     "com/example/lexiyaddons/mixins/MixinEntityPlayerSP": {
       "Lnet/minecraft/client/entity/AbstractClientPlayer;onLivingUpdate()V": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_70636_d()V",
@@ -142,6 +151,9 @@
     "com/example/lexiyaddons/mixins/MixinAbstractClientPlayer": {
       "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;getAttributeValue()D": "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;func_111126_e()D",
       "getFovModifier": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_175156_o()F"
+    },
+    "com/example/lexiyaddons/mixins/MixinI18n": {
+      "format": "Lnet/minecraft/client/resources/I18n;func_135052_a(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"
     },
     "com/example/lexiyaddons/mixins/IAccessorPlayerControllerMP": {
       "curBlockDamageMP": "field_78770_f:F",
@@ -203,6 +215,10 @@
         "renderPosX": "o:D",
         "renderPosY": "p:D",
         "renderPosZ": "q:D"
+      },
+      "com/example/lexiyaddons/mixins/MixinGuiIngameForge": {
+        "Lnet/minecraft/client/entity/EntityPlayerSP;experienceLevel:I": "Lbew;bB:I",
+        "Lnet/minecraft/client/entity/EntityPlayerSP;experience:F": "Lbew;bD:F"
       },
       "com/example/lexiyaddons/mixins/IAccessorC0DPacketCloseWindow": {
         "windowId": "a:I"
@@ -276,10 +292,15 @@
       "com/example/lexiyaddons/mixins/MixinBlockPane": {
         "getBlockLayer": "Lakd;m()Ladf;"
       },
+      "com/example/lexiyaddons/mixins/MixinStatCollector": {
+        "translateToLocalFormatted": "Ldi;a(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;",
+        "translateToLocal": "Ldi;a(Ljava/lang/String;)Ljava/lang/String;"
+      },
       "com/example/lexiyaddons/mixins/IAccessorMinecraft": {
         "rightClickDelayTimer": "ap:I",
         "timer": "Y:Lavl;",
-        "logger": "K:Lorg/apache/logging/log4j/Logger;"
+        "logger": "K:Lorg/apache/logging/log4j/Logger;",
+        "leftClickCounter": "ag:I"
       },
       "com/example/lexiyaddons/mixins/MixinEntityPlayerSP": {
         "Lnet/minecraft/client/entity/AbstractClientPlayer;onLivingUpdate()V": "Lbet;m()V",
@@ -324,6 +345,9 @@
       "com/example/lexiyaddons/mixins/MixinAbstractClientPlayer": {
         "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;getAttributeValue()D": "Lqc;e()D",
         "getFovModifier": "Lbet;o()F"
+      },
+      "com/example/lexiyaddons/mixins/MixinI18n": {
+        "format": "Lbnq;a(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"
       },
       "com/example/lexiyaddons/mixins/IAccessorPlayerControllerMP": {
         "curBlockDamageMP": "e:F",
@@ -384,6 +408,10 @@
         "renderPosX": "field_78725_b:D",
         "renderPosY": "field_78726_c:D",
         "renderPosZ": "field_78723_d:D"
+      },
+      "com/example/lexiyaddons/mixins/MixinGuiIngameForge": {
+        "Lnet/minecraft/client/entity/EntityPlayerSP;experienceLevel:I": "Lnet/minecraft/client/entity/EntityPlayerSP;field_71068_ca:I",
+        "Lnet/minecraft/client/entity/EntityPlayerSP;experience:F": "Lnet/minecraft/client/entity/EntityPlayerSP;field_71106_cc:F"
       },
       "com/example/lexiyaddons/mixins/IAccessorC0DPacketCloseWindow": {
         "windowId": "field_149556_a:I"
@@ -457,10 +485,15 @@
       "com/example/lexiyaddons/mixins/MixinBlockPane": {
         "getBlockLayer": "Lnet/minecraft/block/BlockPane;func_180664_k()Lnet/minecraft/util/EnumWorldBlockLayer;"
       },
+      "com/example/lexiyaddons/mixins/MixinStatCollector": {
+        "translateToLocalFormatted": "Lnet/minecraft/util/StatCollector;func_74837_a(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;",
+        "translateToLocal": "Lnet/minecraft/util/StatCollector;func_74838_a(Ljava/lang/String;)Ljava/lang/String;"
+      },
       "com/example/lexiyaddons/mixins/IAccessorMinecraft": {
         "rightClickDelayTimer": "field_71467_ac:I",
         "timer": "field_71428_T:Lnet/minecraft/util/Timer;",
-        "logger": "field_147123_G:Lorg/apache/logging/log4j/Logger;"
+        "logger": "field_147123_G:Lorg/apache/logging/log4j/Logger;",
+        "leftClickCounter": "field_71429_W:I"
       },
       "com/example/lexiyaddons/mixins/MixinEntityPlayerSP": {
         "Lnet/minecraft/client/entity/AbstractClientPlayer;onLivingUpdate()V": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_70636_d()V",
@@ -505,6 +538,9 @@
       "com/example/lexiyaddons/mixins/MixinAbstractClientPlayer": {
         "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;getAttributeValue()D": "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;func_111126_e()D",
         "getFovModifier": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_175156_o()F"
+      },
+      "com/example/lexiyaddons/mixins/MixinI18n": {
+        "format": "Lnet/minecraft/client/resources/I18n;func_135052_a(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"
       },
       "com/example/lexiyaddons/mixins/IAccessorPlayerControllerMP": {
         "curBlockDamageMP": "field_78770_f:F",

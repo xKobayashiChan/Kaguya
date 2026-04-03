@@ -21,7 +21,7 @@ if errorlevel 1 (
 
 echo [3/3] Copying jar to run/mods...
 if not exist "run\mods" mkdir "run\mods"
-copy /y "build\libs\lexiyaddons-1.0.jar" "run\mods\" >nul
+copy /y "build\libs\KaguyaClient-*.jar" "run\mods\" >nul
 
 echo.
 echo ========================================

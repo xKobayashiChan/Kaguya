@@ -6,8 +6,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 @Mod(modid = LexiyAddons.MODID, name = LexiyAddons.NAME, version = LexiyAddons.VERSION)
 public class LexiyAddons {
     public static final String MODID = "lexiyaddons";
-    public static final String NAME = "LexiyAddons";
-    public static final String VERSION = "Alpha 1.0";
+    public static final String NAME = "Kaguya Client";
+    public static final String VERSION = "v1.1.0";
 
     @Mod.Instance(MODID)
     private static LexiyAddons instance;
@@ -15,7 +15,7 @@ public class LexiyAddons {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         instance = this;
-        System.out.println("[LexiyAddons] Initialized!");
+        System.out.println("[Kaguya Client] Initialized!");
     }
 
     public static LexiyAddons getInstance() {

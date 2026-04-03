@@ -1,7 +1,7 @@
 [
 {
   "modid": "lexiyaddons",
-  "name": "LexiyAddons",
+  "name": "Kaguya Client",
   "description": "自分用のアドオン - ClickGUIで設定可能",
   "version": "${version}",
   "mcversion": "${mcversion}",

@@ -1,7 +1,7 @@
 {
   "Combat": {
-    "x": 483,
-    "y": 88,
+    "x": 484,
+    "y": 81,
     "open": true
   },
   "Movement": {

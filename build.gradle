@@ -18,9 +18,9 @@ apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: 'org.spongepowered.mixin'
 
 //TODO: Change the version, group, and archivesBaseName to your own.
-version = "1.0" // The version number of your mod.
+version = "v1.1.0" // The version number of your mod.
 group = "com.example" // This is the group of the mod (usually domain or your name -> at.manuthebyte)
-archivesBaseName = "lexiyaddons" // This is the name of the jar that is generated.
+archivesBaseName = "KaguyaClient" // This is the name of the jar that is generated.
 
 sourceCompatibility = targetCompatibility = 1.8 // Java version to compile for.
 compileJava.options.encoding = "UTF-8" // Make sure that the encoding is set to UTF-8, so we have no encoding issues.
@@ -125,10 +125,17 @@ processResources {
         expand "buildDate": buildDate
     }
 
+    // version.json にバージョンを埋め込む
+    from(sourceSets.main.resources.srcDirs) {
+        include "version.json"
+        expand "version": project.version
+    }
+
     // Copies all other resources.
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
         exclude "lexiyaddons.properties"
+        exclude "version.json"
     }
 
     rename '(.+_at.cfg)', 'META-INF/$1'

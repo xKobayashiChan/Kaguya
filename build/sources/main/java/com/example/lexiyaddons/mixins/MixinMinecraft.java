@@ -7,16 +7,12 @@ import com.example.lexiyaddons.event.types.EventType;
 import com.example.lexiyaddons.events.*;
 import com.example.lexiyaddons.module.modules.NoHitDelay;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -25,16 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @SideOnly(Side.CLIENT)
 @Mixin(value = {Minecraft.class}, priority = 9999)
 public abstract class MixinMinecraft {
-    @Shadow
-    private int leftClickCounter;
-    @Shadow
-    public PlayerControllerMP playerController;
-    @Shadow
-    public WorldClient theWorld;
-    @Shadow
-    public EntityPlayerSP thePlayer;
-    @Shadow
-    public GuiScreen currentScreen;
 
     @Inject(
             method = {"startGame"},
@@ -57,7 +43,8 @@ public abstract class MixinMinecraft {
             at = {@At("HEAD")}
     )
     private void runTick(CallbackInfo callbackInfo) {
-        if (this.theWorld != null && this.thePlayer != null) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.theWorld != null && mc.thePlayer != null) {
             EventManager.call(new TickEvent(EventType.PRE));
         }
     }
@@ -67,7 +54,8 @@ public abstract class MixinMinecraft {
             at = {@At("RETURN")}
     )
     private void postRunTick(CallbackInfo callbackInfo) {
-        if (this.theWorld != null && this.thePlayer != null) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.theWorld != null && mc.thePlayer != null) {
             EventManager.call(new TickEvent(EventType.POST));
         }
     }
@@ -95,7 +83,7 @@ public abstract class MixinMinecraft {
     )
     private void clickMouse(CallbackInfo callbackInfo) {
         if (Myau.moduleManager != null && Myau.moduleManager.modules.get(NoHitDelay.class).isEnabled()) {
-            this.leftClickCounter = 0;
+            ((IAccessorMinecraft) this).setLeftClickCounter(0);
         }
         LeftClickMouseEvent event = new LeftClickMouseEvent();
         EventManager.call(event);
@@ -127,7 +115,7 @@ public abstract class MixinMinecraft {
         EventManager.call(event);
         if (event.isCancelled()) {
             callbackInfo.cancel();
-            this.playerController.resetBlockRemoving();
+            Minecraft.getMinecraft().playerController.resetBlockRemoving();
         }
     }
 
@@ -140,7 +128,7 @@ public abstract class MixinMinecraft {
     )
     private void setKeyBindState(int integer, boolean boolean2) {
         KeyBinding.setKeyBindState(integer, boolean2);
-        if (boolean2 && this.currentScreen == null) {
+        if (boolean2 && Minecraft.getMinecraft().currentScreen == null) {
             EventManager.call(new KeyEvent(integer));
         }
     }

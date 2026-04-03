@@ -18,14 +18,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = {GuiIngameForge.class}, priority = 9999)
 public abstract class MixinGuiIngameForge {
     @Inject(
-            method = {"renderGameOverlay"},
+            method = {"renderGameOverlay", "func_175180_a"},
             remap = false,
-            at = {@At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraftforge/client/GuiIngameForge;renderTitle(IIF)V",
-                    shift = At.Shift.AFTER,
-                    remap = false
-            )}
+            require = 0,
+            at = {@At("RETURN")}
     )
     private void renderGameOverlay(float float1, CallbackInfo callbackInfo) {
         EventManager.call(new Render2DEvent(float1));
@@ -36,7 +32,8 @@ public abstract class MixinGuiIngameForge {
             remap = false,
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/client/entity/EntityPlayerSP;experience:F"
+                    target = "Lnet/minecraft/client/entity/EntityPlayerSP;experience:F",
+                    remap = true
             )
     )
     private float renderExperience(EntityPlayerSP entityPlayerSP) {
@@ -53,7 +50,8 @@ public abstract class MixinGuiIngameForge {
             remap = false,
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/client/entity/EntityPlayerSP;experienceLevel:I"
+                    target = "Lnet/minecraft/client/entity/EntityPlayerSP;experienceLevel:I",
+                    remap = true
             )
     )
     private int renderExperienceLevel(EntityPlayerSP entityPlayerSP) {

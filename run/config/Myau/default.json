@@ -174,6 +174,11 @@
     "key": 0,
     "hidden": false
   },
+  "ClientHUD": {
+    "toggled": true,
+    "key": 0,
+    "hidden": false
+  },
   "ChestESP": {
     "toggled": false,
     "key": 0,
@@ -208,7 +213,7 @@
     "sneaking-only": false
   },
   "ESP": {
-    "toggled": false,
+    "toggled": true,
     "key": 0,
     "hidden": false,
     "mode": "3D",
@@ -255,7 +260,7 @@
     "key": 0,
     "hidden": false,
     "team-only": true,
-    "ignore-weapons": false
+    "ignore-weapons": true
   },
   "ClickGui": {
     "toggled": false,
@@ -282,7 +287,7 @@
     "position-x": "RIGHT",
     "position-y": "TOP",
     "offset-x": 255,
-    "offset-y": 149,
+    "offset-y": 112,
     "scale": 1.0,
     "background": 0,
     "bar": false,
@@ -355,17 +360,18 @@
     "lock-move-dey": false
   },
   "ItemESP": {
-    "toggled": false,
+    "toggled": true,
     "key": 0,
     "hidden": false,
-    "opacity": 25,
+    "opacity": 0,
     "outline": false,
     "item-count": true,
     "auto-scale": true,
     "emeralds": true,
     "diamonds": true,
     "gold": true,
-    "iron": true
+    "iron": true,
+    "potions": true
   },
   "Jesus": {
     "toggled": false,
@@ -463,15 +469,15 @@
     "hidden": true
   },
   "NameTags": {
-    "toggled": false,
+    "toggled": true,
     "key": 0,
     "hidden": false,
     "scale": 1.0,
     "auto-scale": true,
     "background": 25,
     "shadow": true,
-    "distance": "NONE",
-    "health": "HEARTS",
+    "distance": "VAPE",
+    "health": "HP",
     "armor": true,
     "effects": true,
     "players": true,
@@ -558,7 +564,7 @@
     "cross-color": "FFC0C0"
   },
   "Reach": {
-    "toggled": false,
+    "toggled": true,
     "key": 0,
     "hidden": false,
     "range": 3.1,
@@ -650,8 +656,8 @@
     "hidden": true,
     "position-x": "MIDDLE",
     "position-y": "MIDDLE",
-    "offset-x": 92,
-    "offset-y": 51,
+    "offset-x": 108,
+    "offset-y": 36,
     "entity": true,
     "outline": false,
     "animations": true,

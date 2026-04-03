@@ -14,10 +14,10 @@ difficulty:2
 fancyGraphics:false
 ao:0
 renderClouds:false
-resourcePacks:["?��?��3suepie swords","font","UHC-16x (asuks) Rev1.zip"]
+resourcePacks:[]
 incompatibleResourcePacks:[]
 lastServer:anticheat-test.com
-lang:en_us
+lang:en_US
 chatVisibility:0
 chatColors:true
 chatLinks:true

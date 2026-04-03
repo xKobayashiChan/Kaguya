@@ -17,10 +17,5 @@ FD: com/example/lexiyaddons/mixins/MixinEntityPlayerSP/prevRenderArmYaw com/exam
 FD: com/example/lexiyaddons/mixins/MixinEntityRenderer/mc com/example/lexiyaddons/mixins/MixinEntityRenderer/field_78531_r
 FD: com/example/lexiyaddons/mixins/MixinEntityRenderer/thirdPersonDistance com/example/lexiyaddons/mixins/MixinEntityRenderer/field_78490_B
 FD: com/example/lexiyaddons/mixins/MixinKeyBinding/keyDescription com/example/lexiyaddons/mixins/MixinKeyBinding/field_74515_c
-FD: com/example/lexiyaddons/mixins/MixinMinecraft/leftClickCounter com/example/lexiyaddons/mixins/MixinMinecraft/field_71429_W
-FD: com/example/lexiyaddons/mixins/MixinMinecraft/playerController com/example/lexiyaddons/mixins/MixinMinecraft/field_71442_b
-FD: com/example/lexiyaddons/mixins/MixinMinecraft/theWorld com/example/lexiyaddons/mixins/MixinMinecraft/field_71441_e
-FD: com/example/lexiyaddons/mixins/MixinMinecraft/thePlayer com/example/lexiyaddons/mixins/MixinMinecraft/field_71439_g
-FD: com/example/lexiyaddons/mixins/MixinMinecraft/currentScreen com/example/lexiyaddons/mixins/MixinMinecraft/field_71462_r
 MD: com/example/lexiyaddons/mixins/MixinBlockModelRenderer/renderModelAmbientOcclusion (Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/resources/model/IBakedModel;Lnet/minecraft/block/Block;Lnet/minecraft/util/BlockPos;Lnet/minecraft/client/renderer/WorldRenderer;Z)Z com/example/lexiyaddons/mixins/MixinBlockModelRenderer/func_178265_a (Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/resources/model/IBakedModel;Lnet/minecraft/block/Block;Lnet/minecraft/util/BlockPos;Lnet/minecraft/client/renderer/WorldRenderer;Z)Z
 MD: com/example/lexiyaddons/mixins/MixinEntity/isRiding ()Z com/example/lexiyaddons/mixins/MixinEntity/func_70115_ae ()Z

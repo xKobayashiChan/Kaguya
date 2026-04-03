@@ -34,6 +34,7 @@ import java.util.Locale;
 public class TargetHUD extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private static final DecimalFormat healthFormat = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.US));
+    private static final float ENTITY_TEXT_GAP = 10.0F;
 
     private final TimerUtil lastAttackTimer = new TimerUtil();
     private final TimerUtil animTimer = new TimerUtil();
@@ -136,7 +137,7 @@ public class TargetHUD extends Module {
                 if (this.entity.getValue()) {
                     entityRenderScale = 16.0F;
                     scaledEntityHeight = Math.max(18.0F, entityRenderScale * Math.max(this.target.height, 0.5F));
-                    entityOffset = entityRenderScale + 18.0F;
+                    entityOffset = entityRenderScale + ENTITY_TEXT_GAP;
                 }
 
                 float textBlockHeight = fontH + gapText + hpTextHeight;
@@ -202,6 +203,7 @@ public class TargetHUD extends Module {
                     boolean wasHideGUI = mc.gameSettings.hideGUI;
                     mc.gameSettings.hideGUI = true;
                     float entityFeetY = entityCenterY + scaledEntityHeight / 2.0F;
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     GuiInventory.drawEntityOnScreen(
                             (int) entityCenterX, (int) entityFeetY, (int) entityRenderScale,
                             30.0F, -(float) (hudHeight / 2.0F),

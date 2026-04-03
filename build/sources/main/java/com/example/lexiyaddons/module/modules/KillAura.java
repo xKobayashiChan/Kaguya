@@ -53,10 +53,15 @@ import java.util.Random;
 public class KillAura extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private static final DecimalFormat df = new DecimalFormat("+0.0;-0.0", new DecimalFormatSymbols(Locale.US));
+    private static final Color TARGET_IDLE_COLOR = new Color(255, 140, 140);
+    private static final Color TARGET_HIT_COLOR = new Color(170, 25, 25);
+    private static final Color TARGET_DAMAGE_COLOR = new Color(110, 8, 8);
+    private static final int HIT_COLOR_TICKS = 6;
     private final TimerUtil timer = new TimerUtil();
     private AttackData target = null;
     private int switchTick = 0;
     private boolean hitRegistered = false;
+    private int hitColorTicks = 0;
     private boolean blockingState = false;
     private boolean isBlocking = false;
     private boolean fakeBlockState = false;
@@ -123,6 +128,7 @@ public class KillAura extends Module {
                         PlayerUtil.attackEntity(this.target.getEntity());
                     }
                     this.hitRegistered = true;
+                    this.hitColorTicks = HIT_COLOR_TICKS;
                     return true;
                 }
             }
@@ -357,7 +363,7 @@ public class KillAura extends Module {
         this.golems = new BooleanProperty("golems", false);
         this.silverfish = new BooleanProperty("silverfish", false);
         this.teams = new BooleanProperty("teams", true);
-        this.showTarget = new ModeProperty("show-target", 0, new String[]{"NONE", "DEFAULT", "HUD"});
+        this.showTarget = new ModeProperty("show-target", 0, new String[]{"NONE", "DEFAULT"});
         this.debugLog = new ModeProperty("debug-log", 0, new String[]{"NONE", "HEALTH"});
     }
 
@@ -406,6 +412,9 @@ public class KillAura extends Module {
             Myau.blinkManager.setBlinkState(true, BlinkModules.AUTO_BLOCK);
         }
         if (this.isEnabled() && event.getType() == EventType.PRE) {
+            if (this.hitColorTicks > 0) {
+                this.hitColorTicks--;
+            }
             if (this.attackDelayMS > 0L) {
                 this.attackDelayMS -= 50L;
             }
@@ -861,14 +870,16 @@ public class KillAura extends Module {
                 Color color = new Color(-1);
                 switch (this.showTarget.getValue()) {
                     case 1:
-                        if (this.target.getEntity().hurtTime > 0) {
-                            color = new Color(16733525);
+                        if (this.hitColorTicks > 0 && this.target.getEntity().hurtTime > 0) {
+                            color = TARGET_DAMAGE_COLOR;
+                        } else if (this.hitColorTicks > 0) {
+                            color = TARGET_HIT_COLOR;
+                        } else if (this.target.getEntity().hurtTime > 0) {
+                            color = TARGET_IDLE_COLOR;
                         } else {
-                            color = new Color(5635925);
+                            color = TARGET_IDLE_COLOR;
                         }
                         break;
-                    case 2:
-                        color = ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
                 }
                 RenderUtil.enableRenderState();
                 RenderUtil.drawEntityBox(this.target.getEntity(), color.getRed(), color.getGreen(), color.getBlue());
@@ -922,6 +933,7 @@ public class KillAura extends Module {
         this.target = null;
         this.switchTick = 0;
         this.hitRegistered = false;
+        this.hitColorTicks = 0;
         this.attackDelayMS = 0L;
         this.blockTick = 0;
     }
@@ -932,6 +944,7 @@ public class KillAura extends Module {
         this.blockingState = false;
         this.isBlocking = false;
         this.fakeBlockState = false;
+        this.hitColorTicks = 0;
     }
 
     @Override

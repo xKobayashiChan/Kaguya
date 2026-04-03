@@ -3,6 +3,7 @@ package com.example.lexiyaddons.mixins;
 import com.example.lexiyaddons.Myau;
 import com.example.lexiyaddons.module.modules.AntiObfuscate;
 import com.example.lexiyaddons.module.modules.NickHider;
+import com.example.lexiyaddons.util.LangFallback;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,6 +22,7 @@ public abstract class MixinFontRenderer {
             argsOnly = true
     )
     private String renderString(String string) {
+        string = translateIfKey(string);
         if (Myau.moduleManager == null) {
             return string;
         } else {
@@ -40,6 +42,7 @@ public abstract class MixinFontRenderer {
             argsOnly = true
     )
     private String getStringWidth(String string) {
+        string = translateIfKey(string);
         if (Myau.moduleManager == null) {
             return string;
         } else {
@@ -86,5 +89,24 @@ public abstract class MixinFontRenderer {
                 && charAt != 'F'
                 ? charAt
                 : 'r';
+    }
+
+    /**
+     * Last-resort translation at the FontRenderer level.
+     * Catches ANY string that looks like a translation key (word.word pattern)
+     * and translates it using the en_US.lang fallback map.
+     */
+    private String translateIfKey(String text) {
+        if (text == null) {
+            return null;
+        }
+
+        if (LangFallback.looksLikeTranslationKey(text)) {
+            String fallback = LangFallback.translate(text);
+            if (fallback != null) {
+                return fallback;
+            }
+        }
+        return text;
     }
 }

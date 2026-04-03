@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -51,6 +52,11 @@ public class HUD extends Module {
     public final BooleanProperty blinkTimer = new BooleanProperty("blink-timer", true);
     public final BooleanProperty toggleSound = new BooleanProperty("toggle-sounds", true);
     public final BooleanProperty toggleAlerts = new BooleanProperty("toggle-alerts", false);
+    private boolean isDragging = false;
+    private int dragStartMouseX = 0;
+    private int dragStartMouseY = 0;
+    private int dragStartOffsetX = 0;
+    private int dragStartOffsetY = 0;
 
     private String getModuleName(Module module) {
         String moduleName = module.getName();
@@ -169,16 +175,19 @@ public class HUD extends Module {
             }
         }
         if (this.isEnabled() && !mc.gameSettings.showDebugInfo) {
+            ScaledResolution scaledResolution = new ScaledResolution(mc);
             float height = (float) mc.fontRendererObj.FONT_HEIGHT - 1.0F;
             float x = (float) this.offsetX.getValue()
                     + (1.0F + (this.showBar.getValue() ? (this.shadow.getValue() ? 2.0F : 1.0F) : 0.0F)) * this.scale.getValue();
             float y = (float) this.offsetY.getValue() + 1.0F * this.scale.getValue();
             if (this.posX.getValue() == 1) {
-                x = (float) new ScaledResolution(mc).getScaledWidth() - x;
+                x = (float) scaledResolution.getScaledWidth() - x;
             }
             if (this.posY.getValue() == 1) {
-                y = (float) new ScaledResolution(mc).getScaledHeight() - y - height * this.scale.getValue();
+                y = (float) scaledResolution.getScaledHeight() - y - height * this.scale.getValue();
             }
+            float startX = x;
+            float startY = y;
             GlStateManager.pushMatrix();
             GlStateManager.scale(this.scale.getValue(), this.scale.getValue(), 0.0F);
             long l = System.currentTimeMillis();
@@ -288,6 +297,51 @@ public class HUD extends Module {
             }
             GlStateManager.enableDepth();
             GlStateManager.popMatrix();
+
+            if (mc.currentScreen instanceof GuiChat) {
+                float maxWidth = 0.0F;
+                for (Module module : this.activeModules) {
+                    float moduleWidth = (float) this.getModuleWidth(module);
+                    if (moduleWidth > maxWidth) {
+                        maxWidth = moduleWidth;
+                    }
+                }
+                float lineHeight = (height + (this.shadow.getValue() ? 1.0F : 0.0F)) * this.scale.getValue();
+                float totalHeight = (this.activeModules.isEmpty() ? 1.0F : (float) this.activeModules.size()) * lineHeight;
+                float left = this.posX.getValue() == 0
+                        ? startX - (this.showBar.getValue() ? (this.shadow.getValue() ? 3.0F : 2.0F) * this.scale.getValue() : 1.0F)
+                        : startX - maxWidth * this.scale.getValue() - 1.0F;
+                float right = this.posX.getValue() == 0
+                        ? startX + maxWidth * this.scale.getValue() + 1.0F
+                        : startX + (this.showBar.getValue() ? (this.shadow.getValue() ? 3.0F : 2.0F) * this.scale.getValue() : 1.0F);
+                float top = this.posY.getValue() == 0 ? startY - this.scale.getValue() : startY - totalHeight - this.scale.getValue();
+                float bottom = this.posY.getValue() == 0 ? startY + totalHeight + this.scale.getValue() : startY + this.scale.getValue();
+
+                int mouseX = Mouse.getX() * scaledResolution.getScaledWidth() / mc.displayWidth;
+                int mouseY = scaledResolution.getScaledHeight() - Mouse.getY() * scaledResolution.getScaledHeight() / mc.displayHeight - 1;
+                boolean mouseOver = mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom;
+                if (Mouse.isButtonDown(0)) {
+                    if (!this.isDragging && mouseOver) {
+                        this.isDragging = true;
+                        this.dragStartMouseX = mouseX;
+                        this.dragStartMouseY = mouseY;
+                        this.dragStartOffsetX = this.offsetX.getValue();
+                        this.dragStartOffsetY = this.offsetY.getValue();
+                    }
+                    if (this.isDragging) {
+                        int deltaX = mouseX - this.dragStartMouseX;
+                        int deltaY = mouseY - this.dragStartMouseY;
+                        int newOffsetX = this.dragStartOffsetX + (this.posX.getValue() == 1 ? -deltaX : deltaX);
+                        int newOffsetY = this.dragStartOffsetY + (this.posY.getValue() == 1 ? -deltaY : deltaY);
+                        this.offsetX.setValue(Math.max(0, Math.min(255, newOffsetX)));
+                        this.offsetY.setValue(Math.max(0, Math.min(255, newOffsetY)));
+                    }
+                } else {
+                    this.isDragging = false;
+                }
+            } else {
+                this.isDragging = false;
+            }
         }
     }
 }

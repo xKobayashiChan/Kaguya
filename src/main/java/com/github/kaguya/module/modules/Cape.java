@@ -47,13 +47,19 @@ public class Cape extends Module {
                 System.err.println("[Kaguya] Failed to read cape image: " + CAPE_FILE.getAbsolutePath());
                 return;
             }
-            if (capeTexture != null) {
-                mc.getTextureManager().deleteTexture(capeTexture);
-            }
+            releaseTexture();
             DynamicTexture dynamicTexture = new DynamicTexture(image);
             capeTexture = mc.getTextureManager().getDynamicTextureLocation("kaguya_cape", dynamicTexture);
         } catch (Exception e) {
-            System.err.println("[Kaguya] Error loading cape texture: " + e.getMessage());
+            System.err.println("[Kaguya] Error loading cape texture:");
+            e.printStackTrace();
+        }
+    }
+
+    private static void releaseTexture() {
+        if (capeTexture != null) {
+            mc.getTextureManager().deleteTexture(capeTexture);
+            capeTexture = null;
         }
     }
 
@@ -86,10 +92,7 @@ public class Cape extends Module {
 
     @Override
     public void onDisabled() {
-        if (capeTexture != null) {
-            mc.getTextureManager().deleteTexture(capeTexture);
-        }
-        capeTexture = null;
+        releaseTexture();
         lastModified = 0;
     }
 }

@@ -2,7 +2,7 @@ package com.github.kaguya.mixins;
 
 import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.Chams;
-import com.github.kaguya.module.modules.ViewClip;
+import com.github.kaguya.module.modules.Camera;
 import com.github.kaguya.module.modules.Xray;
 import net.minecraft.client.renderer.chunk.SetVisibility;
 import net.minecraft.client.renderer.chunk.VisGraph;
@@ -25,7 +25,7 @@ public abstract class MixinVisGraph {
     private void func_178606_a(CallbackInfo callbackInfo) {
         if (Kaguya.moduleManager != null) {
             if (Kaguya.moduleManager.modules.get(Chams.class).isEnabled()
-                    || Kaguya.moduleManager.modules.get(ViewClip.class).isEnabled()
+                    || Kaguya.moduleManager.modules.get(Camera.class).isEnabled()
                     || Kaguya.moduleManager.modules.get(Xray.class).isEnabled()) {
                 callbackInfo.cancel();
             }
@@ -40,7 +40,7 @@ public abstract class MixinVisGraph {
     private void computeVisibility(CallbackInfoReturnable<SetVisibility> callbackInfoReturnable) {
         if (Kaguya.moduleManager != null) {
             if (Kaguya.moduleManager.modules.get(Chams.class).isEnabled()
-                    || Kaguya.moduleManager.modules.get(ViewClip.class).isEnabled()
+                    || Kaguya.moduleManager.modules.get(Camera.class).isEnabled()
                     || Kaguya.moduleManager.modules.get(Xray.class).isEnabled()) {
                 SetVisibility setVisibility = new SetVisibility();
                 setVisibility.setAllVisible(true);

@@ -62,6 +62,7 @@ public class ClickGui extends GuiScreen {
         movementModules.add(Kaguya.moduleManager.getModule(AntiVoid.class));
 
         List<Module> renderModules = new ArrayList<>();
+        renderModules.add(Kaguya.moduleManager.getModule(Cape.class));
         renderModules.add(Kaguya.moduleManager.getModule(ESP.class));
         renderModules.add(Kaguya.moduleManager.getModule(Chams.class));
         renderModules.add(Kaguya.moduleManager.getModule(FullBright.class));
@@ -72,7 +73,7 @@ public class ClickGui extends GuiScreen {
         renderModules.add(Kaguya.moduleManager.getModule(Indicators.class));
         renderModules.add(Kaguya.moduleManager.getModule(BedESP.class));
         renderModules.add(Kaguya.moduleManager.getModule(ItemESP.class));
-        renderModules.add(Kaguya.moduleManager.getModule(ViewClip.class));
+        renderModules.add(Kaguya.moduleManager.getModule(Camera.class));
         renderModules.add(Kaguya.moduleManager.getModule(NoHurtCam.class));
         renderModules.add(Kaguya.moduleManager.getModule(HUD.class));
         renderModules.add(Kaguya.moduleManager.getModule(ClientHUD.class));

@@ -206,14 +206,15 @@ public class ItemESP extends Module {
                     GlStateManager.rotate(mc.getRenderManager().playerViewY * -1.0F, 0.0F, 1.0F, 0.0F);
                     float flip = mc.gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F;
                     GlStateManager.rotate(mc.getRenderManager().playerViewX, flip, 0.0F, 0.0F);
-                    double fontScale = -0.04375 - 0.0328125 * ((Math.max(6.0, this.autoScale.getValue() ? distance : 6.0) - 6.0) / 28.0);
+                    double fontScale = -0.025 - 0.01875 * ((Math.max(6.0, this.autoScale.getValue() ? distance : 6.0) - 6.0) / 28.0);
                     GlStateManager.scale(fontScale, fontScale, 1.0);
                     GlStateManager.disableDepth();
                     String countText = String.format("%s x%d", itemEntry.getKey().displayName, itemEntry.getValue());
-                    RenderUtil.drawOutlinedString(
+                    mc.fontRendererObj.drawStringWithShadow(
                             countText,
                             ((float) mc.fontRendererObj.getStringWidth(countText) / 2.0F - 0.5F) * -1.0F,
-                            ((float) (mc.fontRendererObj.FONT_HEIGHT / 2) - 0.5F) * -1.0F
+                            ((float) (mc.fontRendererObj.FONT_HEIGHT / 2) - 0.5F) * -1.0F,
+                            -1
                     );
                     GlStateManager.enableDepth();
                     GlStateManager.resetColor();

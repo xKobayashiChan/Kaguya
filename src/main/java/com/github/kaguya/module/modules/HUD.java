@@ -1,18 +1,19 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.BlinkModules;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.Render2DEvent;
 import com.github.kaguya.events.TickEvent;
+import com.github.kaguya.management.NotificationManager;
 import com.github.kaguya.mixins.IAccessorGuiChat;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.property.properties.*;
 import com.github.kaguya.util.ColorUtil;
 import com.github.kaguya.util.RenderUtil;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
@@ -153,7 +154,7 @@ public class HUD extends Module {
     @EventTarget
     public void onTick(TickEvent event) {
         if (this.isEnabled() && event.getType() == EventType.POST) {
-            this.activeModules = Myau.moduleManager.modules.values().stream().filter(module -> module.isEnabled() && !module.isHidden()).sorted(Comparator.comparingInt(this::getModuleWidth).reversed()).collect(Collectors.<Module>toList());
+            this.activeModules = Kaguya.moduleManager.modules.values().stream().filter(module -> module.isEnabled() && !module.isHidden()).sorted(Comparator.comparingInt(this::getModuleWidth).reversed()).collect(Collectors.<Module>toList());
         }
     }
 
@@ -161,7 +162,7 @@ public class HUD extends Module {
     public void onRender2D(Render2DEvent event) {
         if (this.chatOutline.getValue() && mc.currentScreen instanceof GuiChat) {
             String text = ((IAccessorGuiChat) mc.currentScreen).getInputField().getText().trim();
-            if (Myau.commandManager != null && Myau.commandManager.isTypingCommand(text)) {
+            if (Kaguya.commandManager != null && Kaguya.commandManager.isTypingCommand(text)) {
                 RenderUtil.enableRenderState();
                 RenderUtil.drawOutlineRect(
                         2.0F,
@@ -277,9 +278,9 @@ public class HUD extends Module {
                 offset++;
             }
             if (this.blinkTimer.getValue()) {
-                BlinkModules blinkingModule = Myau.blinkManager.getBlinkingModule();
+                BlinkModules blinkingModule = Kaguya.blinkManager.getBlinkingModule();
                 if (blinkingModule != BlinkModules.NONE && blinkingModule != BlinkModules.AUTO_BLOCK) {
-                    long movementPacketSize = Myau.blinkManager.countMovement();
+                    long movementPacketSize = Kaguya.blinkManager.countMovement();
                     if (movementPacketSize > 0L) {
                         GlStateManager.enableBlend();
                         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -344,5 +345,7 @@ public class HUD extends Module {
                 this.isDragging = false;
             }
         }
+
+        NotificationManager.render();
     }
 }

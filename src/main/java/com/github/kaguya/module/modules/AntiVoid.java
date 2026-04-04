@@ -1,7 +1,7 @@
 package com.github.kaguya.module.modules;
 
 import com.google.common.base.CaseFormat;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.BlinkModules;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.Priority;
@@ -27,12 +27,12 @@ public class AntiVoid extends Module {
     public final FloatProperty distance = new FloatProperty("distance", 5.0F, 0.0F, 16.0F);
 
     private void resetBlink() {
-        Myau.blinkManager.setBlinkState(false, BlinkModules.ANTI_VOID);
+        Kaguya.blinkManager.setBlinkState(false, BlinkModules.ANTI_VOID);
         this.lastSafePosition = null;
     }
 
     private boolean canUseAntiVoid() {
-        LongJump longJump = (LongJump) Myau.moduleManager.modules.get(LongJump.class);
+        LongJump longJump = (LongJump) Kaguya.moduleManager.modules.get(LongJump.class);
         return !longJump.isJumping();
     }
 
@@ -65,15 +65,15 @@ public class AntiVoid extends Module {
                     }
                 }
                 if (!this.wasInVoid && this.isInVoid && this.canUseAntiVoid()) {
-                    Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
-                    if (Myau.blinkManager.setBlinkState(true, BlinkModules.ANTI_VOID)) {
+                    Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                    if (Kaguya.blinkManager.setBlinkState(true, BlinkModules.ANTI_VOID)) {
                         this.lastSafePosition = new double[]{mc.thePlayer.prevPosX, mc.thePlayer.prevPosY, mc.thePlayer.prevPosZ};
                     }
                 }
-                if (Myau.blinkManager.getBlinkingModule() == BlinkModules.ANTI_VOID
+                if (Kaguya.blinkManager.getBlinkingModule() == BlinkModules.ANTI_VOID
                         && this.lastSafePosition != null
                         && this.lastSafePosition[1] - (double) this.distance.getValue().floatValue() > mc.thePlayer.posY) {
-                    Myau.blinkManager
+                    Kaguya.blinkManager
                             .blinkedPackets
                             .offerFirst(
                                     new C04PacketPlayerPosition(
@@ -106,7 +106,7 @@ public class AntiVoid extends Module {
 
     @Override
     public void onDisabled() {
-        Myau.blinkManager.setBlinkState(false, BlinkModules.ANTI_VOID);
+        Kaguya.blinkManager.setBlinkState(false, BlinkModules.ANTI_VOID);
     }
 
     @Override

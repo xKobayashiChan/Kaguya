@@ -1,5 +1,5 @@
 [03:27:17] [main/INFO]: Extra: []
-[03:27:17] [main/INFO]: Found and added coremod: com.example.lexiyaddons.init.MixinLoader
+[03:27:17] [main/INFO]: Found and added coremod: init.com.github.kaguya.MixinLoader
 [03:27:17] [main/INFO]: Running with arguments: [--userProperties, {}, --assetsDir, C:/Users/小林優太/.gradle/caches/minecraft/assets, --assetIndex, 1.8, --accessToken{REDACTED}, --version, 1.8.9, --tweakClass, net.minecraftforge.fml.common.launcher.FMLTweaker, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
 [03:27:17] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
 [03:27:17] [main/INFO]: Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
@@ -8,9 +8,9 @@
 [03:27:17] [main/INFO]: Forge Mod Loader version 11.15.1.2318 for Minecraft 1.8.9 loading
 [03:27:17] [main/INFO]: Java is OpenJDK 64-Bit Server VM, version 1.8.0_472, running on Windows 11:amd64:10.0, installed at C:\Program Files\BellSoft\LibericaJDK-8\jre
 [03:27:17] [main/INFO]: Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation
-[03:27:17] [main/INFO]: Found a command line coremod : com.example.lexiyaddons.init.MixinLoader
-[03:27:17] [main/WARN]: The coremod com.example.lexiyaddons.init.MixinLoader does not have a MCVersion annotation, it may cause issues with this version of Minecraft
-[03:27:17] [main/INFO]: [com.example.lexiyaddons.init.MixinLoader:<init>:12]: [LexiyAddons] Injecting with IFMLLoadingPlugin.
+[03:27:17] [main/INFO]: Found a command line coremod : init.com.github.kaguya.MixinLoader
+[03:27:17] [main/WARN]: The coremod init.com.github.kaguya.MixinLoader does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[03:27:17] [main/INFO]: [init.com.github.kaguya.MixinLoader:<init>:12]: [LexiyAddons] Injecting with IFMLLoadingPlugin.
 [03:27:17] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.7.10 Source=file:/C:/Users/%e5%b0%8f%e6%9e%97%e5%84%aa%e5%a4%aa/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.7.10-SNAPSHOT/db99723868016630419bf62afa24109bd6236073/mixin-0.7.10-SNAPSHOT.jar Service=LaunchWrapper Env=CLIENT
 [03:27:17] [main/INFO]: Compatibility level set to JAVA_8
 [03:27:17] [main/DEBUG]: Enqueued coremod MixinLoader
@@ -21,7 +21,7 @@
 [03:27:17] [main/INFO]: Calling tweak class net.minecraftforge.gradle.tweakers.CoremodTweaker
 [03:27:17] [main/INFO]: Injecting location in coremod net.minecraftforge.fml.relauncher.FMLCorePlugin
 [03:27:17] [main/INFO]: Injecting location in coremod net.minecraftforge.classloading.FMLForgePlugin
-[03:27:17] [main/INFO]: Injecting location in coremod com.example.lexiyaddons.init.MixinLoader
+[03:27:17] [main/INFO]: Injecting location in coremod init.com.github.kaguya.MixinLoader
 [03:27:17] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
 [03:27:17] [main/INFO]: Loading tweak class name org.spongepowered.asm.mixin.EnvironmentStateTweaker
 [03:27:17] [main/INFO]: Loading tweak class name org.spongepowered.asm.launch.MixinTweaker
@@ -49,9 +49,9 @@
 [03:27:17] [main/DEBUG]: Running coremod plugin FMLForgePlugin
 [03:27:17] [main/DEBUG]: Coremod plugin class FMLForgePlugin run successfully
 [03:27:17] [main/INFO]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
-[03:27:17] [main/DEBUG]: Injecting coremod MixinLoader {com.example.lexiyaddons.init.MixinLoader} class transformers
+[03:27:17] [main/DEBUG]: Injecting coremod MixinLoader {init.com.github.kaguya.MixinLoader} class transformers
 [03:27:17] [main/DEBUG]: Injection complete
-[03:27:17] [main/DEBUG]: Running coremod plugin for MixinLoader {com.example.lexiyaddons.init.MixinLoader}
+[03:27:17] [main/DEBUG]: Running coremod plugin for MixinLoader {init.com.github.kaguya.MixinLoader}
 [03:27:17] [main/DEBUG]: Running coremod plugin MixinLoader
 [03:27:17] [main/DEBUG]: Coremod plugin class MixinLoader run successfully
 [03:27:17] [main/INFO]: Calling tweak class org.spongepowered.asm.mixin.EnvironmentStateTweaker
@@ -65,14 +65,14 @@
 [03:27:17] [main/INFO]: Loading tweak class name net.minecraftforge.fml.common.launcher.TerminalTweaker
 [03:27:17] [main/INFO]: Calling tweak class net.minecraftforge.fml.common.launcher.TerminalTweaker
 [03:27:18] [main/INFO]: Remapping refMap mixins.lexiyaddons.refmap.json using C:\Users\小林優太\.gradle\caches\minecraft\de\oceanlabs\mcp\mcp_stable\22\srgs\srg-mcp.srg
-[03:27:18] [main/INFO]: [com.example.lexiyaddons.init.FMLLoadingPlugin:getMixins:75]: Found classes at jar:file:/C:/git/LexiysAddons/build/libs/KaguyaClient-v1.1.0.jar!/com/example/lexiyaddons/init/FMLLoadingPlugin.class
-[03:27:18] [main/INFO]: [com.example.lexiyaddons.init.FMLLoadingPlugin:getMixins:82]: Base directory found at C:\git\LexiysAddons\build\libs\KaguyaClient-v1.1.0.jar
-[03:27:18] [main/INFO]: [com.example.lexiyaddons.init.FMLLoadingPlugin:walkJar:103]: Trying to find mixins from jar file
-[03:27:18] [main/INFO]: [com.example.lexiyaddons.init.FMLLoadingPlugin:getMixins:88]: Found mixins: [IAccessorC03PacketPlayer, IAccessorC0DPacketCloseWindow, IAccessorEntity, IAccessorEntityLivingBase, IAccessorEntityPlayer, IAccessorEntityRenderer, IAccessorGuiChat, IAccessorGuiScreen, IAccessorItemSword, IAccessorKeyBinding, IAccessorMinecraft, IAccessorPlayerControllerMP, IAccessorRenderManager, MixinAbstractClientPlayer, MixinBlock, MixinBlockBush, MixinBlockGrass, MixinBlockLadder, MixinBlockLeaves, MixinBlockModelRenderer, MixinBlockPane, MixinBlockRendererDispatcher, MixinBlockWeb, MixinEntity, MixinEntityLivingBase, MixinEntityPlayer, MixinEntityPlayerSP, MixinEntityRenderer, MixinFontRenderer, MixinFovHandler, MixinGuiIngame, MixinGuiIngameForge, MixinI18n, MixinItemStack, MixinKeyBinding, MixinMinecraft, MixinNetworkManager, MixinPlayerControllerMP, MixinRendererLivingEntity, MixinRenderManager, MixinStatCollector, MixinVisGraph, MixinWorld, MixinWorldRenderer]
+[03:27:18] [main/INFO]: [init.com.github.kaguya.FMLLoadingPlugin:getMixins:75]: Found classes at jar:file:/C:/git/LexiysAddons/build/libs/KaguyaClient-v1.1.0.jar!/com/example/lexiyaddons/init/FMLLoadingPlugin.class
+[03:27:18] [main/INFO]: [init.com.github.kaguya.FMLLoadingPlugin:getMixins:82]: Base directory found at C:\git\LexiysAddons\build\libs\KaguyaClient-v1.1.0.jar
+[03:27:18] [main/INFO]: [init.com.github.kaguya.FMLLoadingPlugin:walkJar:103]: Trying to find mixins from jar file
+[03:27:18] [main/INFO]: [init.com.github.kaguya.FMLLoadingPlugin:getMixins:88]: Found mixins: [IAccessorC03PacketPlayer, IAccessorC0DPacketCloseWindow, IAccessorEntity, IAccessorEntityLivingBase, IAccessorEntityPlayer, IAccessorEntityRenderer, IAccessorGuiChat, IAccessorGuiScreen, IAccessorItemSword, IAccessorKeyBinding, IAccessorMinecraft, IAccessorPlayerControllerMP, IAccessorRenderManager, MixinAbstractClientPlayer, MixinBlock, MixinBlockBush, MixinBlockGrass, MixinBlockLadder, MixinBlockLeaves, MixinBlockModelRenderer, MixinBlockPane, MixinBlockRendererDispatcher, MixinBlockWeb, MixinEntity, MixinEntityLivingBase, MixinEntityPlayer, MixinEntityPlayerSP, MixinEntityRenderer, MixinFontRenderer, MixinFovHandler, MixinGuiIngame, MixinGuiIngameForge, MixinI18n, MixinItemStack, MixinKeyBinding, MixinMinecraft, MixinNetworkManager, MixinPlayerControllerMP, MixinRendererLivingEntity, MixinRenderManager, MixinStatCollector, MixinVisGraph, MixinWorld, MixinWorldRenderer]
 [03:27:18] [main/WARN]: Error loading class: club/sk1er/patcher/util/fov/FovHandler (java.lang.ClassNotFoundException: The specified class 'club.sk1er.patcher.util.fov.FovHandler' was not found)
 [03:27:18] [main/INFO]: Launching wrapped minecraft {net.minecraft.client.main.Main}
 [03:27:19] [Client thread/INFO]: Setting user: Player750
-[03:27:20] [Client thread/INFO]: [com.example.lexiyaddons.init.Initializer:<init>:5]: Meow!
+[03:27:20] [Client thread/INFO]: [init.com.github.kaguya.Initializer:<init>:5]: Meow!
 [03:27:20] [Client thread/INFO]: LWJGL Version: 2.9.4
 [03:27:20] [Client thread/WARN]: =============================================================
 [03:27:20] [Client thread/WARN]: MOD HAS DIRECT REFERENCE System.exit() THIS IS NOT ALLOWED REROUTING TO FML!
@@ -151,7 +151,7 @@ MixinLoader (KaguyaClient-v1.1.0.jar)
 [03:27:23] [Sound Library Loader/INFO]: Sound engine started
 [03:27:24] [Client thread/INFO]: Max texture size: 16384
 [03:27:24] [Client thread/INFO]: Created: 16x16 textures-atlas
-[03:27:24] [Client thread/INFO]: [com.example.lexiyaddons.LexiyAddons:init:18]: [Kaguya Client] Initialized!
+[03:27:24] [Client thread/INFO]: [com.github.kaguya.KaguyaClient:init:18]: [Kaguya Client] Initialized!
 [03:27:24] [Client thread/INFO]: Injecting itemstacks
 [03:27:24] [Client thread/INFO]: Itemstack injection complete
 [03:27:25] [Client thread/INFO]: Forge Mod Loader has successfully loaded 4 mods

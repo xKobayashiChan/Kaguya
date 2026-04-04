@@ -1,6 +1,6 @@
 package com.github.kaguya.command.commands;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
 import com.github.kaguya.util.ChatUtil;
 
@@ -14,9 +14,9 @@ public class HelpCommand extends Command {
 
     @Override
     public void runCommand(ArrayList<String> args) {
-        if (!Myau.moduleManager.modules.isEmpty()) {
-            ChatUtil.sendFormatted(String.format("%sCommands:&r", Myau.clientName));
-            for (Command command : Myau.commandManager.commands) {
+        if (!Kaguya.moduleManager.modules.isEmpty()) {
+            ChatUtil.sendFormatted(String.format("%sCommands:&r", Kaguya.clientName));
+            for (Command command : Kaguya.commandManager.commands) {
                 if (!(command instanceof ModuleCommand)) {
                     ChatUtil.sendFormatted(String.format("&7»&r .%s&r", String.join(" &7/&r .", command.names)));
                 }

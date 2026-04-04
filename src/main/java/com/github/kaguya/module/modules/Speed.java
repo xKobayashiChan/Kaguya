@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.Priority;
 import com.github.kaguya.events.LivingUpdateEvent;
@@ -19,7 +19,7 @@ public class Speed extends Module {
     public final PercentProperty strafe = new PercentProperty("strafe", 0);
 
     private boolean canBoost() {
-        Scaffold scaffold = (Scaffold) Myau.moduleManager.modules.get(Scaffold.class);
+        Scaffold scaffold = (Scaffold) Kaguya.moduleManager.modules.get(Scaffold.class);
         return !scaffold.isEnabled() && MoveUtil.isForwardPressed()
                 && mc.thePlayer.getFoodStats().getFoodLevel() > 6
                 && !mc.thePlayer.isSneaking()

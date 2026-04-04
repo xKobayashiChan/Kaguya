@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.BlinkModules;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
@@ -22,17 +22,17 @@ public class Blink extends Module {
     @EventTarget(Priority.LOWEST)
     public void onTick(TickEvent event) {
         if (this.isEnabled() && event.getType() == EventType.POST) {
-            if (!Myau.blinkManager.getBlinkingModule().equals(BlinkModules.BLINK)) {
+            if (!Kaguya.blinkManager.getBlinkingModule().equals(BlinkModules.BLINK)) {
                 this.setEnabled(false);
             } else {
-                if (this.ticks.getValue() > 0 && Myau.blinkManager.countMovement() > (long) this.ticks.getValue()) {
+                if (this.ticks.getValue() > 0 && Kaguya.blinkManager.countMovement() > (long) this.ticks.getValue()) {
                     switch (this.mode.getValue()) {
                         case 0:
                             this.setEnabled(false);
                             break;
                         case 1:
-                            Myau.blinkManager.setBlinkState(false, BlinkModules.BLINK);
-                            Myau.blinkManager.setBlinkState(true, BlinkModules.BLINK);
+                            Kaguya.blinkManager.setBlinkState(false, BlinkModules.BLINK);
+                            Kaguya.blinkManager.setBlinkState(true, BlinkModules.BLINK);
                     }
                 }
             }
@@ -46,12 +46,12 @@ public class Blink extends Module {
 
     @Override
     public void onEnabled() {
-        Myau.blinkManager.setBlinkState(false, Myau.blinkManager.getBlinkingModule());
-        Myau.blinkManager.setBlinkState(true, BlinkModules.BLINK);
+        Kaguya.blinkManager.setBlinkState(false, Kaguya.blinkManager.getBlinkingModule());
+        Kaguya.blinkManager.setBlinkState(true, BlinkModules.BLINK);
     }
 
     @Override
     public void onDisabled() {
-        Myau.blinkManager.setBlinkState(false, BlinkModules.BLINK);
+        Kaguya.blinkManager.setBlinkState(false, BlinkModules.BLINK);
     }
 }

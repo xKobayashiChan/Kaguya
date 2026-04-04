@@ -1,7 +1,7 @@
 package com.github.kaguya.config;
 
 import com.google.gson.*;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.mixins.IAccessorMinecraft;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.util.ChatUtil;
@@ -40,7 +40,7 @@ public class Config {
         try {
 
             if (!file.exists()) {
-                ChatUtil.sendFormatted(String.format("%sConfig file not found (&c&o%s&r). Creating default config...&r", Myau.clientName, file.getName()));
+                ChatUtil.sendFormatted(String.format("%sConfig file not found (&c&o%s&r). Creating default config...&r", Kaguya.clientName, file.getName()));
                 save();
                 return;
             }
@@ -50,17 +50,17 @@ public class Config {
                 parsed = new JsonParser().parse(reader);
             }
             if (parsed == null || !parsed.isJsonObject()) {
-                ChatUtil.sendFormatted(String.format("%sInvalid config format (&c&o%s&r)&r", Myau.clientName, file.getName()));
+                ChatUtil.sendFormatted(String.format("%sInvalid config format (&c&o%s&r)&r", Kaguya.clientName, file.getName()));
                 return;
             }
 
             JsonObject jsonObject = parsed.getAsJsonObject();
-            for (Module module : Myau.moduleManager.modules.values()) {
+            for (Module module : Kaguya.moduleManager.modules.values()) {
                 JsonElement moduleObj = jsonObject.get(module.getName());
                 if (moduleObj != null && moduleObj.isJsonObject()) {
                     JsonObject object = moduleObj.getAsJsonObject();
 
-                    ArrayList<Property<?>> list = Myau.propertyManager.properties.get(module.getClass());
+                    ArrayList<Property<?>> list = Kaguya.propertyManager.properties.get(module.getClass());
                     if (list != null) {
                         for (Property<?> property : list) {
                             if (object.has(property.getName())) {
@@ -95,15 +95,15 @@ public class Config {
                     }
                 }
             }
-            ChatUtil.sendFormatted(String.format("%sConfig has been loaded (&a&o%s&r)&r", Myau.clientName, file.getName()));
+            ChatUtil.sendFormatted(String.format("%sConfig has been loaded (&a&o%s&r)&r", Kaguya.clientName, file.getName()));
         } catch (FileNotFoundException e) {
-            ChatUtil.sendFormatted(String.format("%sConfig file not found (&c&o%s&r)&r", Myau.clientName, file.getName()));
+            ChatUtil.sendFormatted(String.format("%sConfig file not found (&c&o%s&r)&r", Kaguya.clientName, file.getName()));
         } catch (JsonSyntaxException e) {
-            ChatUtil.sendFormatted(String.format("%sConfig has invalid JSON syntax (&c&o%s&r)&r", Myau.clientName, file.getName()));
+            ChatUtil.sendFormatted(String.format("%sConfig has invalid JSON syntax (&c&o%s&r)&r", Kaguya.clientName, file.getName()));
             ((IAccessorMinecraft) mc).getLogger().error("JSON Syntax Error: " + e.getMessage());
         } catch (Exception e) {
             ((IAccessorMinecraft) mc).getLogger().error("Error loading config: " + e.getMessage());
-            ChatUtil.sendFormatted(String.format("%sConfig couldn't be loaded (&c&o%s&r)&r", Myau.clientName, file.getName()));
+            ChatUtil.sendFormatted(String.format("%sConfig couldn't be loaded (&c&o%s&r)&r", Kaguya.clientName, file.getName()));
         }
     }
 
@@ -114,13 +114,13 @@ public class Config {
             }
 
             JsonObject object = new JsonObject();
-            for (Module module : Myau.moduleManager.modules.values()) {
+            for (Module module : Kaguya.moduleManager.modules.values()) {
                 JsonObject moduleObject = new JsonObject();
                 moduleObject.addProperty("toggled", module.isEnabled());
                 moduleObject.addProperty("key", module.getKey());
                 moduleObject.addProperty("hidden", module.isHidden());
 
-                ArrayList<Property<?>> list = Myau.propertyManager.properties.get(module.getClass());
+                ArrayList<Property<?>> list = Kaguya.propertyManager.properties.get(module.getClass());
                 if (list != null) {
                     for (Property<?> property : list) {
                         try {
@@ -136,10 +136,10 @@ public class Config {
             try (PrintWriter printWriter = new PrintWriter(new FileWriter(file))) {
                 printWriter.println(gson.toJson(object));
             }
-            ChatUtil.sendFormatted(String.format("%sConfig has been saved (&a&o%s&r)&r", Myau.clientName, file.getName()));
+            ChatUtil.sendFormatted(String.format("%sConfig has been saved (&a&o%s&r)&r", Kaguya.clientName, file.getName()));
         } catch (IOException e) {
             ((IAccessorMinecraft) mc).getLogger().error("Error saving config: " + e.getMessage());
-            ChatUtil.sendFormatted(String.format("%sConfig couldn't be saved (&c&o%s&r)&r", Myau.clientName, file.getName()));
+            ChatUtil.sendFormatted(String.format("%sConfig couldn't be saved (&c&o%s&r)&r", Kaguya.clientName, file.getName()));
         }
     }
 }

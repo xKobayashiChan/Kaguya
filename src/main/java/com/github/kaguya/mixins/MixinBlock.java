@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.Xray;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
@@ -25,8 +25,8 @@ public abstract class MixinBlock {
     private void shouldSideBeRendered(
             IBlockAccess iBlockAccess, BlockPos blockPos, EnumFacing enumFacing, CallbackInfoReturnable<Boolean> callbackInfoReturnable
     ) {
-        if (Myau.moduleManager != null) {
-            Xray xray = (Xray) Myau.moduleManager.modules.get(Xray.class);
+        if (Kaguya.moduleManager != null) {
+            Xray xray = (Xray) Kaguya.moduleManager.modules.get(Xray.class);
             if (xray.isEnabled() && xray.mode.getValue() == 1 && xray.shouldRenderSide(Block.getIdFromBlock((Block) ((Object) this)))) {
                 BlockPos block = new BlockPos(
                         blockPos.getX() - enumFacing.getDirectionVec().getX(),
@@ -46,8 +46,8 @@ public abstract class MixinBlock {
             cancellable = true
     )
     private void getBlockLayer(CallbackInfoReturnable<EnumWorldBlockLayer> callbackInfoReturnable) {
-        if (Myau.moduleManager != null) {
-            Xray xray = (Xray) Myau.moduleManager.modules.get(Xray.class);
+        if (Kaguya.moduleManager != null) {
+            Xray xray = (Xray) Kaguya.moduleManager.modules.get(Xray.class);
             if (xray.isEnabled()) {
                 int id = Block.getIdFromBlock((Block) ((Object) this));
                 if (!xray.shouldRenderSide(id) || xray.mode.getValue() == 0 && !xray.isXrayBlock(id)) {

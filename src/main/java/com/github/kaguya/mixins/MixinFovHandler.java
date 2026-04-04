@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.Sprint;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,8 +28,8 @@ public abstract class MixinFovHandler {
     @Dynamic("Patcher")
     private boolean fovChange(EntityPlayer entityPlayer) {
         boolean sprinting = entityPlayer.isSprinting();
-        if (entityPlayer instanceof EntityPlayerSP && Myau.moduleManager != null) {
-            Sprint sprint = (Sprint) Myau.moduleManager.modules.get(Sprint.class);
+        if (entityPlayer instanceof EntityPlayerSP && Kaguya.moduleManager != null) {
+            Sprint sprint = (Sprint) Kaguya.moduleManager.modules.get(Sprint.class);
             return sprint.isEnabled() && sprint.shouldKeepFov(sprinting) || sprinting;
         } else {
             return sprinting;

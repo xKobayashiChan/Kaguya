@@ -1,6 +1,6 @@
 package com.github.kaguya.command.commands;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.util.ChatUtil;
@@ -24,7 +24,7 @@ public class ItemCommand extends Command {
             String display = stack.getDisplayName().replace('§', '&');
             String registryName = stack.getItem().getRegistryName();
             String compound = stack.hasTagCompound() ? stack.getTagCompound().toString().replace('§', '&') : "";
-            ChatUtil.sendRaw(String.format("%s%s (%s) %s", ChatColors.formatColor(Myau.clientName), display, registryName, compound));
+            ChatUtil.sendRaw(String.format("%s%s (%s) %s", ChatColors.formatColor(Kaguya.clientName), display, registryName, compound));
         }
     }
 }

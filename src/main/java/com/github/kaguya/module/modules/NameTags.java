@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.events.Render3DEvent;
@@ -11,7 +11,7 @@ import com.github.kaguya.property.properties.PercentProperty;
 import com.github.kaguya.util.ColorUtil;
 import com.github.kaguya.util.RenderUtil;
 import com.github.kaguya.util.TeamUtil;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.ModeProperty;
 import net.minecraft.client.Minecraft;
@@ -236,7 +236,7 @@ public class NameTags extends Module {
                                 view = (float) (-mc.fontRendererObj.FONT_HEIGHT) - 1.0F;
                                 float y1 = (float) width / 2.0F + 1.0F;
                                 float offset = this.shadow.getValue() ? 0.0F : -1.0F;
-                                int friendColor = Myau.friendManager.getColor().getRGB();
+                                int friendColor = Kaguya.friendManager.getColor().getRGB();
                                 RenderUtil.drawOutlineRect(x1, view, y1, offset, 1.5F, 0, friendColor);
                                 RenderUtil.disableRenderState();
                             } else if (TeamUtil.isTarget((EntityPlayer) entity)) {
@@ -245,7 +245,7 @@ public class NameTags extends Module {
                                 view = (float) (-mc.fontRendererObj.FONT_HEIGHT) - 1.0F;
                                 float y1 = (float) width / 2.0F + 1.0F;
                                 float offset = this.shadow.getValue() ? 0.0F : -1.0F;
-                                int targetColor = Myau.targetManager.getColor().getRGB();
+                                int targetColor = Kaguya.targetManager.getColor().getRGB();
                                 RenderUtil.drawOutlineRect(x1, view, y1, offset, 1.5F, 0, targetColor);
                                 RenderUtil.disableRenderState();
                             }

@@ -2,7 +2,7 @@ package com.github.kaguya.module.modules;
 
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.Priority;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.events.*;
 import com.github.kaguya.mixins.IAccessorPlayerControllerMP;
 import com.github.kaguya.module.Module;

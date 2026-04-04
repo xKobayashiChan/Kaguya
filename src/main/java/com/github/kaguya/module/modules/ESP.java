@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.Priority;
@@ -66,9 +66,9 @@ public class ESP extends Module {
 
     private Color getEntityColor(EntityPlayer entityPlayer) {
         if (TeamUtil.isFriend(entityPlayer)) {
-            return Myau.friendManager.getColor();
+            return Kaguya.friendManager.getColor();
         } else if (TeamUtil.isTarget(entityPlayer)) {
-            return Myau.targetManager.getColor();
+            return Kaguya.targetManager.getColor();
         } else {
             switch (this.color.getValue()) {
                 case 0:
@@ -77,7 +77,7 @@ public class ESP extends Module {
                     int teamColor = TeamUtil.isSameTeam(entityPlayer) ? ChatColors.BLUE.toAwtColor() : ChatColors.RED.toAwtColor();
                     return new Color(teamColor);
                 case 2:
-                    int hudColor = ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis()).getRGB();
+                    int hudColor = ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis()).getRGB();
                     return new Color(hudColor);
                 default:
                     return new Color(-1);

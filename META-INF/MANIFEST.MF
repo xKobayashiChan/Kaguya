@@ -5,5 +5,5 @@ MixinConfigs: mixins.lexiyaddons.json
 FMLCorePluginContainsFMLMod: true
 TweakClass: org.spongepowered.asm.launch.MixinTweaker
 ForceLoadAsMod: true
-FMLCorePlugin: com.example.lexiyaddons.init.MixinLoader
+FMLCorePlugin: init.com.github.kaguya.MixinLoader
 

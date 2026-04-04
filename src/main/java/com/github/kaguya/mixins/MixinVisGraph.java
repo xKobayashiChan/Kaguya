@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.Chams;
 import com.github.kaguya.module.modules.ViewClip;
 import com.github.kaguya.module.modules.Xray;
@@ -23,10 +23,10 @@ public abstract class MixinVisGraph {
             cancellable = true
     )
     private void func_178606_a(CallbackInfo callbackInfo) {
-        if (Myau.moduleManager != null) {
-            if (Myau.moduleManager.modules.get(Chams.class).isEnabled()
-                    || Myau.moduleManager.modules.get(ViewClip.class).isEnabled()
-                    || Myau.moduleManager.modules.get(Xray.class).isEnabled()) {
+        if (Kaguya.moduleManager != null) {
+            if (Kaguya.moduleManager.modules.get(Chams.class).isEnabled()
+                    || Kaguya.moduleManager.modules.get(ViewClip.class).isEnabled()
+                    || Kaguya.moduleManager.modules.get(Xray.class).isEnabled()) {
                 callbackInfo.cancel();
             }
         }
@@ -38,10 +38,10 @@ public abstract class MixinVisGraph {
             cancellable = true
     )
     private void computeVisibility(CallbackInfoReturnable<SetVisibility> callbackInfoReturnable) {
-        if (Myau.moduleManager != null) {
-            if (Myau.moduleManager.modules.get(Chams.class).isEnabled()
-                    || Myau.moduleManager.modules.get(ViewClip.class).isEnabled()
-                    || Myau.moduleManager.modules.get(Xray.class).isEnabled()) {
+        if (Kaguya.moduleManager != null) {
+            if (Kaguya.moduleManager.modules.get(Chams.class).isEnabled()
+                    || Kaguya.moduleManager.modules.get(ViewClip.class).isEnabled()
+                    || Kaguya.moduleManager.modules.get(Xray.class).isEnabled()) {
                 SetVisibility setVisibility = new SetVisibility();
                 setVisibility.setAllVisible(true);
                 callbackInfoReturnable.setReturnValue(setVisibility);

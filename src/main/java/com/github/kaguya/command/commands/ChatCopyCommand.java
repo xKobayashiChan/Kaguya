@@ -1,6 +1,6 @@
 package com.github.kaguya.command.commands;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
 import com.github.kaguya.util.ChatUtil;
 
@@ -39,7 +39,7 @@ public class ChatCopyCommand extends Command {
             if (text != null) {
                 StringSelection sel = new StringSelection(text);
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
-                ChatUtil.sendFormatted(String.format("%s&aCopied to clipboard!&r", Myau.clientName));
+                ChatUtil.sendFormatted(String.format("%s&aCopied to clipboard!&r", Kaguya.clientName));
             }
         } catch (NumberFormatException ignored) {
         }

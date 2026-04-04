@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
@@ -15,7 +15,7 @@ import com.github.kaguya.util.ChatUtil;
 import com.github.kaguya.util.ColorUtil;
 import com.github.kaguya.util.SoundUtil;
 import com.github.kaguya.util.TeamUtil;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
@@ -142,7 +142,7 @@ public class BedTracker extends Module {
                     if (!this.trackedPearls.contains(enderPearl)) {
                         this.trackedPearls.add(enderPearl);
                         if (this.alertOnPearl.getValue()) {
-                            ChatUtil.sendFormatted(String.format("%s%s: &fDetected &5Ender Pearl&r &e&l⚠&r", Myau.clientName, this.getName()));
+                            ChatUtil.sendFormatted(String.format("%s%s: &fDetected &5Ender Pearl&r &e&l⚠&r", Kaguya.clientName, this.getName()));
                             pearl = true;
                         }
                         if (this.marcoOnPreal.getValue() && this.lastMarcoTime + (long) this.marcoDelay.getValue() * 1000L <= millis) {
@@ -172,7 +172,7 @@ public class BedTracker extends Module {
                         if (cooldown == null || cooldown + (long) this.alertFrequency.getValue() * 1000L <= millis) {
                             this.alertCooldowns.put(name, millis);
                             ChatUtil.sendFormatted(
-                                    String.format("%s%s: %s&r &fis %d blocks away from your bed &e&l⚠&r", Myau.clientName, this.getName(), text, (int) distance + 1)
+                                    String.format("%s%s: %s&r &fis %d blocks away from your bed &e&l⚠&r", Kaguya.clientName, this.getName(), text, (int) distance + 1)
                             );
                             pearl = true;
                         }
@@ -182,7 +182,7 @@ public class BedTracker extends Module {
                         if (cooldown == null || cooldown + (long) this.alertFrequency.getValue() * 1000L <= millis) {
                             this.alertCooldowns.put(name, millis);
                             ChatUtil.sendFormatted(
-                                    String.format("%s%s: %s&r &fhas &5Ender Pearl&r &e&l⚠&r", Myau.clientName, this.getName(), text)
+                                    String.format("%s%s: %s&r &fhas &5Ender Pearl&r &e&l⚠&r", Kaguya.clientName, this.getName(), text)
                             );
                             pearl = true;
                         }
@@ -204,7 +204,7 @@ public class BedTracker extends Module {
                 ChatUtil.sendRaw(
                         String.format(
                                 ChatColors.formatColor("%s%s: &fRunning &6%s&r"),
-                                ChatColors.formatColor(Myau.clientName),
+                                ChatColors.formatColor(Kaguya.clientName),
                                 this.getName(),
                                 this.marcoText.getValue()
                         )
@@ -310,8 +310,8 @@ public class BedTracker extends Module {
                                                     this.bedPos = blockPos;
                                                     ChatUtil.sendFormatted(
                                                             String.format(
-                                                                    "%s%s: &fWhitelisted your bed at (%d, %d, %d) &a&l✔&r",
-                                                                    Myau.clientName,
+                                                                    "%s%s: &fWhitelisted your bed at (%d, %d, %d) &a&l✁Er",
+                                                                    Kaguya.clientName,
                                                                     this.getName(),
                                                                     this.bedPos.getX(),
                                                                     this.bedPos.getY(),

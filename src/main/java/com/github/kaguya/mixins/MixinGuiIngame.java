@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.AutoBlockIn;
 import com.github.kaguya.module.modules.Scaffold;
 import net.minecraft.client.gui.GuiIngame;
@@ -23,14 +23,14 @@ public abstract class MixinGuiIngame {
             )
     )
     private ItemStack updateTick(InventoryPlayer inventoryPlayer) {
-        Scaffold scaffold = (Scaffold) Myau.moduleManager.modules.get(Scaffold.class);
+        Scaffold scaffold = (Scaffold) Kaguya.moduleManager.modules.get(Scaffold.class);
         if (scaffold.isEnabled() && scaffold.itemSpoof.getValue()) {
             int slot = scaffold.getSlot();
             if (slot >= 0) {
                 return inventoryPlayer.getStackInSlot(slot);
             }
         }
-        AutoBlockIn autoBlockIn = (AutoBlockIn) Myau.moduleManager.modules.get(AutoBlockIn.class);
+        AutoBlockIn autoBlockIn = (AutoBlockIn) Kaguya.moduleManager.modules.get(AutoBlockIn.class);
         if(autoBlockIn.itemSpoof.getValue() && autoBlockIn.isEnabled()){
             int slot = autoBlockIn.getSlot();
             if (slot >= 0) {

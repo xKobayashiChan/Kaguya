@@ -1,7 +1,8 @@
 package com.github.kaguya.command.commands;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
+import com.github.kaguya.management.NotificationManager;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.util.ChatUtil;
 
@@ -18,12 +19,12 @@ public class ToggleCommand extends Command {
     public void runCommand(ArrayList<String> args) {
         if (args.size() < 2) {
             ChatUtil.sendFormatted(
-                    String.format("%sUsage: .%s <&omodule&r>&r", Myau.clientName, args.get(0).toLowerCase(Locale.ROOT))
+                    String.format("%sUsage: .%s <&omodule&r>&r", Kaguya.clientName, args.get(0).toLowerCase(Locale.ROOT))
             );
         } else {
-            Module module = Myau.moduleManager.getModule(args.get(1));
+            Module module = Kaguya.moduleManager.getModule(args.get(1));
             if (module == null) {
-                ChatUtil.sendFormatted(String.format("%sModule not found (&o%s&r)&r", Myau.clientName, args.get(1)));
+                ChatUtil.sendFormatted(String.format("%sModule not found (&o%s&r)&r", Kaguya.clientName, args.get(1)));
             } else {
                 boolean changed = true;
                 if (args.size() >= 3) {
@@ -38,7 +39,7 @@ public class ToggleCommand extends Command {
                     }
                 }
                 if (changed && module.toggle()) {
-                    ChatUtil.sendFormatted(String.format("%s%s: %s&r", Myau.clientName, module.getName(), module.isEnabled() ? "&a&lON" : "&c&lOFF"));
+                    NotificationManager.show(String.format("%s%s: %s&r", Kaguya.clientName, module.getName(), module.isEnabled() ? "&a&lON" : "&c&lOFF"));
                 }
             }
         }

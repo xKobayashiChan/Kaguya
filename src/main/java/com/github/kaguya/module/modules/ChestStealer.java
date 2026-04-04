@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.UpdateEvent;
@@ -64,7 +64,7 @@ public class ChestStealer extends Module {
 
     private boolean isInvManagerRequire(ItemStack itemStack) {
         if (itemStack == null) return false;
-        InvManager invManager = (InvManager) Myau.moduleManager.modules.get(InvManager.class);
+        InvManager invManager = (InvManager) Kaguya.moduleManager.modules.get(InvManager.class);
         if (ItemUtil.ItemType.Block.contains(itemStack)) {
             return !invManager.isEnabled() || ItemUtil.findInventorySlot(ItemUtil.ItemType.Block) < invManager.blocks.getValue();
         }
@@ -120,7 +120,7 @@ public class ChestStealer extends Module {
                             }
                             if (mc.thePlayer.inventory.getFirstEmptyStack() == -1) {
                                 if (!this.warnedFull) {
-                                    ChatUtil.sendFormatted(String.format("%s%s: &cYour inventory is full!&r", Myau.clientName, this.getName()));
+                                    ChatUtil.sendFormatted(String.format("%s%s: &cYour inventory is full!&r", Kaguya.clientName, this.getName()));
                                     this.warnedFull = true;
                                 }
                                 if (this.autoClose.getValue()) {

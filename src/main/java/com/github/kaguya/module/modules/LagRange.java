@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.Priority;
 import com.github.kaguya.events.PacketEvent;
@@ -15,7 +15,7 @@ import com.github.kaguya.util.ItemUtil;
 import com.github.kaguya.util.RenderUtil;
 import com.github.kaguya.util.RotationUtil;
 import com.github.kaguya.util.TeamUtil;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.ModeProperty;
 import net.minecraft.client.Minecraft;
@@ -87,9 +87,9 @@ public class LagRange extends Module {
         if (this.isEnabled()) {
             switch (event.getType()) {
                 case PRE:
-                    Myau.lagManager.setDelay(0);
+                    Kaguya.lagManager.setDelay(0);
                     this.hasTarget = false;
-                    BedNuker bedNuker = (BedNuker) Myau.moduleManager.modules.get(BedNuker.class);
+                    BedNuker bedNuker = (BedNuker) Kaguya.moduleManager.modules.get(BedNuker.class);
                     if ((!bedNuker.isEnabled() || !bedNuker.isReady())
                             && !((IAccessorPlayerControllerMP) mc.playerController).getIsHittingBlock()
                             && (!mc.thePlayer.isUsingItem() || mc.thePlayer.isBlocking())
@@ -109,7 +109,7 @@ public class LagRange extends Module {
                             this.tickIndex = -1;
                         } else {
                             double height = mc.thePlayer.getEyeHeight();
-                            Vec3 eyePosition = Myau.lagManager.getLastPosition().addVector(0.0, height, 0.0);
+                            Vec3 eyePosition = Kaguya.lagManager.getLastPosition().addVector(0.0, height, 0.0);
                             Vec3 targetEyePosition = new Vec3(mc.thePlayer.lastTickPosX, mc.thePlayer.lastTickPosY + height, mc.thePlayer.lastTickPosZ);
                             Vec3 playerEyePosition = new Vec3(mc.thePlayer.posX, mc.thePlayer.posY + height, mc.thePlayer.posZ);
                             for (EntityPlayer player : players) {
@@ -127,7 +127,7 @@ public class LagRange extends Module {
                                                 this.tickIndex++;
                                             }
                                         }
-                                        Myau.lagManager.setDelay(this.tickIndex);
+                                        Kaguya.lagManager.setDelay(this.tickIndex);
                                         this.hasTarget = true;
                                         return;
                                     }
@@ -139,7 +139,7 @@ public class LagRange extends Module {
                     }
                     break;
                 case POST:
-                    Vec3 savedPosition = Myau.lagManager.getLastPosition();
+                    Vec3 savedPosition = Kaguya.lagManager.getLastPosition();
                     if (this.currentPosition == null) {
                         this.lastPosition = savedPosition;
                     } else {
@@ -154,7 +154,7 @@ public class LagRange extends Module {
     public void onPacket(PacketEvent event) {
         if (this.isEnabled()) {
             if (this.shouldResetOnPacket(event.getPacket())) {
-                Myau.lagManager.setDelay(0);
+                Kaguya.lagManager.setDelay(0);
                 this.tickIndex = -1;
             }
         }
@@ -174,7 +174,7 @@ public class LagRange extends Module {
                         color = TeamUtil.getTeamColor(mc.thePlayer, 1.0F);
                         break;
                     case 2:
-                        color = ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
+                        color = ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
                 }
                 double x = RenderUtil.lerpDouble(this.currentPosition.xCoord, this.lastPosition.xCoord, event.getPartialTicks());
                 double y = RenderUtil.lerpDouble(this.currentPosition.yCoord, this.lastPosition.yCoord, event.getPartialTicks());
@@ -203,7 +203,7 @@ public class LagRange extends Module {
 
     @Override
     public void onDisabled() {
-        Myau.lagManager.setDelay(0);
+        Kaguya.lagManager.setDelay(0);
         this.tickIndex = -1;
         this.delayCounter = 0L;
         this.hasTarget = false;

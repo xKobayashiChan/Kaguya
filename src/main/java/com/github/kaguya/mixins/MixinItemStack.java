@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.ESP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,8 +19,8 @@ public abstract class MixinItemStack {
             cancellable = true
     )
     private void hasEffect(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        if (Myau.moduleManager != null) {
-            ESP esp = (ESP) Myau.moduleManager.modules.get(ESP.class);
+        if (Kaguya.moduleManager != null) {
+            ESP esp = (ESP) Kaguya.moduleManager.modules.get(ESP.class);
             if (esp.isEnabled() && !esp.isGlowEnabled()) {
                 callbackInfoReturnable.setReturnValue(false);
             }

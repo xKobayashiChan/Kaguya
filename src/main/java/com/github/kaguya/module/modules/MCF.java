@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.events.KeyEvent;
 import com.github.kaguya.module.Module;
@@ -21,12 +21,12 @@ public class MCF extends Module {
         if (this.isEnabled() && event.getKey() == -98) {
             if (mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY && mc.objectMouseOver.entityHit instanceof EntityPlayer) {
                 String hitName = mc.objectMouseOver.entityHit.getName();
-                if (!Myau.friendManager.isFriend(hitName)) {
-                    Myau.friendManager.add(hitName);
-                    ChatUtil.sendFormatted(String.format("%sAdded &o%s&r to your friend list&r", Myau.clientName, hitName));
+                if (!Kaguya.friendManager.isFriend(hitName)) {
+                    Kaguya.friendManager.add(hitName);
+                    ChatUtil.sendFormatted(String.format("%sAdded &o%s&r to your friend list&r", Kaguya.clientName, hitName));
                 } else {
-                    Myau.friendManager.remove(hitName);
-                    ChatUtil.sendFormatted(String.format("%sRemoved &o%s&r from your friend list&r", Myau.clientName, hitName));
+                    Kaguya.friendManager.remove(hitName);
+                    ChatUtil.sendFormatted(String.format("%sRemoved &o%s&r from your friend list&r", Kaguya.clientName, hitName));
                 }
             }
         }

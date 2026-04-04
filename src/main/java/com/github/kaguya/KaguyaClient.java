@@ -3,14 +3,14 @@ package com.github.kaguya;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
-@Mod(modid = LexiyAddons.MODID, name = LexiyAddons.NAME, version = LexiyAddons.VERSION)
-public class LexiyAddons {
-    public static final String MODID = "lexiyaddons";
+@Mod(modid = KaguyaClient.MODID, name = KaguyaClient.NAME, version = KaguyaClient.VERSION)
+public class KaguyaClient {
+    public static final String MODID = "Kaguya";
     public static final String NAME = "Kaguya Client";
     public static final String VERSION = "v1.1.0";
 
     @Mod.Instance(MODID)
-    private static LexiyAddons instance;
+    private static KaguyaClient instance;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -18,7 +18,7 @@ public class LexiyAddons {
         System.out.println("[Kaguya Client] Initialized!");
     }
 
-    public static LexiyAddons getInstance() {
+    public static KaguyaClient getInstance() {
         return instance;
     }
 }

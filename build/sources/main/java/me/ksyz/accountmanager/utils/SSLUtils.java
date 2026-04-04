@@ -27,7 +27,11 @@ public class SSLUtils {
             if (stream == null) {
                 throw new RuntimeException("Couldn't find ssl.jks in resources");
             }
-            jks.load(stream, "changeit".toCharArray());
+            try {
+                jks.load(stream, "changeit".toCharArray());
+            } finally {
+                stream.close();
+            }
 
             // Initialize TrustManagerFactory with the keystore
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());

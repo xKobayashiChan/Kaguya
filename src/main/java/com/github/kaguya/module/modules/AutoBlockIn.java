@@ -3,7 +3,7 @@ package com.github.kaguya.module.modules;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.events.*;
 import com.github.kaguya.management.RotationState;
 import com.github.kaguya.module.Module;

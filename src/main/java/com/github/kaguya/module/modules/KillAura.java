@@ -4,18 +4,18 @@ import com.github.kaguya.events.*;
 import com.github.kaguya.property.properties.*;
 import com.github.kaguya.util.*;
 import com.google.common.base.CaseFormat;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.BlinkModules;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.management.RotationState;
 import com.github.kaguya.mixins.IAccessorPlayerControllerMP;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.property.properties.*;
-import com.example.lexiyaddons.util.*;
+import com.github.kaguya.property.properties.*;
+import com.github.kaguya.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -111,7 +111,7 @@ public class KillAura extends Module {
     }
 
     private boolean performAttack(float yaw, float pitch) {
-        if (!Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+        if (!Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
             if (this.isPlayerBlocking() && this.autoBlock.getValue() != 1) {
                 return false;
             } else if (this.attackDelayMS > 0L) {
@@ -187,15 +187,15 @@ public class KillAura extends Module {
             } else if ((ItemUtil.isEating() || ItemUtil.isUsingBow()) && PlayerUtil.isUsingItem()) {
                 return false;
             } else {
-                AutoHeal autoHeal = (AutoHeal) Myau.moduleManager.modules.get(AutoHeal.class);
+                AutoHeal autoHeal = (AutoHeal) Kaguya.moduleManager.modules.get(AutoHeal.class);
                 if (autoHeal.isEnabled() && autoHeal.isSwitching()) {
                     return false;
                 } else {
-                    BedNuker bedNuker = (BedNuker) Myau.moduleManager.modules.get(BedNuker.class);
-                    AutoBlockIn autoBlockIn = (AutoBlockIn) Myau.moduleManager.modules.get(AutoBlockIn.class);
+                    BedNuker bedNuker = (BedNuker) Kaguya.moduleManager.modules.get(BedNuker.class);
+                    AutoBlockIn autoBlockIn = (AutoBlockIn) Kaguya.moduleManager.modules.get(AutoBlockIn.class);
                     if (bedNuker.isEnabled() && bedNuker.isReady()) {
                         return false;
-                    } else if (Myau.moduleManager.modules.get(Scaffold.class).isEnabled()) {
+                    } else if (Kaguya.moduleManager.modules.get(Scaffold.class).isEnabled()) {
                         return false;
                     } else if (autoBlockIn.isEnabled()) {
                         return false;
@@ -375,7 +375,7 @@ public class KillAura extends Module {
     }
 
     public boolean isAttackAllowed() {
-        Scaffold scaffold = (Scaffold) Myau.moduleManager.modules.get(Scaffold.class);
+        Scaffold scaffold = (Scaffold) Kaguya.moduleManager.modules.get(Scaffold.class);
         if (scaffold.isEnabled()) {
             return false;
         } else if (!this.weaponsOnly.getValue()
@@ -411,8 +411,8 @@ public class KillAura extends Module {
     public void onUpdate(UpdateEvent event) {
         if (event.getType() == EventType.POST && this.blinkReset) {
             this.blinkReset = false;
-            Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
-            Myau.blinkManager.setBlinkState(true, BlinkModules.AUTO_BLOCK);
+            Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+            Kaguya.blinkManager.setBlinkState(true, BlinkModules.AUTO_BLOCK);
         }
         if (this.isEnabled() && event.getType() == EventType.PRE) {
             if (this.hitColorTicks > 0) {
@@ -424,7 +424,7 @@ public class KillAura extends Module {
             boolean attack = this.target != null && this.canAttack();
             boolean block = attack && this.canAutoBlock();
             if (!block) {
-                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                 this.isBlocking = false;
                 this.fakeBlockState = false;
                 this.blockTick = 0;
@@ -437,28 +437,28 @@ public class KillAura extends Module {
                         case 0: // NONE
                             if (PlayerUtil.isUsingItem()) {
                                 this.isBlocking = true;
-                                if (!this.isPlayerBlocking() && !Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                                if (!this.isPlayerBlocking() && !Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                                     swap = true;
                                 }
                             } else {
                                 this.isBlocking = false;
-                                if (this.isPlayerBlocking() && !Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                                if (this.isPlayerBlocking() && !Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                                     this.stopBlock();
                                 }
                             }
-                            Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                            Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                             this.fakeBlockState = false;
                             break;
                         case 1: // VANILLA
                             if (this.hasValidTarget()) {
-                                if (!this.isPlayerBlocking() && !Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                                if (!this.isPlayerBlocking() && !Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                                     swap = true;
                                 }
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = true;
                                 this.fakeBlockState = false;
                             } else {
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = false;
                                 this.fakeBlockState = false;
                             }
@@ -466,8 +466,8 @@ public class KillAura extends Module {
                         case 2: // SPOOF
                             if (this.hasValidTarget()) {
                                 int item = ((IAccessorPlayerControllerMP) mc.playerController).getCurrentPlayerItem();
-                                if (Myau.playerStateManager.digging
-                                        || Myau.playerStateManager.placing
+                                if (Kaguya.playerStateManager.digging
+                                        || Kaguya.playerStateManager.placing
                                         || mc.thePlayer.inventory.currentItem != item
                                         || this.isPlayerBlocking() && this.blockTick != 0
                                         || this.attackDelayMS > 0L && this.attackDelayMS <= 50L) {
@@ -479,18 +479,18 @@ public class KillAura extends Module {
                                     swap = true;
                                     this.blockTick = 1;
                                 }
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = true;
                                 this.fakeBlockState = false;
                             } else {
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = false;
                                 this.fakeBlockState = false;
                             }
                             break;
                         case 3: // HYPIXEL
                             if (this.hasValidTarget()) {
-                                if (!Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                                if (!Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                                     switch (this.blockTick) {
                                         case 0:
                                             if (!this.isPlayerBlocking()) {
@@ -501,7 +501,7 @@ public class KillAura extends Module {
                                             break;
                                         case 1:
                                             if (this.isPlayerBlocking()) {
-                                                if(Myau.moduleManager.modules.get(NoSlow.class).isEnabled()){
+                                                if(Kaguya.moduleManager.modules.get(NoSlow.class).isEnabled()){
                                                     int randomSlot = new Random().nextInt(9);
                                                     while (randomSlot == mc.thePlayer.inventory.currentItem) {
                                                         randomSlot = new Random().nextInt(9);
@@ -523,14 +523,14 @@ public class KillAura extends Module {
                                 this.isBlocking = true;
                                 this.fakeBlockState = true;
                             } else {
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = false;
                                 this.fakeBlockState = false;
                             }
                             break;
                         case 4: // BLINK
                             if (this.hasValidTarget()) {
-                                if (!Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                                if (!Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                                     switch (this.blockTick) {
                                         case 0:
                                             if (!this.isPlayerBlocking()) {
@@ -555,7 +555,7 @@ public class KillAura extends Module {
                                 this.isBlocking = true;
                                 this.fakeBlockState = true;
                             } else {
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = false;
                                 this.fakeBlockState = false;
                             }
@@ -563,7 +563,7 @@ public class KillAura extends Module {
                         case 5: // INTERACT
                             if (this.hasValidTarget()) {
                                 int item = ((IAccessorPlayerControllerMP) mc.playerController).getCurrentPlayerItem();
-                                if (mc.thePlayer.inventory.currentItem == item && !Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                                if (mc.thePlayer.inventory.currentItem == item && !Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                                     switch (this.blockTick) {
                                         case 0:
                                             if (!this.isPlayerBlocking()) {
@@ -590,7 +590,7 @@ public class KillAura extends Module {
                                 this.isBlocking = true;
                                 this.fakeBlockState = true;
                             } else {
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = false;
                                 this.fakeBlockState = false;
                             }
@@ -598,7 +598,7 @@ public class KillAura extends Module {
                         case 6: // SWAP
                             if (this.hasValidTarget()) {
                                 int item = ((IAccessorPlayerControllerMP) mc.playerController).getCurrentPlayerItem();
-                                if (mc.thePlayer.inventory.currentItem == item && !Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                                if (mc.thePlayer.inventory.currentItem == item && !Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                                     switch (this.blockTick) {
                                         case 0:
                                             int slot = this.findSwordSlot(item);
@@ -626,19 +626,19 @@ public class KillAura extends Module {
                                         default:
                                             this.blockTick = 0;
                                     }
-                                    Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                    Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                     this.isBlocking = true;
                                     this.fakeBlockState = true;
                                     break;
                                 }
                             }
-                            Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                            Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                             this.isBlocking = false;
                             this.fakeBlockState = false;
                             break;
                         case 7: // LEGIT
                             if (this.hasValidTarget()) {
-                                if (!Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                                if (!Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                                     switch (this.blockTick) {
                                         case 0:
                                             if (!this.isPlayerBlocking()) {
@@ -659,23 +659,23 @@ public class KillAura extends Module {
                                             this.blockTick = 0;
                                     }
                                 }
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = true;
                                 this.fakeBlockState = false;
                             } else {
-                                Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                                Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                                 this.isBlocking = false;
                                 this.fakeBlockState = false;
                             }
                             break;
                         case 8: // FAKE
-                            Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                            Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
                             this.isBlocking = false;
                             this.fakeBlockState = this.hasValidTarget();
                             if (PlayerUtil.isUsingItem()
                                     && !this.isPlayerBlocking()
-                                    && !Myau.playerStateManager.digging
-                                    && !Myau.playerStateManager.placing) {
+                                    && !Kaguya.playerStateManager.digging
+                                    && !Kaguya.playerStateManager.placing) {
                                 swap = true;
                             }
                     }
@@ -692,7 +692,7 @@ public class KillAura extends Module {
                         );
                         event.setRotation(rotations[0], rotations[1], 1);
                         if (this.rotations.getValue() == 3) {
-                            Myau.rotationManager.setRotation(rotations[0], rotations[1], 1, true);
+                            Kaguya.rotationManager.setRotation(rotations[0], rotations[1], 1, true);
                         }
                         if (this.moveFix.getValue() != 0 || this.rotations.getValue() == 3) {
                             event.setPervRotation(rotations[0], 1);
@@ -710,8 +710,8 @@ public class KillAura extends Module {
                     }
                 }
                 if (blocked) {
-                    Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
-                    Myau.blinkManager.setBlinkState(true, BlinkModules.AUTO_BLOCK);
+                    Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+                    Kaguya.blinkManager.setBlinkState(true, BlinkModules.AUTO_BLOCK);
                 }
             }
         }
@@ -814,7 +814,7 @@ public class KillAura extends Module {
                         ChatUtil.sendFormatted(
                                 String.format(
                                         "%sHealth: %s&l%s&r (&otick: %d&r)&r",
-                                        Myau.clientName,
+                                        Kaguya.clientName,
                                         packet > 0.0F ? "&a" : "&c",
                                         df.format(packet),
                                         mc.thePlayer.ticksExisted
@@ -833,7 +833,7 @@ public class KillAura extends Module {
                                     ChatUtil.sendFormatted(
                                             String.format(
                                                     "%sHealth: %s&l%s&r (&otick: %d&r)&r",
-                                                    Myau.clientName,
+                                                    Kaguya.clientName,
                                                     diff > 0.0F ? "&a" : "&c",
                                                     df.format(diff),
                                                     mc.thePlayer.ticksExisted
@@ -943,7 +943,7 @@ public class KillAura extends Module {
 
     @Override
     public void onDisabled() {
-        Myau.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
+        Kaguya.blinkManager.setBlinkState(false, BlinkModules.AUTO_BLOCK);
         this.blockingState = false;
         this.isBlocking = false;
         this.fakeBlockState = false;

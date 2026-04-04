@@ -1,6 +1,6 @@
 package com.github.kaguya.ui.components;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.GuiModule;
 import com.github.kaguya.module.modules.HUD;
 import com.github.kaguya.ui.Component;
@@ -29,7 +29,7 @@ public class BindComponent implements Component {
         GL11.glPushMatrix();
         GL11.glScaled(0.5D, 0.5D, 0.5D);
         String displayText = this.isBinding ? BindStage.binding : BindStage.bind + ": " + KeyBindUtil.getKeyName(this.parentModule.mod.getKey());
-        this.renderText(displayText, ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis(), offset.get()).getRGB());
+        this.renderText(displayText, ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis(), offset.get()).getRGB());
         GL11.glPopMatrix();
     }
 

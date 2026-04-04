@@ -6,7 +6,7 @@ import com.github.kaguya.event.types.Priority;
 import com.github.kaguya.events.LeftClickMouseEvent;
 import com.github.kaguya.events.TickEvent;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.util.*;
+import com.github.kaguya.util.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.IntProperty;

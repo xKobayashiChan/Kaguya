@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.events.Render2DEvent;
 import com.github.kaguya.module.modules.NickHider;
@@ -37,10 +37,10 @@ public abstract class MixinGuiIngameForge {
             )
     )
     private float renderExperience(EntityPlayerSP entityPlayerSP) {
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return entityPlayerSP.experience;
         } else {
-            NickHider event = (NickHider) Myau.moduleManager.modules.get(NickHider.class);
+            NickHider event = (NickHider) Kaguya.moduleManager.modules.get(NickHider.class);
             return event.isEnabled() && event.level.getValue() ? 0.0F : entityPlayerSP.experience;
         }
     }
@@ -55,10 +55,10 @@ public abstract class MixinGuiIngameForge {
             )
     )
     private int renderExperienceLevel(EntityPlayerSP entityPlayerSP) {
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return entityPlayerSP.experienceLevel;
         } else {
-            NickHider event = (NickHider) Myau.moduleManager.modules.get(NickHider.class);
+            NickHider event = (NickHider) Kaguya.moduleManager.modules.get(NickHider.class);
             return event.isEnabled() && event.level.getValue() ? 0 : entityPlayerSP.experienceLevel;
         }
     }

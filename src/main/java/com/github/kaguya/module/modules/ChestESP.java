@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.events.Render3DEvent;
 import com.github.kaguya.mixins.IAccessorMinecraft;
@@ -150,7 +150,7 @@ public class ChestESP extends Module {
                                 );
                     }
                     vec = new Vec3(vec.xCoord, vec.yCoord + (double) mc.getRenderViewEntity().getEyeHeight(), vec.zCoord);
-                    float opacity = (float) ((Tracers) Myau.moduleManager.modules.get(Tracers.class)).opacity.getValue() / 100.0F;
+                    float opacity = (float) ((Tracers) Kaguya.moduleManager.modules.get(Tracers.class)).opacity.getValue() / 100.0F;
                     RenderUtil.drawLine3D(
                             vec,
                             (double) chest.getPos().getX() + 0.5,

@@ -3,15 +3,15 @@ package com.github.kaguya.module.modules;
 import com.github.kaguya.events.*;
 import com.github.kaguya.util.*;
 import com.google.common.base.CaseFormat;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.management.RotationState;
 import com.github.kaguya.mixins.IAccessorPlayerControllerMP;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.util.*;
+import com.github.kaguya.util.*;
 import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.PercentProperty;
 import com.github.kaguya.property.properties.ModeProperty;
@@ -240,7 +240,7 @@ public class LongJump extends Module {
         this.jumpTimer.reset();
         if (this.isAutoMode() && this.findFireballInHotbar() == -1) {
             this.setEnabled(false);
-            ChatUtil.sendFormatted(String.format("%s%s: &cNo fireball found in your hotbar!&r", Myau.clientName, this.getName()));
+            ChatUtil.sendFormatted(String.format("%s%s: &cNo fireball found in your hotbar!&r", Kaguya.clientName, this.getName()));
         }
     }
 

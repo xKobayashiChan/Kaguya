@@ -1,21 +1,21 @@
-FD: com/example/lexiyaddons/mixins/MixinEntity/worldObj com/example/lexiyaddons/mixins/MixinEntity/field_70170_p
-FD: com/example/lexiyaddons/mixins/MixinEntity/posX com/example/lexiyaddons/mixins/MixinEntity/field_70165_t
-FD: com/example/lexiyaddons/mixins/MixinEntity/posY com/example/lexiyaddons/mixins/MixinEntity/field_70163_u
-FD: com/example/lexiyaddons/mixins/MixinEntity/posZ com/example/lexiyaddons/mixins/MixinEntity/field_70161_v
-FD: com/example/lexiyaddons/mixins/MixinEntity/motionX com/example/lexiyaddons/mixins/MixinEntity/field_70159_w
-FD: com/example/lexiyaddons/mixins/MixinEntity/motionY com/example/lexiyaddons/mixins/MixinEntity/field_70181_x
-FD: com/example/lexiyaddons/mixins/MixinEntity/motionZ com/example/lexiyaddons/mixins/MixinEntity/field_70179_y
-FD: com/example/lexiyaddons/mixins/MixinEntity/rotationYaw com/example/lexiyaddons/mixins/MixinEntity/field_70177_z
-FD: com/example/lexiyaddons/mixins/MixinEntity/rotationPitch com/example/lexiyaddons/mixins/MixinEntity/field_70125_A
-FD: com/example/lexiyaddons/mixins/MixinEntity/prevRotationYaw com/example/lexiyaddons/mixins/MixinEntity/field_70126_B
-FD: com/example/lexiyaddons/mixins/MixinEntity/prevRotationPitch com/example/lexiyaddons/mixins/MixinEntity/field_70127_C
-FD: com/example/lexiyaddons/mixins/MixinEntity/onGround com/example/lexiyaddons/mixins/MixinEntity/field_70122_E
-FD: com/example/lexiyaddons/mixins/MixinEntityPlayerSP/lastReportedYaw com/example/lexiyaddons/mixins/MixinEntityPlayerSP/field_175164_bL
-FD: com/example/lexiyaddons/mixins/MixinEntityPlayerSP/lastReportedPitch com/example/lexiyaddons/mixins/MixinEntityPlayerSP/field_175165_bM
-FD: com/example/lexiyaddons/mixins/MixinEntityPlayerSP/renderArmYaw com/example/lexiyaddons/mixins/MixinEntityPlayerSP/field_71154_f
-FD: com/example/lexiyaddons/mixins/MixinEntityPlayerSP/prevRenderArmYaw com/example/lexiyaddons/mixins/MixinEntityPlayerSP/field_71163_h
-FD: com/example/lexiyaddons/mixins/MixinEntityRenderer/mc com/example/lexiyaddons/mixins/MixinEntityRenderer/field_78531_r
-FD: com/example/lexiyaddons/mixins/MixinEntityRenderer/thirdPersonDistance com/example/lexiyaddons/mixins/MixinEntityRenderer/field_78490_B
-FD: com/example/lexiyaddons/mixins/MixinKeyBinding/keyDescription com/example/lexiyaddons/mixins/MixinKeyBinding/field_74515_c
-MD: com/example/lexiyaddons/mixins/MixinBlockModelRenderer/renderModelAmbientOcclusion (Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/resources/model/IBakedModel;Lnet/minecraft/block/Block;Lnet/minecraft/util/BlockPos;Lnet/minecraft/client/renderer/WorldRenderer;Z)Z com/example/lexiyaddons/mixins/MixinBlockModelRenderer/func_178265_a (Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/resources/model/IBakedModel;Lnet/minecraft/block/Block;Lnet/minecraft/util/BlockPos;Lnet/minecraft/client/renderer/WorldRenderer;Z)Z
-MD: com/example/lexiyaddons/mixins/MixinEntity/isRiding ()Z com/example/lexiyaddons/mixins/MixinEntity/func_70115_ae ()Z
+FD: com/github/kaguya/mixins/MixinEntity/worldObj com/github/kaguya/mixins/MixinEntity/field_70170_p
+FD: com/github/kaguya/mixins/MixinEntity/posX com/github/kaguya/mixins/MixinEntity/field_70165_t
+FD: com/github/kaguya/mixins/MixinEntity/posY com/github/kaguya/mixins/MixinEntity/field_70163_u
+FD: com/github/kaguya/mixins/MixinEntity/posZ com/github/kaguya/mixins/MixinEntity/field_70161_v
+FD: com/github/kaguya/mixins/MixinEntity/motionX com/github/kaguya/mixins/MixinEntity/field_70159_w
+FD: com/github/kaguya/mixins/MixinEntity/motionY com/github/kaguya/mixins/MixinEntity/field_70181_x
+FD: com/github/kaguya/mixins/MixinEntity/motionZ com/github/kaguya/mixins/MixinEntity/field_70179_y
+FD: com/github/kaguya/mixins/MixinEntity/rotationYaw com/github/kaguya/mixins/MixinEntity/field_70177_z
+FD: com/github/kaguya/mixins/MixinEntity/rotationPitch com/github/kaguya/mixins/MixinEntity/field_70125_A
+FD: com/github/kaguya/mixins/MixinEntity/prevRotationYaw com/github/kaguya/mixins/MixinEntity/field_70126_B
+FD: com/github/kaguya/mixins/MixinEntity/prevRotationPitch com/github/kaguya/mixins/MixinEntity/field_70127_C
+FD: com/github/kaguya/mixins/MixinEntity/onGround com/github/kaguya/mixins/MixinEntity/field_70122_E
+FD: com/github/kaguya/mixins/MixinEntityPlayerSP/lastReportedYaw com/github/kaguya/mixins/MixinEntityPlayerSP/field_175164_bL
+FD: com/github/kaguya/mixins/MixinEntityPlayerSP/lastReportedPitch com/github/kaguya/mixins/MixinEntityPlayerSP/field_175165_bM
+FD: com/github/kaguya/mixins/MixinEntityPlayerSP/renderArmYaw com/github/kaguya/mixins/MixinEntityPlayerSP/field_71154_f
+FD: com/github/kaguya/mixins/MixinEntityPlayerSP/prevRenderArmYaw com/github/kaguya/mixins/MixinEntityPlayerSP/field_71163_h
+FD: com/github/kaguya/mixins/MixinEntityRenderer/mc com/github/kaguya/mixins/MixinEntityRenderer/field_78531_r
+FD: com/github/kaguya/mixins/MixinEntityRenderer/thirdPersonDistance com/github/kaguya/mixins/MixinEntityRenderer/field_78490_B
+FD: com/github/kaguya/mixins/MixinKeyBinding/keyDescription com/github/kaguya/mixins/MixinKeyBinding/field_74515_c
+MD: com/github/kaguya/mixins/MixinBlockModelRenderer/renderModelAmbientOcclusion (Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/resources/model/IBakedModel;Lnet/minecraft/block/Block;Lnet/minecraft/util/BlockPos;Lnet/minecraft/client/renderer/WorldRenderer;Z)Z com/github/kaguya/mixins/MixinBlockModelRenderer/func_178265_a (Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/resources/model/IBakedModel;Lnet/minecraft/block/Block;Lnet/minecraft/util/BlockPos;Lnet/minecraft/client/renderer/WorldRenderer;Z)Z
+MD: com/github/kaguya/mixins/MixinEntity/isRiding ()Z com/github/kaguya/mixins/MixinEntity/func_70115_ae ()Z

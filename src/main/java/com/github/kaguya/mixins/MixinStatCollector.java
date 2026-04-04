@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.example.lexiyaddons.util.LangFallback;
+import com.github.kaguya.util.LangFallback;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

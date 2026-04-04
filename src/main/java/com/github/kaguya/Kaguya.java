@@ -7,13 +7,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.ksyz.accountmanager.AccountManager;
 import com.github.kaguya.command.CommandManager;
-import com.github.kaguya.command.commands.*;
 import com.github.kaguya.config.Config;
 import com.github.kaguya.event.EventManager;
-import com.github.kaguya.management.*;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.module.ModuleManager;
-import com.github.kaguya.module.modules.*;
 import com.github.kaguya.property.Property;
 import com.github.kaguya.property.PropertyManager;
 
@@ -23,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Myau {
+public class Kaguya {
     public static String clientName = "&7[&6Kaguya&7]&r ";
     public static String version;
     public static RotationManager rotationManager;
@@ -38,7 +35,7 @@ public class Myau {
     public static ModuleManager moduleManager;
     public static CommandManager commandManager;
 
-    public Myau() {
+    public Kaguya() {
         this.init();
     }
 
@@ -177,7 +174,7 @@ public class Myau {
         }
         Runtime.getRuntime().addShutdownHook(new Thread(config::save));
 
-        try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(Myau.class.getResourceAsStream("/version.json")), StandardCharsets.UTF_8)) {
+        try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(Kaguya.class.getResourceAsStream("/version.json")), StandardCharsets.UTF_8)) {
             JsonObject modInfo = new JsonParser().parse(reader).getAsJsonObject();
             version = modInfo.get("version").getAsString();
         } catch (Exception e) {

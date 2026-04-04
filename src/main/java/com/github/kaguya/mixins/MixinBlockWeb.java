@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.Xray;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -20,8 +20,8 @@ public abstract class MixinBlockWeb {
             cancellable = true
     )
     private void getBlockLayer(CallbackInfoReturnable<EnumWorldBlockLayer> callbackInfoReturnable) {
-        if (Myau.moduleManager != null) {
-            if (Myau.moduleManager.modules.get(Xray.class).isEnabled()) {
+        if (Kaguya.moduleManager != null) {
+            if (Kaguya.moduleManager.modules.get(Xray.class).isEnabled()) {
                 callbackInfoReturnable.setReturnValue(EnumWorldBlockLayer.TRANSLUCENT);
             }
         }

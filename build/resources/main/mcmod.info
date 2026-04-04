@@ -2,14 +2,14 @@
 {
   "modid": "Kaguya",
   "name": "Kaguya Client",
-  "description": "自�?用のアドオン - ClickGUIで設定可能",
+  "description": "skidded myau client XD",
   "version": "v1.1.0",
   "mcversion": "1.8.9",
   "url": "",
   "updateUrl": "",
-  "authorList": ["Me"],
-  "credits": "",
-  "logoFile": "",
+  "authorList": ["lexiy"],
+  "credits": "myau",
+  "logoFile": "kaguya-logo.png",
   "screenshots": [],
   "dependencies": []
 }

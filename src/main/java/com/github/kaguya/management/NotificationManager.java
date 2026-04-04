@@ -1,5 +1,6 @@
 package com.github.kaguya.management;
 
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.util.RenderUtil;
 import net.minecraft.client.Minecraft;
@@ -22,9 +23,15 @@ public class NotificationManager {
     private static final int PADDING_Y = 4;
     private static final int MARGIN = 3;
     private static final int BAR_WIDTH = 2;
+    private static final int LINE_SPACING = 2;
+    private static final int MAX_NOTIFICATIONS = 5;
 
     public static void show(String message) {
-        notifications.add(new Notification(message, System.currentTimeMillis()));
+        notifications.add(new Notification(Kaguya.clientName.trim(), message, System.currentTimeMillis()));
+    }
+
+    public static void show(String title, String message) {
+        notifications.add(new Notification(title, message, System.currentTimeMillis()));
     }
 
     public static void render() {
@@ -47,11 +54,14 @@ public class NotificationManager {
         if (notifications.isEmpty()) return;
 
         int fontHeight = mc.fontRendererObj.FONT_HEIGHT;
-        int boxHeight = fontHeight + PADDING_Y * 2;
+        int boxHeight = fontHeight * 2 + LINE_SPACING + PADDING_Y * 2;
 
         float yOffset = 0;
+        int displayed = 0;
 
         for (int i = notifications.size() - 1; i >= 0; i--) {
+            if (displayed >= MAX_NOTIFICATIONS) break;
+
             Notification notif = notifications.get(i);
             long elapsed = now - notif.timestamp;
 
@@ -72,9 +82,12 @@ public class NotificationManager {
 
             alpha = Math.max(0.0F, Math.min(1.0F, alpha));
 
-            String formatted = ChatColors.formatColor(notif.message);
-            int textWidth = mc.fontRendererObj.getStringWidth(formatted);
-            int boxWidth = textWidth + PADDING_X * 2 + BAR_WIDTH + 2;
+            String formattedTitle = ChatColors.formatColor(notif.title);
+            String formattedMessage = ChatColors.formatColor(notif.message);
+            int titleWidth = mc.fontRendererObj.getStringWidth(formattedTitle);
+            int messageWidth = mc.fontRendererObj.getStringWidth(formattedMessage);
+            int maxTextWidth = Math.max(titleWidth, messageWidth);
+            int boxWidth = maxTextWidth + PADDING_X * 2 + BAR_WIDTH + 2;
 
             float x = screenWidth - boxWidth - 4 + slideX;
             float y = screenHeight - 30 - yOffset - boxHeight;
@@ -91,24 +104,35 @@ public class NotificationManager {
 
             GlStateManager.disableDepth();
             int textAlpha = (int) (alpha * 255);
-            int textColor = (textAlpha << 24) | 0xFFFFFF;
+            int titleColor = (textAlpha << 24) | 0xFFFFFF;
+            int messageColor = (textAlpha << 24) | 0xFFFFFF;
+            float textX = x + BAR_WIDTH + 2 + PADDING_X;
             mc.fontRendererObj.drawStringWithShadow(
-                    formatted,
-                    x + BAR_WIDTH + 2 + PADDING_X,
+                    formattedTitle,
+                    textX,
                     y + PADDING_Y,
-                    textColor
+                    titleColor
+            );
+            mc.fontRendererObj.drawStringWithShadow(
+                    formattedMessage,
+                    textX,
+                    y + PADDING_Y + fontHeight + LINE_SPACING,
+                    messageColor
             );
             GlStateManager.enableDepth();
 
             yOffset += boxHeight + MARGIN;
+            displayed++;
         }
     }
 
     private static class Notification {
+        final String title;
         final String message;
         final long timestamp;
 
-        Notification(String message, long timestamp) {
+        Notification(String title, String message, long timestamp) {
+            this.title = title;
             this.message = message;
             this.timestamp = timestamp;
         }

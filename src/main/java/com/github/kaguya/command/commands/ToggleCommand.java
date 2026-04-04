@@ -39,7 +39,7 @@ public class ToggleCommand extends Command {
                     }
                 }
                 if (changed && module.toggle()) {
-                    NotificationManager.show(String.format("%s%s: %s&r", Kaguya.clientName, module.getName(), module.isEnabled() ? "&a&lON" : "&c&lOFF"));
+                    NotificationManager.show(String.format("%s: %s&r", module.getName(), module.isEnabled() ? "&a&lON" : "&c&lOFF"));
                 }
             }
         }

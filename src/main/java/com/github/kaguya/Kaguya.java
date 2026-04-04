@@ -7,13 +7,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.ksyz.accountmanager.AccountManager;
 import com.github.kaguya.command.CommandManager;
-import com.example.lexiyaddons.command.commands.*;
+import com.github.kaguya.command.commands.*;
 import com.github.kaguya.config.Config;
 import com.github.kaguya.event.EventManager;
-import com.example.lexiyaddons.management.*;
+import com.github.kaguya.management.*;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.module.ModuleManager;
-import com.example.lexiyaddons.module.modules.*;
+import com.github.kaguya.module.modules.*;
 import com.github.kaguya.property.Property;
 import com.github.kaguya.property.PropertyManager;
 
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Myau {
-    public static String clientName = "&7[&bLA&7]&r ";
+    public static String clientName = "&7[&6Kaguya&7]&r ";
     public static String version;
     public static RotationManager rotationManager;
     public static FloatManager floatManager;

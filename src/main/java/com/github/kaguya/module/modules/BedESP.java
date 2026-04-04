@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.events.Render3DEvent;
 import com.github.kaguya.mixins.IAccessorRenderManager;
@@ -8,7 +8,7 @@ import com.github.kaguya.module.Module;
 import com.github.kaguya.property.properties.ColorProperty;
 import com.github.kaguya.property.properties.PercentProperty;
 import com.github.kaguya.util.RenderUtil;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.ModeProperty;
 import net.minecraft.block.BlockBed;
@@ -39,7 +39,7 @@ public class BedESP extends Module {
             case 0:
                 return new Color(this.customColor.getValue());
             case 1:
-                return ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
+                return ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
             default:
                 return new Color(-1);
         }

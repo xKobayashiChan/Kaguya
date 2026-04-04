@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.AntiObbyTrap;
 import com.github.kaguya.module.modules.Jesus;
 import net.minecraft.block.state.IBlockState;
@@ -26,8 +26,8 @@ public abstract class MixinWorld {
             )
     )
     private boolean handleMaterialAcceleration(Entity entity) {
-        if (entity instanceof EntityPlayerSP && Myau.moduleManager != null) {
-            Jesus jesus = (Jesus) Myau.moduleManager.modules.get(Jesus.class);
+        if (entity instanceof EntityPlayerSP && Kaguya.moduleManager != null) {
+            Jesus jesus = (Jesus) Kaguya.moduleManager.modules.get(Jesus.class);
             if (jesus.isEnabled() && jesus.noPush.getValue()) {
                 return false;
             }
@@ -43,10 +43,10 @@ public abstract class MixinWorld {
             )
     )
     private IBlockState rayTraceBlocks(World world, BlockPos blockPos) {
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return world.getBlockState(blockPos);
         } else {
-            AntiObbyTrap antiObbyTrap = (AntiObbyTrap) Myau.moduleManager.modules.get(AntiObbyTrap.class);
+            AntiObbyTrap antiObbyTrap = (AntiObbyTrap) Kaguya.moduleManager.modules.get(AntiObbyTrap.class);
             if (antiObbyTrap.isEnabled() && antiObbyTrap.isInsideBlock(world, blockPos)) {
                 if (antiObbyTrap.setAir.getValue()) {
                     world.setBlockToAir(blockPos);

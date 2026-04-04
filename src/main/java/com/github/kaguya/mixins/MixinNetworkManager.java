@@ -2,7 +2,7 @@ package com.github.kaguya.mixins;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.concurrent.GenericFutureListener;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.PacketEvent;
@@ -28,7 +28,7 @@ public abstract class MixinNetworkManager {
     )
     private void channelRead0(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo callbackInfo) {
         if (!packet.getClass().getName().startsWith("net.minecraft.network.play.client")) {
-            if (Myau.delayManager != null && Myau.delayManager.shouldDelay((Packet<INetHandlerPlayClient>) packet)) {
+            if (Kaguya.delayManager != null && Kaguya.delayManager.shouldDelay((Packet<INetHandlerPlayClient>) packet)) {
                 callbackInfo.cancel();
             } else {
                 PacketEvent event = new PacketEvent(EventType.RECEIVE, packet);
@@ -51,16 +51,16 @@ public abstract class MixinNetworkManager {
             EventManager.call(event);
             if (event.isCancelled()) {
                 callbackInfo.cancel();
-            } else if (Myau.playerStateManager != null && Myau.blinkManager != null && Myau.lagManager != null) {
-                if (!Myau.lagManager.isFlushing()) {
-                    Myau.playerStateManager.handlePacket(packet);
-                    if (Myau.blinkManager.isBlinking()) {
-                        if (Myau.blinkManager.offerPacket(packet)) {
+            } else if (Kaguya.playerStateManager != null && Kaguya.blinkManager != null && Kaguya.lagManager != null) {
+                if (!Kaguya.lagManager.isFlushing()) {
+                    Kaguya.playerStateManager.handlePacket(packet);
+                    if (Kaguya.blinkManager.isBlinking()) {
+                        if (Kaguya.blinkManager.offerPacket(packet)) {
                             callbackInfo.cancel();
                             return;
                         }
                     }
-                    if (Myau.lagManager.handlePacket(packet)) {
+                    if (Kaguya.lagManager.handlePacket(packet)) {
                         callbackInfo.cancel();
                     }
                 }
@@ -80,16 +80,16 @@ public abstract class MixinNetworkManager {
             CallbackInfo callbackInfo
     ) {
         if (!packet.getClass().getName().startsWith("net.minecraft.network.play.server")) {
-            if (Myau.playerStateManager != null && Myau.blinkManager != null && Myau.lagManager != null) {
-                if (!Myau.lagManager.isFlushing()) {
-                    Myau.playerStateManager.handlePacket(packet);
-                    if (Myau.blinkManager.isBlinking()) {
-                        if (Myau.blinkManager.offerPacket(packet)) {
+            if (Kaguya.playerStateManager != null && Kaguya.blinkManager != null && Kaguya.lagManager != null) {
+                if (!Kaguya.lagManager.isFlushing()) {
+                    Kaguya.playerStateManager.handlePacket(packet);
+                    if (Kaguya.blinkManager.isBlinking()) {
+                        if (Kaguya.blinkManager.offerPacket(packet)) {
                             callbackInfo.cancel();
                             return;
                         }
                     }
-                    if (Myau.lagManager.handlePacket(packet)) {
+                    if (Kaguya.lagManager.handlePacket(packet)) {
                         callbackInfo.cancel();
                     }
                 }

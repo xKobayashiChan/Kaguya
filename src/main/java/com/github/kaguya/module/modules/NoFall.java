@@ -2,7 +2,7 @@ package com.github.kaguya.module.modules;
 
 import com.github.kaguya.util.*;
 import com.google.common.base.CaseFormat;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.BlinkModules;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
@@ -12,7 +12,7 @@ import com.github.kaguya.events.TickEvent;
 import com.github.kaguya.mixins.IAccessorC03PacketPlayer;
 import com.github.kaguya.mixins.IAccessorMinecraft;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.util.*;
+import com.github.kaguya.util.*;
 import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.ModeProperty;
 import com.github.kaguya.property.properties.IntProperty;
@@ -65,28 +65,28 @@ public class NoFall extends Module {
                         break;
                     case 1:
                         boolean allowed = !mc.thePlayer.isOnLadder() && !mc.thePlayer.capabilities.allowFlying && mc.thePlayer.hurtTime == 0;
-                        if (Myau.blinkManager.getBlinkingModule() != BlinkModules.NO_FALL) {
+                        if (Kaguya.blinkManager.getBlinkingModule() != BlinkModules.NO_FALL) {
                             if (this.lastOnGround
                                     && !packet.isOnGround()
                                     && allowed
                                     && PlayerUtil.canFly(this.distance.getValue().intValue())
                                     && mc.thePlayer.motionY < 0.0) {
-                                Myau.blinkManager.setBlinkState(false, Myau.blinkManager.getBlinkingModule());
-                                Myau.blinkManager.setBlinkState(true, BlinkModules.NO_FALL);
+                                Kaguya.blinkManager.setBlinkState(false, Kaguya.blinkManager.getBlinkingModule());
+                                Kaguya.blinkManager.setBlinkState(true, BlinkModules.NO_FALL);
                             }
                         } else if (!allowed) {
-                            Myau.blinkManager.setBlinkState(false, BlinkModules.NO_FALL);
-                            ChatUtil.sendFormatted(String.format("%s%s: &cFailed player check!&r", Myau.clientName, this.getName()));
+                            Kaguya.blinkManager.setBlinkState(false, BlinkModules.NO_FALL);
+                            ChatUtil.sendFormatted(String.format("%s%s: &cFailed player check!&r", Kaguya.clientName, this.getName()));
                         } else if (PlayerUtil.checkInWater(mc.thePlayer.getEntityBoundingBox().expand(2.0, 0.0, 2.0))) {
-                            Myau.blinkManager.setBlinkState(false, BlinkModules.NO_FALL);
-                            ChatUtil.sendFormatted(String.format("%s%s: &cFailed void check!&r", Myau.clientName, this.getName()));
+                            Kaguya.blinkManager.setBlinkState(false, BlinkModules.NO_FALL);
+                            ChatUtil.sendFormatted(String.format("%s%s: &cFailed void check!&r", Kaguya.clientName, this.getName()));
                         } else if (packet.isOnGround()) {
-                            for (Packet<?> blinkedPacket : Myau.blinkManager.blinkedPackets) {
+                            for (Packet<?> blinkedPacket : Kaguya.blinkManager.blinkedPackets) {
                                 if (blinkedPacket instanceof C03PacketPlayer) {
                                     ((IAccessorC03PacketPlayer) blinkedPacket).setOnGround(true);
                                 }
                             }
-                            Myau.blinkManager.setBlinkState(false, BlinkModules.NO_FALL);
+                            Kaguya.blinkManager.setBlinkState(false, BlinkModules.NO_FALL);
                             this.packetDelayTimer.reset();
                         }
                         this.lastOnGround = packet.isOnGround() && allowed && this.canTrigger();
@@ -126,7 +126,7 @@ public class NoFall extends Module {
     @Override
     public void onDisabled() {
         this.lastOnGround = false;
-        Myau.blinkManager.setBlinkState(false, BlinkModules.NO_FALL);
+        Kaguya.blinkManager.setBlinkState(false, BlinkModules.NO_FALL);
         if (this.slowFalling) {
             this.slowFalling = false;
             ((IAccessorMinecraft) mc).getTimer().timerSpeed = 1.0F;

@@ -3,7 +3,7 @@ package com.github.kaguya.command.commands;
 import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.util.ChatUtil;
@@ -28,7 +28,7 @@ public class DenickCommand extends Command {
     @Override
     public void runCommand(ArrayList<String> args) {
         if (args.size() < 2) {
-            ChatUtil.sendFormatted(String.format("%sUsage: .%s <&oname&r>&r", Myau.clientName, args.get(0).toLowerCase(Locale.ROOT)));
+            ChatUtil.sendFormatted(String.format("%sUsage: .%s <&oname&r>&r", Kaguya.clientName, args.get(0).toLowerCase(Locale.ROOT)));
         } else {
             NetworkPlayerInfo playerInfo = mc.getNetHandler().getPlayerInfo(ChatColors.formatColor(args.get(1)));
             if (playerInfo != null) {
@@ -41,7 +41,7 @@ public class DenickCommand extends Command {
                     ChatUtil.sendRaw(
                             String.format(
                                     ChatColors.formatColor("%s%s&r -> %s (&o%s&r)&r"),
-                                    ChatColors.formatColor(Myau.clientName),
+                                    ChatColors.formatColor(Kaguya.clientName),
                                     gameProfile.getName().replace("§", "&"),
                                     name,
                                     uuid
@@ -54,7 +54,7 @@ public class DenickCommand extends Command {
                     ChatUtil.sendRaw(
                             String.format(
                                     ChatColors.formatColor("%sNo textures for entity with name &o%s&r"),
-                                    ChatColors.formatColor(Myau.clientName),
+                                    ChatColors.formatColor(Kaguya.clientName),
                                     args.get(1)
                             )
                     );
@@ -63,7 +63,7 @@ public class DenickCommand extends Command {
                 ChatUtil.sendRaw(
                         String.format(
                                 ChatColors.formatColor("%sNo entity with name &o%s&r"),
-                                ChatColors.formatColor(Myau.clientName),
+                                ChatColors.formatColor(Kaguya.clientName),
                                 args.get(1)
                         )
                 );

@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.KeepSprint;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,10 +21,10 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
             )}
     )
     private double attackTargetEntityWithCurrentItem(double speed) {
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return speed;
         } else {
-            KeepSprint keepSprint = (KeepSprint) Myau.moduleManager.modules.get(KeepSprint.class);
+            KeepSprint keepSprint = (KeepSprint) Kaguya.moduleManager.modules.get(KeepSprint.class);
             return keepSprint.isEnabled() && keepSprint.shouldKeepSprint()
                     ? speed + (1.0 - speed) * (1.0 - keepSprint.slowdown.getValue().doubleValue() / 100.0)
                     : speed;
@@ -39,8 +39,8 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
             )
     )
     private void setSprinnt(EntityPlayer entityPlayer, boolean boolean2) {
-        if (Myau.moduleManager != null) {
-            KeepSprint keepSprint = (KeepSprint) Myau.moduleManager.modules.get(KeepSprint.class);
+        if (Kaguya.moduleManager != null) {
+            KeepSprint keepSprint = (KeepSprint) Kaguya.moduleManager.modules.get(KeepSprint.class);
             if (!keepSprint.isEnabled() || !keepSprint.shouldKeepSprint()) {
                 entityPlayer.setSprinting(boolean2);
             }

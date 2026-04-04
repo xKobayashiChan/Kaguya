@@ -1,6 +1,6 @@
 package com.github.kaguya.command.commands;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.util.ChatUtil;
@@ -23,11 +23,11 @@ public class BindCommand extends Command {
     public void runCommand(ArrayList<String> args) {
         if (args.size() < 3) {
             if (args.size() == 2 && (args.get(1).equalsIgnoreCase("l") || args.get(1).equalsIgnoreCase("list"))) {
-                List<Module> modules = Myau.moduleManager.modules.values().stream().filter(module -> module.getKey() != 0).collect(Collectors.toList());
+                List<Module> modules = Kaguya.moduleManager.modules.values().stream().filter(module -> module.getKey() != 0).collect(Collectors.toList());
                 if (modules.isEmpty()) {
-                    ChatUtil.sendFormatted(String.format("%sNo binds&r", Myau.clientName));
+                    ChatUtil.sendFormatted(String.format("%sNo binds&r", Kaguya.clientName));
                 } else {
-                    ChatUtil.sendFormatted(String.format("%sBinds:&r", Myau.clientName));
+                    ChatUtil.sendFormatted(String.format("%sBinds:&r", Kaguya.clientName));
                     for (Module module : modules) {
                         ChatUtil.sendFormatted(String.format("%s»&r %s&r", module.isHidden() ? "&8" : "&7", module.formatModule()));
                     }
@@ -36,7 +36,7 @@ public class BindCommand extends Command {
                 ChatUtil.sendFormatted(
                         String.format(
                                 "%sUsage: .%s <&omodule&r> <&okey&r>&r | .%s <&omodule&r> &onone&r | .%s &olist&r",
-                                Myau.clientName,
+                                Kaguya.clientName,
                                 args.get(0).toLowerCase(Locale.ROOT),
                                 args.get(0).toLowerCase(Locale.ROOT),
                                 args.get(0).toLowerCase(Locale.ROOT)
@@ -61,32 +61,32 @@ public class BindCommand extends Command {
             }
 
             if (!args.get(1).equals("*")) {
-                Module module = Myau.moduleManager.getModule(args.get(1));
+                Module module = Kaguya.moduleManager.getModule(args.get(1));
                 if (module == null) {
-                    ChatUtil.sendFormatted(String.format("%sModule not found (&o%s&r)&r", Myau.clientName, args.get(1)));
+                    ChatUtil.sendFormatted(String.format("%sModule not found (&o%s&r)&r", Kaguya.clientName, args.get(1)));
                 } else {
                     module.setKey(keyIndex);
                     if (keyIndex == 0) {
                         ChatUtil.sendFormatted(
-                                String.format("%sUnbind &o%s&r", Myau.clientName, module.getName())
+                                String.format("%sUnbind &o%s&r", Kaguya.clientName, module.getName())
                         );
                     } else {
                         ChatUtil.sendFormatted(
-                                String.format("%sBound &o%s&r to &l[%s]&r", Myau.clientName, module.getName(), KeyBindUtil.getKeyName(keyIndex))
+                                String.format("%sBound &o%s&r to &l[%s]&r", Kaguya.clientName, module.getName(), KeyBindUtil.getKeyName(keyIndex))
                         );
                     }
                 }
             } else {
-                for (Module module : Myau.moduleManager.modules.values()) {
+                for (Module module : Kaguya.moduleManager.modules.values()) {
                     module.setKey(keyIndex);
                 }
                 if (keyIndex == 0) {
                     ChatUtil.sendFormatted(
-                            String.format("%sUnbind all modules&r", Myau.clientName)
+                            String.format("%sUnbind all modules&r", Kaguya.clientName)
                     );
                 } else {
                     ChatUtil.sendFormatted(
-                            String.format("%sBind all modules to &l[%s]&r", Myau.clientName, KeyBindUtil.getKeyName(keyIndex))
+                            String.format("%sBind all modules to &l[%s]&r", Kaguya.clientName, KeyBindUtil.getKeyName(keyIndex))
                     );
                 }
             }

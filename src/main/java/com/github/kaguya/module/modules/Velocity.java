@@ -2,11 +2,11 @@ package com.github.kaguya.module.modules;
 
 import com.github.kaguya.events.*;
 import com.google.common.base.CaseFormat;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.DelayModules;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.mixins.IAccessorEntity;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.property.properties.BooleanProperty;
@@ -52,7 +52,7 @@ public class Velocity extends Module {
     }
 
     private boolean canDelay() {
-        KillAura killAura = (KillAura) Myau.moduleManager.modules.get(KillAura.class);
+        KillAura killAura = (KillAura) Kaguya.moduleManager.modules.get(KillAura.class);
         return mc.thePlayer.onGround && (!killAura.isEnabled() || !killAura.shouldAutoBlock());
     }
 
@@ -110,9 +110,9 @@ public class Velocity extends Module {
                     && (
                     this.canDelay()
                             || this.isInLiquidOrWeb()
-                            || Myau.delayManager.getDelay() >= (long) this.delayTicks.getValue()
+                            || Kaguya.delayManager.getDelay() >= (long) this.delayTicks.getValue()
             )) {
-                Myau.delayManager.setDelayState(false, DelayModules.VELOCITY);
+                Kaguya.delayManager.setDelayState(false, DelayModules.VELOCITY);
                 this.reverseFlag = false;
             }
             if (this.delayActive) {
@@ -161,7 +161,7 @@ public class Velocity extends Module {
             if (event.getPacket() instanceof S12PacketEntityVelocity) {
                 S12PacketEntityVelocity packet = (S12PacketEntityVelocity) event.getPacket();
                 if (packet.getEntityID() == mc.thePlayer.getEntityId()) {
-                    LongJump longJump = (LongJump) Myau.moduleManager.modules.get(LongJump.class);
+                    LongJump longJump = (LongJump) Kaguya.moduleManager.modules.get(LongJump.class);
                     if (this.mode.getValue() == 2
                             && !this.reverseFlag
                             && !this.canDelay()
@@ -171,8 +171,8 @@ public class Velocity extends Module {
                             && (!longJump.isEnabled() || !longJump.canStartJump())) {
                         this.delayChanceCounter = this.delayChanceCounter % 100 + this.delayChance.getValue();
                         if (this.delayChanceCounter >= 100) {
-                            Myau.delayManager.setDelayState(true, DelayModules.VELOCITY);
-                            Myau.delayManager.delayedPacket.offer(packet);
+                            Kaguya.delayManager.setDelayState(true, DelayModules.VELOCITY);
+                            Kaguya.delayManager.delayedPacket.offer(packet);
                             event.setCancelled(true);
                             this.reverseFlag = true;
                             return;
@@ -182,7 +182,7 @@ public class Velocity extends Module {
                         ChatUtil.sendFormatted(
                                 String.format(
                                         "%sVelocity (&otick: %d, x: %.2f, y: %.2f, z: %.2f&r)&r",
-                                        Myau.clientName,
+                                        Kaguya.clientName,
                                         mc.thePlayer.ticksExisted,
                                         (double) packet.getMotionX() / 8000.0,
                                         (double) packet.getMotionY() / 8000.0,
@@ -210,7 +210,7 @@ public class Velocity extends Module {
                         ChatUtil.sendFormatted(
                                 String.format(
                                         "%sExplosion (&otick: %d, x: %.2f, y: %.2f, z: %.2f&r)&r",
-                                        Myau.clientName,
+                                        Kaguya.clientName,
                                         mc.thePlayer.ticksExisted,
                                         mc.thePlayer.motionX + (double) packet.func_149149_c(),
                                         mc.thePlayer.motionY + (double) packet.func_149144_d(),

@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.events.Render3DEvent;
@@ -11,10 +11,12 @@ import com.github.kaguya.property.properties.PercentProperty;
 import com.github.kaguya.util.ColorUtil;
 import com.github.kaguya.util.RenderUtil;
 import com.github.kaguya.util.TeamUtil;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.ModeProperty;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -65,6 +67,7 @@ public class NameTags extends Module {
     public final BooleanProperty animals = new BooleanProperty("animals", false);
     public final BooleanProperty self = new BooleanProperty("self", false);
     public final BooleanProperty bots = new BooleanProperty("bots", false);
+    public final BooleanProperty head = new BooleanProperty("head", true);
 
     public NameTags() {
         super("NameTags", false);
@@ -167,15 +170,19 @@ public class NameTags extends Module {
                         }
                         String color = ChatColors.formatColor(String.format("%s&f%s&r%s", distanceText, teamName, healText));
                         int width = mc.fontRendererObj.getStringWidth(color);
+                        boolean showHead = this.head.getValue() && entity instanceof EntityPlayer;
+                        int headSize = mc.fontRendererObj.FONT_HEIGHT;
+                        int headOffset = showHead ? headSize + 2 : 0;
+                        int totalWidth = width + headOffset;
                         if (this.backgroundOpacity.getValue() > 0) {
                             Color textColor = !entity.isSneaking() && !entity.isInvisible()
                                     ? new Color(0.0F, 0.0F, 0.0F, (float) this.backgroundOpacity.getValue() / 100.0F)
                                     : new Color(0.33F, 0.0F, 0.33F, (float) this.backgroundOpacity.getValue() / 100.0F);
                             RenderUtil.enableRenderState();
                             RenderUtil.drawRect(
-                                    (float) (-width) / 2.0F - 1.0F,
+                                    (float) (-totalWidth) / 2.0F - 1.0F,
                                     (float) (-mc.fontRendererObj.FONT_HEIGHT) - 1.0F,
-                                    (float) width / 2.0F + (this.shadow.getValue() ? 1.0F : 0.0F),
+                                    (float) totalWidth / 2.0F + (this.shadow.getValue() ? 1.0F : 0.0F),
                                     this.shadow.getValue() ? 0.0F : -1.0F,
                                     textColor.getRGB()
                             );
@@ -185,11 +192,22 @@ public class NameTags extends Module {
                         mc.fontRendererObj
                                 .drawString(
                                         color,
-                                        (float) (-width) / 2.0F,
+                                        (float) (-totalWidth) / 2.0F + headOffset,
                                         (float) (-mc.fontRendererObj.FONT_HEIGHT),
                                         ColorUtil.getHealthBlend(percent).getRGB(),
                                         this.shadow.getValue()
                                 );
+                        if (showHead) {
+                            GlStateManager.enableTexture2D();
+                            GlStateManager.enableBlend();
+                            GlStateManager.enableAlpha();
+                            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                            mc.getTextureManager().bindTexture(((AbstractClientPlayer) entity).getLocationSkin());
+                            int headX = (int) ((float) (-totalWidth) / 2.0F);
+                            int headY = -mc.fontRendererObj.FONT_HEIGHT - 1;
+                            Gui.drawScaledCustomSizeModalRect(headX, headY, 8.0F, 8.0F, 8, 8, headSize, headSize + 1, 64.0F, 64.0F);
+                            Gui.drawScaledCustomSizeModalRect(headX, headY, 40.0F, 8.0F, 8, 8, headSize, headSize + 1, 64.0F, 64.0F);
+                        }
                         GlStateManager.enableDepth();
                         if (entity instanceof EntityPlayer) {
                             int height = mc.fontRendererObj.FONT_HEIGHT + 2;
@@ -232,20 +250,20 @@ public class NameTags extends Module {
                             }
                             if (TeamUtil.isFriend((EntityPlayer) entity)) {
                                 RenderUtil.enableRenderState();
-                                float x1 = (float) (-width) / 2.0F - 1.0F;
+                                float x1 = (float) (-totalWidth) / 2.0F - 1.0F;
                                 view = (float) (-mc.fontRendererObj.FONT_HEIGHT) - 1.0F;
-                                float y1 = (float) width / 2.0F + 1.0F;
+                                float y1 = (float) totalWidth / 2.0F + 1.0F;
                                 float offset = this.shadow.getValue() ? 0.0F : -1.0F;
-                                int friendColor = Myau.friendManager.getColor().getRGB();
+                                int friendColor = Kaguya.friendManager.getColor().getRGB();
                                 RenderUtil.drawOutlineRect(x1, view, y1, offset, 1.5F, 0, friendColor);
                                 RenderUtil.disableRenderState();
                             } else if (TeamUtil.isTarget((EntityPlayer) entity)) {
                                 RenderUtil.enableRenderState();
-                                float x1 = (float) (-width) / 2.0F - 1.0F;
+                                float x1 = (float) (-totalWidth) / 2.0F - 1.0F;
                                 view = (float) (-mc.fontRendererObj.FONT_HEIGHT) - 1.0F;
-                                float y1 = (float) width / 2.0F + 1.0F;
+                                float y1 = (float) totalWidth / 2.0F + 1.0F;
                                 float offset = this.shadow.getValue() ? 0.0F : -1.0F;
-                                int targetColor = Myau.targetManager.getColor().getRGB();
+                                int targetColor = Kaguya.targetManager.getColor().getRGB();
                                 RenderUtil.drawOutlineRect(x1, view, y1, offset, 1.5F, 0, targetColor);
                                 RenderUtil.disableRenderState();
                             }

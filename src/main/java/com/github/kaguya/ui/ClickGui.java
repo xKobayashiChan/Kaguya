@@ -1,13 +1,13 @@
 package com.github.kaguya.ui;
 
+import com.github.kaguya.KaguyaClient;
 import com.github.kaguya.module.modules.*;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.github.kaguya.LexiyAddons;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.module.modules.*;
+import com.github.kaguya.module.modules.*;
 import com.github.kaguya.ui.components.CategoryComponent;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
@@ -29,84 +29,84 @@ public class ClickGui extends GuiScreen {
         instance = this;
 
         List<Module> combatModules = new ArrayList<>();
-        combatModules.add(Myau.moduleManager.getModule(AimAssist.class));
-        combatModules.add(Myau.moduleManager.getModule(AutoClicker.class));
-        combatModules.add(Myau.moduleManager.getModule(KillAura.class));
-        combatModules.add(Myau.moduleManager.getModule(Wtap.class));
-        combatModules.add(Myau.moduleManager.getModule(Velocity.class));
-        combatModules.add(Myau.moduleManager.getModule(Freeze.class));
-        combatModules.add(Myau.moduleManager.getModule(Reach.class));
-        combatModules.add(Myau.moduleManager.getModule(TargetStrafe.class));
-        combatModules.add(Myau.moduleManager.getModule(NoHitDelay.class));
-        combatModules.add(Myau.moduleManager.getModule(AntiFireball.class));
-        combatModules.add(Myau.moduleManager.getModule(LagRange.class));
-        combatModules.add(Myau.moduleManager.getModule(HitBox.class));
-        combatModules.add(Myau.moduleManager.getModule(MoreKB.class));
-        combatModules.add(Myau.moduleManager.getModule(Refill.class));
-        combatModules.add(Myau.moduleManager.getModule(HitSelect.class));
+        combatModules.add(Kaguya.moduleManager.getModule(AimAssist.class));
+        combatModules.add(Kaguya.moduleManager.getModule(AutoClicker.class));
+        combatModules.add(Kaguya.moduleManager.getModule(KillAura.class));
+        combatModules.add(Kaguya.moduleManager.getModule(Wtap.class));
+        combatModules.add(Kaguya.moduleManager.getModule(Velocity.class));
+        combatModules.add(Kaguya.moduleManager.getModule(Freeze.class));
+        combatModules.add(Kaguya.moduleManager.getModule(Reach.class));
+        combatModules.add(Kaguya.moduleManager.getModule(TargetStrafe.class));
+        combatModules.add(Kaguya.moduleManager.getModule(NoHitDelay.class));
+        combatModules.add(Kaguya.moduleManager.getModule(AntiFireball.class));
+        combatModules.add(Kaguya.moduleManager.getModule(LagRange.class));
+        combatModules.add(Kaguya.moduleManager.getModule(HitBox.class));
+        combatModules.add(Kaguya.moduleManager.getModule(MoreKB.class));
+        combatModules.add(Kaguya.moduleManager.getModule(Refill.class));
+        combatModules.add(Kaguya.moduleManager.getModule(HitSelect.class));
 
         List<Module> movementModules = new ArrayList<>();
-        movementModules.add(Myau.moduleManager.getModule(AntiAFK.class));
-        movementModules.add(Myau.moduleManager.getModule(Fly.class));
-        movementModules.add(Myau.moduleManager.getModule(Speed.class));
-        movementModules.add(Myau.moduleManager.getModule(LongJump.class));
-        movementModules.add(Myau.moduleManager.getModule(Sprint.class));
-        movementModules.add(Myau.moduleManager.getModule(SafeWalk.class));
-        movementModules.add(Myau.moduleManager.getModule(Jesus.class));
-        movementModules.add(Myau.moduleManager.getModule(Blink.class));
-        movementModules.add(Myau.moduleManager.getModule(NoFall.class));
-        movementModules.add(Myau.moduleManager.getModule(NoSlow.class));
-        movementModules.add(Myau.moduleManager.getModule(KeepSprint.class));
-        movementModules.add(Myau.moduleManager.getModule(Eagle.class));
-        movementModules.add(Myau.moduleManager.getModule(NoJumpDelay.class));
-        movementModules.add(Myau.moduleManager.getModule(AntiVoid.class));
+        movementModules.add(Kaguya.moduleManager.getModule(AntiAFK.class));
+        movementModules.add(Kaguya.moduleManager.getModule(Fly.class));
+        movementModules.add(Kaguya.moduleManager.getModule(Speed.class));
+        movementModules.add(Kaguya.moduleManager.getModule(LongJump.class));
+        movementModules.add(Kaguya.moduleManager.getModule(Sprint.class));
+        movementModules.add(Kaguya.moduleManager.getModule(SafeWalk.class));
+        movementModules.add(Kaguya.moduleManager.getModule(Jesus.class));
+        movementModules.add(Kaguya.moduleManager.getModule(Blink.class));
+        movementModules.add(Kaguya.moduleManager.getModule(NoFall.class));
+        movementModules.add(Kaguya.moduleManager.getModule(NoSlow.class));
+        movementModules.add(Kaguya.moduleManager.getModule(KeepSprint.class));
+        movementModules.add(Kaguya.moduleManager.getModule(Eagle.class));
+        movementModules.add(Kaguya.moduleManager.getModule(NoJumpDelay.class));
+        movementModules.add(Kaguya.moduleManager.getModule(AntiVoid.class));
 
         List<Module> renderModules = new ArrayList<>();
-        renderModules.add(Myau.moduleManager.getModule(ESP.class));
-        renderModules.add(Myau.moduleManager.getModule(Chams.class));
-        renderModules.add(Myau.moduleManager.getModule(FullBright.class));
-        renderModules.add(Myau.moduleManager.getModule(Tracers.class));
-        renderModules.add(Myau.moduleManager.getModule(NameTags.class));
-        renderModules.add(Myau.moduleManager.getModule(Xray.class));
-        renderModules.add(Myau.moduleManager.getModule(TargetHUD.class));
-        renderModules.add(Myau.moduleManager.getModule(Indicators.class));
-        renderModules.add(Myau.moduleManager.getModule(BedESP.class));
-        renderModules.add(Myau.moduleManager.getModule(ItemESP.class));
-        renderModules.add(Myau.moduleManager.getModule(ViewClip.class));
-        renderModules.add(Myau.moduleManager.getModule(NoHurtCam.class));
-        renderModules.add(Myau.moduleManager.getModule(HUD.class));
-        renderModules.add(Myau.moduleManager.getModule(ClientHUD.class));
-        renderModules.add(Myau.moduleManager.getModule(GuiModule.class));
-        renderModules.add(Myau.moduleManager.getModule(ChestESP.class));
-        renderModules.add(Myau.moduleManager.getModule(Trajectories.class));
-        renderModules.add(Myau.moduleManager.getModule(Radar.class));
+        renderModules.add(Kaguya.moduleManager.getModule(ESP.class));
+        renderModules.add(Kaguya.moduleManager.getModule(Chams.class));
+        renderModules.add(Kaguya.moduleManager.getModule(FullBright.class));
+        renderModules.add(Kaguya.moduleManager.getModule(Tracers.class));
+        renderModules.add(Kaguya.moduleManager.getModule(NameTags.class));
+        renderModules.add(Kaguya.moduleManager.getModule(Xray.class));
+        renderModules.add(Kaguya.moduleManager.getModule(TargetHUD.class));
+        renderModules.add(Kaguya.moduleManager.getModule(Indicators.class));
+        renderModules.add(Kaguya.moduleManager.getModule(BedESP.class));
+        renderModules.add(Kaguya.moduleManager.getModule(ItemESP.class));
+        renderModules.add(Kaguya.moduleManager.getModule(ViewClip.class));
+        renderModules.add(Kaguya.moduleManager.getModule(NoHurtCam.class));
+        renderModules.add(Kaguya.moduleManager.getModule(HUD.class));
+        renderModules.add(Kaguya.moduleManager.getModule(ClientHUD.class));
+        renderModules.add(Kaguya.moduleManager.getModule(GuiModule.class));
+        renderModules.add(Kaguya.moduleManager.getModule(ChestESP.class));
+        renderModules.add(Kaguya.moduleManager.getModule(Trajectories.class));
+        renderModules.add(Kaguya.moduleManager.getModule(Radar.class));
 
         List<Module> playerModules = new ArrayList<>();
-        playerModules.add(Myau.moduleManager.getModule(AutoHeal.class));
-        playerModules.add(Myau.moduleManager.getModule(AutoTool.class));
-        playerModules.add(Myau.moduleManager.getModule(ChestStealer.class));
-        playerModules.add(Myau.moduleManager.getModule(InvManager.class));
-        playerModules.add(Myau.moduleManager.getModule(InvWalk.class));
-        playerModules.add(Myau.moduleManager.getModule(Scaffold.class));
-        playerModules.add(Myau.moduleManager.getModule(AutoBlockIn.class));
-        playerModules.add(Myau.moduleManager.getModule(SpeedMine.class));
-        playerModules.add(Myau.moduleManager.getModule(FastPlace.class));
-        playerModules.add(Myau.moduleManager.getModule(GhostHand.class));
-        playerModules.add(Myau.moduleManager.getModule(MCF.class));
-        playerModules.add(Myau.moduleManager.getModule(AntiDebuff.class));
+        playerModules.add(Kaguya.moduleManager.getModule(AutoHeal.class));
+        playerModules.add(Kaguya.moduleManager.getModule(AutoTool.class));
+        playerModules.add(Kaguya.moduleManager.getModule(ChestStealer.class));
+        playerModules.add(Kaguya.moduleManager.getModule(InvManager.class));
+        playerModules.add(Kaguya.moduleManager.getModule(InvWalk.class));
+        playerModules.add(Kaguya.moduleManager.getModule(Scaffold.class));
+        playerModules.add(Kaguya.moduleManager.getModule(AutoBlockIn.class));
+        playerModules.add(Kaguya.moduleManager.getModule(SpeedMine.class));
+        playerModules.add(Kaguya.moduleManager.getModule(FastPlace.class));
+        playerModules.add(Kaguya.moduleManager.getModule(GhostHand.class));
+        playerModules.add(Kaguya.moduleManager.getModule(MCF.class));
+        playerModules.add(Kaguya.moduleManager.getModule(AntiDebuff.class));
 
         List<Module> miscModules = new ArrayList<>();
-        miscModules.add(Myau.moduleManager.getModule(Spammer.class));
-        miscModules.add(Myau.moduleManager.getModule(BedNuker.class));
-        miscModules.add(Myau.moduleManager.getModule(BedTracker.class));
-        miscModules.add(Myau.moduleManager.getModule(LightningTracker.class));
-        miscModules.add(Myau.moduleManager.getModule(NoRotate.class));
-        miscModules.add(Myau.moduleManager.getModule(NickHider.class));
-        miscModules.add(Myau.moduleManager.getModule(AntiObbyTrap.class));
-        miscModules.add(Myau.moduleManager.getModule(AntiObfuscate.class));
-        miscModules.add(Myau.moduleManager.getModule(AutoAnduril.class));
-        miscModules.add(Myau.moduleManager.getModule(ChatCopy.class));
-        miscModules.add(Myau.moduleManager.getModule(InventoryClicker.class));
+        miscModules.add(Kaguya.moduleManager.getModule(Spammer.class));
+        miscModules.add(Kaguya.moduleManager.getModule(BedNuker.class));
+        miscModules.add(Kaguya.moduleManager.getModule(BedTracker.class));
+        miscModules.add(Kaguya.moduleManager.getModule(LightningTracker.class));
+        miscModules.add(Kaguya.moduleManager.getModule(NoRotate.class));
+        miscModules.add(Kaguya.moduleManager.getModule(NickHider.class));
+        miscModules.add(Kaguya.moduleManager.getModule(AntiObbyTrap.class));
+        miscModules.add(Kaguya.moduleManager.getModule(AntiObfuscate.class));
+        miscModules.add(Kaguya.moduleManager.getModule(AutoAnduril.class));
+        miscModules.add(Kaguya.moduleManager.getModule(ChatCopy.class));
+        miscModules.add(Kaguya.moduleManager.getModule(InventoryClicker.class));
 
         Comparator<Module> comparator = Comparator.comparing(m -> m.getName().toLowerCase());
         combatModules.sort(comparator);
@@ -122,7 +122,7 @@ public class ClickGui extends GuiScreen {
         registered.addAll(playerModules);
         registered.addAll(miscModules);
 
-        for (Module module : Myau.moduleManager.modules.values()) {
+        for (Module module : Kaguya.moduleManager.modules.values()) {
             if (!registered.contains(module)) {
                 throw new RuntimeException(module.getClass().getName() + " is unregistered to click gui.");
             }
@@ -170,7 +170,7 @@ public class ClickGui extends GuiScreen {
     public void drawScreen(int x, int y, float p) {
         drawRect(0, 0, this.width, this.height, new Color(0, 0, 0, 100).getRGB());
 
-        mc.fontRendererObj.drawStringWithShadow("Kaguya Client " + LexiyAddons.VERSION, 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, new Color(60, 162, 253).getRGB());
+        mc.fontRendererObj.drawStringWithShadow("Kaguya Client " + KaguyaClient.VERSION, 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, new Color(60, 162, 253).getRGB());
 
         for (CategoryComponent category : categoryList) {
             category.render(this.fontRendererObj);

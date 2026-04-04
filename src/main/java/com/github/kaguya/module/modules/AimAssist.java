@@ -1,12 +1,12 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.KeyEvent;
 import com.github.kaguya.events.TickEvent;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.util.*;
+import com.github.kaguya.util.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.PercentProperty;
@@ -57,7 +57,7 @@ public class AimAssist extends Module {
     }
 
     private boolean isInReach(EntityPlayer entityPlayer) {
-        Reach reach = (Reach) Myau.moduleManager.modules.get(Reach.class);
+        Reach reach = (Reach) Kaguya.moduleManager.modules.get(Reach.class);
         double distance = reach.isEnabled() ? (double) reach.range.getValue() : 3.0;
         return RotationUtil.distanceToEntity(entityPlayer) <= distance;
     }
@@ -104,7 +104,7 @@ public class AimAssist extends Module {
                                 );
                                 float yaw = Math.min(Math.abs(this.hSpeed.getValue()), 10.0F);
                                 float pitch = Math.min(Math.abs(this.vSpeed.getValue()), 10.0F);
-                                Myau.rotationManager
+                                Kaguya.rotationManager
                                         .setRotation(
                                                 mc.thePlayer.rotationYaw + (rotation[0] - mc.thePlayer.rotationYaw) * 0.1F * yaw,
                                                 mc.thePlayer.rotationPitch + (rotation[1] - mc.thePlayer.rotationPitch) * 0.1F * pitch,
@@ -121,7 +121,7 @@ public class AimAssist extends Module {
 
     @EventTarget
     public void onPress(KeyEvent event) {
-        if (event.getKey() == mc.gameSettings.keyBindAttack.getKeyCode() && !Myau.moduleManager.modules.get(AutoClicker.class).isEnabled()) {
+        if (event.getKey() == mc.gameSettings.keyBindAttack.getKeyCode() && !Kaguya.moduleManager.modules.get(AutoClicker.class).isEnabled()) {
             this.timer.reset();
         }
     }

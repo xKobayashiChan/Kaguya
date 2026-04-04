@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.FloatModules;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.Priority;
@@ -93,11 +93,11 @@ public class NoSlow extends Module {
             int item = mc.thePlayer.inventory.currentItem;
             if (this.lastSlot != item && PlayerUtil.isUsingItem()) {
                 this.lastSlot = item;
-                Myau.floatManager.setFloatState(true, FloatModules.NO_SLOW);
+                Kaguya.floatManager.setFloatState(true, FloatModules.NO_SLOW);
             }
         } else {
             this.lastSlot = -1;
-            Myau.floatManager.setFloatState(false, FloatModules.NO_SLOW);
+            Kaguya.floatManager.setFloatState(false, FloatModules.NO_SLOW);
         }
     }
 
@@ -122,7 +122,7 @@ public class NoSlow extends Module {
                         }
                 }
             }
-            if (this.isFloatMode() && !Myau.floatManager.isPredicted() && mc.thePlayer.onGround) {
+            if (this.isFloatMode() && !Kaguya.floatManager.isPredicted() && mc.thePlayer.onGround) {
                 event.setCancelled(true);
                 mc.thePlayer.motionY = 0.42F;
             }

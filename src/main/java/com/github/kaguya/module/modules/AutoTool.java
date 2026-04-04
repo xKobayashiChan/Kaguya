@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.TickEvent;
@@ -27,7 +27,7 @@ public class AutoTool extends Module {
     }
 
     public boolean isKillAura() {
-        KillAura killAura = (KillAura) Myau.moduleManager.modules.get(KillAura.class);
+        KillAura killAura = (KillAura) Kaguya.moduleManager.modules.get(KillAura.class);
         if (!killAura.isEnabled()) return false;
         return TeamUtil.isEntityLoaded(killAura.getTarget()) && killAura.isAttackAllowed();
     }

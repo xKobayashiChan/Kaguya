@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.Xray;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,10 +23,10 @@ public abstract class MixinWorldRenderer {
             )
     )
     private IntBuffer putColorMultiplier(IntBuffer intBuffer, int integer2, int integer3) {
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return intBuffer.put(integer2, integer3);
         } else {
-            Xray xray = (Xray) Myau.moduleManager.modules.get(Xray.class);
+            Xray xray = (Xray) Kaguya.moduleManager.modules.get(Xray.class);
             return xray.isEnabled()
                     ? intBuffer.put(integer2, integer3 & 16777215 | (int) ((float) xray.opacity.getValue().intValue() * 255.0F / 100.0F) << 24)
                     : intBuffer.put(integer2, integer3);

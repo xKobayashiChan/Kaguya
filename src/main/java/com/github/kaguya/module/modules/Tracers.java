@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.events.Render2DEvent;
@@ -54,10 +54,10 @@ public class Tracers extends Module {
 
     private Color getEntityColor(EntityPlayer entityPlayer, float alpha) {
         if (TeamUtil.isFriend(entityPlayer)) {
-            Color color = Myau.friendManager.getColor();
+            Color color = Kaguya.friendManager.getColor();
             return new Color((float) color.getRed() / 255.0F, (float) color.getGreen() / 255.0F, (float) color.getBlue() / 255.0F, alpha);
         } else if (TeamUtil.isTarget(entityPlayer)) {
-            Color color = Myau.targetManager.getColor();
+            Color color = Kaguya.targetManager.getColor();
             return new Color((float) color.getRed() / 255.0F, (float) color.getGreen() / 255.0F, (float) color.getBlue() / 255.0F, alpha);
         } else {
             switch (this.colorMode.getValue()) {
@@ -67,7 +67,7 @@ public class Tracers extends Module {
                     int teamColor = TeamUtil.isSameTeam(entityPlayer) ? ChatColors.BLUE.toAwtColor() : ChatColors.RED.toAwtColor();
                     return new Color(teamColor & Color.WHITE.getRGB() | (int) (alpha * 255.0F) << 24, true);
                 case 2:
-                    int color = ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis()).getRGB();
+                    int color = ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis()).getRGB();
                     return new Color(color & Color.WHITE.getRGB() | (int) (alpha * 255.0F) << 24, true);
                 default:
                     return new Color(1.0F, 1.0F, 1.0F, alpha);
@@ -171,7 +171,7 @@ public class Tracers extends Module {
                 } else if (yawBetween < 60.0F) {
                     opacity *= (yawBetween - 30.0F) / 30.0F;
                 }
-                HUD hud = (HUD) Myau.moduleManager.modules.get(HUD.class);
+                HUD hud = (HUD) Kaguya.moduleManager.modules.get(HUD.class);
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(hud.scale.getValue(), hud.scale.getValue(), 0.0F);
                 GlStateManager.translate(

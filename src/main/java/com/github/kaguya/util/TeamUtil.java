@@ -1,6 +1,6 @@
 package com.github.kaguya.util;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -137,10 +137,10 @@ public class TeamUtil {
     }
 
     public static boolean isFriend(EntityPlayer player) {
-        return Myau.friendManager.isFriend(player.getName());
+        return Kaguya.friendManager.isFriend(player.getName());
     }
 
     public static boolean isTarget(EntityPlayer player) {
-        return Myau.targetManager.isFriend(player.getName());
+        return Kaguya.targetManager.isFriend(player.getName());
     }
 }

@@ -1,15 +1,15 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.events.*;
 import com.github.kaguya.management.RotationState;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.util.*;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.util.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.IntProperty;
@@ -97,7 +97,7 @@ public class AntiFireball extends Module {
                     event.setRotation(rotations[0], rotations[1], 0);
                     event.setPervRotation(this.moveFix.getValue() != 0 ? rotations[0] : mc.thePlayer.rotationYaw, 0);
                 }
-                if (!Myau.playerStateManager.attacking && !Myau.playerStateManager.digging && !Myau.playerStateManager.placing) {
+                if (!Kaguya.playerStateManager.attacking && !Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
                     this.doAttackAnimation();
                     if (RotationUtil.distanceToEntity(this.target) <= (double) this.range.getValue().floatValue()) {
                         PacketUtil.sendPacket(new C02PacketUseEntity(this.target, Action.ATTACK));
@@ -138,7 +138,7 @@ public class AntiFireball extends Module {
                         }
                         break;
                     case 2:
-                        color = ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
+                        color = ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
                 }
                 RenderUtil.enableRenderState();
                 RenderUtil.drawEntityBox(this.target, color.getRed(), color.getGreen(), color.getBlue());

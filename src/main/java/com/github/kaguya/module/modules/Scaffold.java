@@ -1,17 +1,17 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.events.*;
 import com.github.kaguya.management.RotationState;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.ModeProperty;
 import com.github.kaguya.property.properties.PercentProperty;
-import com.example.lexiyaddons.util.*;
+import com.github.kaguya.util.*;
 import com.github.kaguya.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -90,11 +90,11 @@ public class Scaffold extends Module {
     }
 
     private boolean canPlace() {
-        BedNuker bedNuker = (BedNuker) Myau.moduleManager.modules.get(BedNuker.class);
+        BedNuker bedNuker = (BedNuker) Kaguya.moduleManager.modules.get(BedNuker.class);
         if (bedNuker.isEnabled() && bedNuker.isReady()) {
             return false;
         } else {
-            LongJump longJump = (LongJump) Myau.moduleManager.modules.get(LongJump.class);
+            LongJump longJump = (LongJump) Kaguya.moduleManager.modules.get(LongJump.class);
             return !longJump.isEnabled() || !longJump.isAutoMode() || longJump.isJumping();
         }
     }
@@ -674,7 +674,7 @@ public class Scaffold extends Module {
                         }
                     }
                 }
-                HUD hud = (HUD) Myau.moduleManager.modules.get(HUD.class);
+                HUD hud = (HUD) Kaguya.moduleManager.modules.get(HUD.class);
                 float scale = hud.scale.getValue();
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(scale, scale, 0.0F);

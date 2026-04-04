@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.LivingUpdateEvent;
@@ -144,7 +144,7 @@ public abstract class MixinEntityPlayerSP extends MixinEntityPlayer {
             )
     )
     private boolean isUsing(EntityPlayerSP entityPlayerSP) {
-        NoSlow noSlow = (NoSlow) Myau.moduleManager.modules.get(NoSlow.class);
+        NoSlow noSlow = (NoSlow) Kaguya.moduleManager.modules.get(NoSlow.class);
         return (!noSlow.isEnabled() || !noSlow.isAnyActive()) && entityPlayerSP.isUsingItem();
     }
 
@@ -156,8 +156,8 @@ public abstract class MixinEntityPlayerSP extends MixinEntityPlayer {
             )
     )
     private boolean checkPotion(EntityPlayerSP entityPlayerSP, Potion potion) {
-        if (potion == Potion.confusion && Myau.moduleManager != null) {
-            AntiDebuff antiDebuff = (AntiDebuff) Myau.moduleManager.modules.get(AntiDebuff.class);
+        if (potion == Potion.confusion && Kaguya.moduleManager != null) {
+            AntiDebuff antiDebuff = (AntiDebuff) Kaguya.moduleManager.modules.get(AntiDebuff.class);
             if (antiDebuff.isEnabled() && antiDebuff.nausea.getValue()) {
                 return false;
             }

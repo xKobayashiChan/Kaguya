@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.SafeWalkEvent;
@@ -24,7 +24,7 @@ public class SafeWalk extends Module {
     public final BooleanProperty blocksOnly = new BooleanProperty("blocks-only", true);
 
     private boolean canSafeWalk() {
-        Scaffold scaffold = (Scaffold) Myau.moduleManager.modules.get(Scaffold.class);
+        Scaffold scaffold = (Scaffold) Kaguya.moduleManager.modules.get(Scaffold.class);
         if (scaffold.isEnabled()) {
             return false;
         } else if (this.directionCheck.getValue() && mc.gameSettings.keyBindForward.isKeyDown()) {

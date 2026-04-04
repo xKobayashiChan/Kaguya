@@ -1,6 +1,6 @@
 package com.github.kaguya.util;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.KeepSprint;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -178,7 +178,7 @@ public class PlayerUtil {
                                     0.1,
                                     MathHelper.cos(mc.thePlayer.rotationYaw * (float) Math.PI / 180.0F) * (float) knockbackLevel * 0.5F
                             );
-                            KeepSprint keepSprint = (KeepSprint) Myau.moduleManager.modules.get(KeepSprint.class);
+                            KeepSprint keepSprint = (KeepSprint) Kaguya.moduleManager.modules.get(KeepSprint.class);
                             if (keepSprint.isEnabled()
                                     && (!keepSprint.groundOnly.getValue() || mc.thePlayer.onGround)
                                     && (!keepSprint.reachOnly.getValue() || !(RotationUtil.distanceToEntity(target) <= 3.0))) {

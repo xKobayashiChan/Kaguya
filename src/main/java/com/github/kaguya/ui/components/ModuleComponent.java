@@ -1,11 +1,11 @@
 
 package com.github.kaguya.ui.components;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.module.modules.HUD;
 import com.github.kaguya.property.Property;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.*;
 import com.github.kaguya.ui.Component;
 import com.github.kaguya.ui.dataset.impl.FloatSlider;
@@ -31,8 +31,8 @@ public class ModuleComponent implements Component {
         this.settings = new ArrayList<>();
         this.panelExpand = false;
         int y = offsetY + 12;
-        if (!Myau.propertyManager.properties.get(mod.getClass()).isEmpty()) {
-            for (Property<?> baseProperty : Myau.propertyManager.properties.get(mod.getClass())) {
+        if (!Kaguya.propertyManager.properties.get(mod.getClass()).isEmpty()) {
+            for (Property<?> baseProperty : Kaguya.propertyManager.properties.get(mod.getClass())) {
                 if (baseProperty instanceof BooleanProperty) {
                     BooleanProperty property = (BooleanProperty) baseProperty;
                     CheckBoxComponent c = new CheckBoxComponent(property, this, y);
@@ -90,7 +90,7 @@ public class ModuleComponent implements Component {
     public void draw(AtomicInteger offset) {
         int textColor;
         if (this.mod.isEnabled()) {
-            textColor = ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis(), offset.get()).getRGB();
+            textColor = ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis(), offset.get()).getRGB();
         } else {
             textColor = new Color(102, 102, 102).getRGB();
         }

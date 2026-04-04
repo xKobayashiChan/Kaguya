@@ -3,13 +3,13 @@ package com.github.kaguya.module.modules;
 import com.github.kaguya.events.*;
 import com.github.kaguya.util.*;
 import com.google.common.base.CaseFormat;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.enums.DelayModules;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.management.RotationState;
 import com.github.kaguya.mixins.IAccessorPlayerControllerMP;
 import com.github.kaguya.module.Module;
@@ -17,7 +17,7 @@ import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.ModeProperty;
 import com.github.kaguya.property.properties.PercentProperty;
-import com.example.lexiyaddons.util.*;
+import com.github.kaguya.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockBed.EnumPartType;
@@ -311,7 +311,7 @@ public class BedNuker extends Module {
                 }
                 return ColorUtil.interpolate((progress - 0.5F) / 0.5F, this.colorYellow, this.colorGreen);
             case 2:
-                return ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
+                return ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis());
             default:
                 return new Color(-1);
         }
@@ -332,7 +332,7 @@ public class BedNuker extends Module {
     @EventTarget(Priority.HIGH)
     public void onTick(TickEvent event) {
         if (this.isEnabled() && event.getType() == EventType.PRE) {
-            AutoBlockIn autoBlockIn = (AutoBlockIn) Myau.moduleManager.modules.get(AutoBlockIn.class);
+            AutoBlockIn autoBlockIn = (AutoBlockIn) Kaguya.moduleManager.modules.get(AutoBlockIn.class);
             if(autoBlockIn.isEnabled()) return;
             if (this.targetBed != null) {
                 if (mc.theWorld.isAirBlock(this.targetBed) || !PlayerUtil.canReach(this.targetBed, this.range.getValue().doubleValue())) {
@@ -428,7 +428,7 @@ public class BedNuker extends Module {
                 }
             }
             if (this.targetBed == null) {
-                Myau.delayManager.setDelayState(false, DelayModules.BED_NUKER);
+                Kaguya.delayManager.setDelayState(false, DelayModules.BED_NUKER);
             }
         }
     }
@@ -436,7 +436,7 @@ public class BedNuker extends Module {
     @EventTarget(Priority.LOWEST)
     public void onUpdate(UpdateEvent event) {
         if (this.isEnabled() && event.getType() == EventType.PRE) {
-            AutoBlockIn autoBlockIn = (AutoBlockIn) Myau.moduleManager.modules.get(AutoBlockIn.class);
+            AutoBlockIn autoBlockIn = (AutoBlockIn) Kaguya.moduleManager.modules.get(AutoBlockIn.class);
             if(autoBlockIn.isEnabled()) return;
             if (this.isReady()) {
                 double x = (double) this.targetBed.getX() + 0.5 - mc.thePlayer.posX;
@@ -453,10 +453,10 @@ public class BedNuker extends Module {
     public void onPlayerUpdate(PlayerUpdateEvent event) {
         if (this.isEnabled()) {
             if (this.isBreaking()
-                    && !Myau.playerStateManager.attacking
-                    && !Myau.playerStateManager.digging
-                    && !Myau.playerStateManager.placing
-                    && !Myau.playerStateManager.swinging) {
+                    && !Kaguya.playerStateManager.attacking
+                    && !Kaguya.playerStateManager.digging
+                    && !Kaguya.playerStateManager.placing
+                    && !Kaguya.playerStateManager.swinging) {
                 this.doSwing();
             }
         }
@@ -491,7 +491,7 @@ public class BedNuker extends Module {
         if (this.isEnabled()) {
             if (this.targetBed != null && (!this.isBed || !this.surroundings.getValue())) {
                 if (this.showProgress.getValue() != 0) {
-                    HUD hud = (HUD) Myau.moduleManager.modules.get(HUD.class);
+                    HUD hud = (HUD) Kaguya.moduleManager.modules.get(HUD.class);
                     float scale = hud.scale.getValue();
                     String text = String.format("%d%%", (int) (this.calcProgress() * 100.0F));
                     GlStateManager.pushMatrix();
@@ -521,7 +521,7 @@ public class BedNuker extends Module {
         if (this.isEnabled() && this.targetBed != null && !mc.theWorld.isAirBlock(this.targetBed)) {
             mc.theWorld.sendBlockBreakProgress(mc.thePlayer.getEntityId(), this.targetBed, (int) (this.calcProgress() * 10.0F) - 1);
             if (this.showTarget.getValue() != 0) {
-                BedESP bedESP = (BedESP) Myau.moduleManager.modules.get(BedESP.class);
+                BedESP bedESP = (BedESP) Kaguya.moduleManager.modules.get(BedESP.class);
                 Color color = this.getProgressColor(this.showTarget.getValue());
                 RenderUtil.enableRenderState();
                 BlockPos target = this.targetBed;
@@ -569,20 +569,20 @@ public class BedNuker extends Module {
                     }
                 }, 1L, TimeUnit.SECONDS);
             }
-            if (this.isEnabled() && this.targetBed != null && this.ignoreVelocity.getValue() == 2 && Myau.delayManager.getDelayModule() != DelayModules.BED_NUKER) {
+            if (this.isEnabled() && this.targetBed != null && this.ignoreVelocity.getValue() == 2 && Kaguya.delayManager.getDelayModule() != DelayModules.BED_NUKER) {
                 if (event.getPacket() instanceof S12PacketEntityVelocity) {
                     S12PacketEntityVelocity packet = (S12PacketEntityVelocity) event.getPacket();
                     if (packet.getEntityID() == mc.thePlayer.getEntityId() && packet.getMotionY() > 0) {
-                        Myau.delayManager.delay(DelayModules.BED_NUKER);
-                        Myau.delayManager.delayedPacket.offer(packet);
+                        Kaguya.delayManager.delay(DelayModules.BED_NUKER);
+                        Kaguya.delayManager.delayedPacket.offer(packet);
                         event.setCancelled(true);
                     }
                 }
                 if (event.getPacket() instanceof S27PacketExplosion) {
                     S27PacketExplosion explosion = (S27PacketExplosion) event.getPacket();
                     if (explosion.func_149149_c() != 0.0F || explosion.func_149144_d() != 0.0F || explosion.func_149147_e() != 0.0F) {
-                        Myau.delayManager.delay(DelayModules.BED_NUKER);
-                        Myau.delayManager.delayedPacket.offer(explosion);
+                        Kaguya.delayManager.delay(DelayModules.BED_NUKER);
+                        Kaguya.delayManager.delayedPacket.offer(explosion);
                         event.setCancelled(true);
                     }
                 }
@@ -630,7 +630,7 @@ public class BedNuker extends Module {
     public void onDisabled() {
         this.resetBreaking();
         this.savedSlot = -1;
-        Myau.delayManager.setDelayState(false, DelayModules.BED_NUKER);
+        Kaguya.delayManager.setDelayState(false, DelayModules.BED_NUKER);
     }
 
     @Override

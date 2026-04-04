@@ -1,6 +1,6 @@
 package com.github.kaguya.command.commands;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.util.ChatUtil;
@@ -24,12 +24,12 @@ public class PlayerCommand extends Command {
             players.add(playerInfo.getGameProfile().getName().replace("§", "&"));
         }
         if (players.isEmpty()) {
-            ChatUtil.sendFormatted(String.format("%sNo players&r", Myau.clientName));
+            ChatUtil.sendFormatted(String.format("%sNo players&r", Kaguya.clientName));
         } else {
             ChatUtil.sendRaw(
                     String.format(
                             ChatColors.formatColor("%sPlayers:&r %s"),
-                            ChatColors.formatColor(Myau.clientName),
+                            ChatColors.formatColor(Kaguya.clientName),
                             String.join(", ", players)
                     )
             );

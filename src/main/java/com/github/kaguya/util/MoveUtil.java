@@ -1,6 +1,6 @@
 package com.github.kaguya.util;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.management.RotationState;
 import com.github.kaguya.module.modules.TargetStrafe;
 import net.minecraft.client.Minecraft;
@@ -44,7 +44,7 @@ public class MoveUtil {
     }
 
     public static float adjustYaw(float yaw, float forward, float strafe) {
-        TargetStrafe targetStrafe = (TargetStrafe) Myau.moduleManager.modules.get(TargetStrafe.class);
+        TargetStrafe targetStrafe = (TargetStrafe) Kaguya.moduleManager.modules.get(TargetStrafe.class);
         if (targetStrafe.isEnabled()) {
             if (!Float.isNaN(targetStrafe.getTargetYaw())) {
                 return targetStrafe.getTargetYaw();

@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.RenderLivingEvent;
@@ -50,12 +50,12 @@ public abstract class MixinRendererLivingEntity<T extends EntityLivingBase> exte
             cancellable = true
     )
     private void canRenderName(T entityLivingBase, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        if (Myau.moduleManager != null) {
-            NameTags nameTags = (NameTags) Myau.moduleManager.modules.get(NameTags.class);
+        if (Kaguya.moduleManager != null) {
+            NameTags nameTags = (NameTags) Kaguya.moduleManager.modules.get(NameTags.class);
             if (nameTags.isEnabled() && nameTags.shouldRenderTags(entityLivingBase)) {
                 callbackInfoReturnable.setReturnValue(false);
             } else {
-                ESP esp = (ESP) Myau.moduleManager.modules.get(ESP.class);
+                ESP esp = (ESP) Kaguya.moduleManager.modules.get(ESP.class);
                 if (esp.isEnabled() && !esp.isOutlineEnabled()) {
                     callbackInfoReturnable.setReturnValue(false);
                 }

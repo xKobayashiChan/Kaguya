@@ -2,7 +2,7 @@ package com.github.kaguya.module.modules;
 
 import com.github.kaguya.ui.ClickGui;
 import com.google.common.base.CaseFormat;
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
@@ -65,7 +65,7 @@ public class InvWalk extends Module {
         this.movementKeys.keySet().stream()
                 .filter(key -> !skipSneak || key != mc.gameSettings.keyBindSneak)
                 .forEach(key -> KeyBindUtil.updateKeyState(key.getKeyCode()));
-        if (Myau.moduleManager.modules.get(Sprint.class).isEnabled()) {
+        if (Kaguya.moduleManager.modules.get(Sprint.class).isEnabled()) {
             KeyBindUtil.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
         }
         this.keysPressed = true;
@@ -87,7 +87,7 @@ public class InvWalk extends Module {
         for (Map.Entry<KeyBinding, Boolean> keyBinding : movementKeys.entrySet()) {
             KeyBindUtil.setKeyBindState(keyBinding.getKey().getKeyCode(), keyBinding.getValue());
         }
-        if (Myau.moduleManager.modules.get(Sprint.class).isEnabled()) {
+        if (Kaguya.moduleManager.modules.get(Sprint.class).isEnabled()) {
             KeyBindUtil.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
         }
         this.keysPressed = true;

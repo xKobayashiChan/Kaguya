@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
@@ -14,7 +14,7 @@ import com.github.kaguya.util.ColorUtil;
 import com.github.kaguya.util.RenderUtil;
 import com.github.kaguya.util.TeamUtil;
 import com.github.kaguya.util.TimerUtil;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
@@ -63,7 +63,7 @@ public class TargetHUD extends Module {
     public final BooleanProperty chatPreview = new BooleanProperty("chat-preview", false);
 
     private EntityLivingBase resolveTarget() {
-        KillAura killAura = (KillAura) Myau.moduleManager.modules.get(KillAura.class);
+        KillAura killAura = (KillAura) Kaguya.moduleManager.modules.get(KillAura.class);
         if (killAura.isEnabled() && killAura.isAttackAllowed() && TeamUtil.isEntityLoaded(killAura.getTarget())) {
             return killAura.getTarget();
         } else if (!(Boolean) this.kaOnly.getValue()
@@ -79,10 +79,10 @@ public class TargetHUD extends Module {
     private Color getTargetColor(EntityLivingBase entityLivingBase) {
         if (entityLivingBase instanceof EntityPlayer) {
             if (TeamUtil.isFriend((EntityPlayer) entityLivingBase)) {
-                return Myau.friendManager.getColor();
+                return Kaguya.friendManager.getColor();
             }
             if (TeamUtil.isTarget((EntityPlayer) entityLivingBase)) {
-                return Myau.targetManager.getColor();
+                return Kaguya.targetManager.getColor();
             }
             return TeamUtil.getTeamColor((EntityPlayer) entityLivingBase, 1.0F);
         }

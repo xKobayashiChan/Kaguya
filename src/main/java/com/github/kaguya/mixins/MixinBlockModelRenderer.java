@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.Xray;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -41,8 +41,8 @@ public abstract class MixinBlockModelRenderer {
             boolean boolean6,
             CallbackInfoReturnable<Boolean> callbackInfoReturnable
     ) {
-        if (Myau.moduleManager != null) {
-            if (Myau.moduleManager.modules.get(Xray.class).isEnabled()) {
+        if (Kaguya.moduleManager != null) {
+            if (Kaguya.moduleManager.modules.get(Xray.class).isEnabled()) {
                 callbackInfoReturnable.setReturnValue(
                         this.renderModelAmbientOcclusion(iBlockAccess, iBakedModel, iBlockState.getBlock(), blockPos, worldRenderer, boolean6)
                 );

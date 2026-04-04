@@ -1,6 +1,6 @@
 package com.github.kaguya.module;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.HUD;
 import com.github.kaguya.util.KeyBindUtil;
 
@@ -60,8 +60,8 @@ public abstract class Module {
         boolean enabled = !this.enabled;
         this.setEnabled(enabled);
         if (this.enabled == enabled) {
-            if (((HUD) Myau.moduleManager.modules.get(HUD.class)).toggleSound.getValue()) {
-                Myau.moduleManager.playSound();
+            if (((HUD) Kaguya.moduleManager.modules.get(HUD.class)).toggleSound.getValue()) {
+                Kaguya.moduleManager.playSound();
             }
             return true;
         } else {

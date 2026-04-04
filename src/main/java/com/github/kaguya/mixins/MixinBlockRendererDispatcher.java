@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.BedESP;
 import com.github.kaguya.module.modules.Xray;
 import net.minecraft.block.Block;
@@ -32,12 +32,12 @@ public abstract class MixinBlockRendererDispatcher {
             WorldRenderer worldRenderer,
             CallbackInfoReturnable<Boolean> callbackInfoReturnable
     ) {
-        if (Myau.moduleManager != null) {
-            BedESP bedESP = (BedESP) Myau.moduleManager.modules.get(BedESP.class);
+        if (Kaguya.moduleManager != null) {
+            BedESP bedESP = (BedESP) Kaguya.moduleManager.modules.get(BedESP.class);
             if (bedESP.isEnabled() && iBlockState.getBlock() instanceof BlockBed && iBlockState.getValue(BlockBed.PART) == EnumPartType.HEAD) {
                 bedESP.beds.add(new BlockPos(blockPos));
             }
-            Xray Xray = (Xray) Myau.moduleManager.modules.get(Xray.class);
+            Xray Xray = (Xray) Kaguya.moduleManager.modules.get(Xray.class);
             if (Xray.isEnabled() && Xray.isXrayBlock(Block.getIdFromBlock(iBlockState.getBlock()))) {
                 if (Xray.checkBlock(blockPos)) {
                     Xray.trackedBlocks.add(new BlockPos(blockPos));

@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
@@ -42,7 +42,7 @@ public class AutoAnduril extends Module {
             if (currentItem.getItem() instanceof ItemBlock && mc.gameSettings.keyBindUseItem.isKeyDown()) return false;
             if (!(currentItem.getItem() instanceof ItemSword) && mc.thePlayer.isUsingItem()) return false;
         }
-        InvWalk invWalk = (InvWalk) Myau.moduleManager.modules.get(InvWalk.class);
+        InvWalk invWalk = (InvWalk) Kaguya.moduleManager.modules.get(InvWalk.class);
         return mc.currentScreen == null || mc.currentScreen instanceof ClickGui
                 || invWalk.isEnabled() && invWalk.canInvWalk();
     }

@@ -1,6 +1,6 @@
 package com.github.kaguya.command;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
@@ -23,9 +23,9 @@ public class CommandManager {
         List<String> params = Arrays.asList(string.substring(1).trim().split("\\s+"));
         ArrayList<String> arrayList = new ArrayList<>(params);
         if (params.get(0).isEmpty()) {
-            ChatUtil.sendFormatted(String.format("%sUnknown command&r", Myau.clientName).replace("&", "§"));
+            ChatUtil.sendFormatted(String.format("%sUnknown command&r", Kaguya.clientName).replace("&", "§"));
         } else {
-            for (Command command : Myau.commandManager.commands) {
+            for (Command command : Kaguya.commandManager.commands) {
                 for (String name : command.names) {
                     if (params.get(0).equalsIgnoreCase(name)) {
                         command.runCommand(arrayList);
@@ -33,7 +33,7 @@ public class CommandManager {
                     }
                 }
             }
-            ChatUtil.sendFormatted(String.format("%sUnknown command (&o%s&r)&r", Myau.clientName, params.get(0)).replace("&", "§"));
+            ChatUtil.sendFormatted(String.format("%sUnknown command (&o%s&r)&r", Kaguya.clientName, params.get(0)).replace("&", "§"));
         }
     }
 

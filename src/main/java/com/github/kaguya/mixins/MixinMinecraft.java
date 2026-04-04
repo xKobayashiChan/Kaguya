@@ -1,11 +1,11 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.events.*;
 import com.github.kaguya.init.Initializer;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.event.types.EventType;
-import com.example.lexiyaddons.events.*;
+import com.github.kaguya.events.*;
 import com.github.kaguya.module.modules.NoHitDelay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -36,7 +36,7 @@ public abstract class MixinMinecraft {
             at = {@At("RETURN")}
     )
     private void postStartGame(CallbackInfo callbackInfo) {
-        new Myau();
+        new Kaguya();
     }
 
     @Inject(
@@ -83,7 +83,7 @@ public abstract class MixinMinecraft {
             cancellable = true
     )
     private void clickMouse(CallbackInfo callbackInfo) {
-        if (Myau.moduleManager != null && Myau.moduleManager.modules.get(NoHitDelay.class).isEnabled()) {
+        if (Kaguya.moduleManager != null && Kaguya.moduleManager.modules.get(NoHitDelay.class).isEnabled()) {
             ((IAccessorMinecraft) this).setLeftClickCounter(0);
         }
         LeftClickMouseEvent event = new LeftClickMouseEvent();

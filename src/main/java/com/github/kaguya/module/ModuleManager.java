@@ -1,13 +1,13 @@
 package com.github.kaguya.module;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.KeyEvent;
 import com.github.kaguya.events.TickEvent;
 import com.github.kaguya.module.modules.GuiModule;
 import com.github.kaguya.module.modules.HUD;
-import com.github.kaguya.util.ChatUtil;
+import com.github.kaguya.management.NotificationManager;
 import com.github.kaguya.util.SoundUtil;
 
 import java.util.LinkedHashMap;
@@ -44,8 +44,8 @@ public class ModuleManager {
             }
             if (shouldNotify) {
                 String status = module.isEnabled() ? "&a&lON" : "&c&lOFF";
-                String message = String.format("%s%s: %s&r", Myau.clientName, module.getName(), status);
-                ChatUtil.sendFormatted(message);
+                String message = String.format("%s%s: %s&r", Kaguya.clientName, module.getName(), status);
+                NotificationManager.show(message);
             }
         }
     }

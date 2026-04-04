@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.events.StrafeEvent;
 import com.github.kaguya.management.RotationState;
@@ -65,10 +65,10 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
     )
     private float moveEntityWithHeading(float float1) {
         if ((EntityLivingBase) ((Object) this) instanceof EntityPlayerSP && float1 == (float) EnchantmentHelper.getDepthStriderModifier((EntityLivingBase) ((Object) this))) {
-            if (Myau.moduleManager == null) {
+            if (Kaguya.moduleManager == null) {
                 return float1;
             }
-            Jesus jesus = (Jesus) Myau.moduleManager.modules.get(Jesus.class);
+            Jesus jesus = (Jesus) Kaguya.moduleManager.modules.get(Jesus.class);
             if (jesus.isEnabled() && (!jesus.groundOnly.getValue() || this.onGround)) {
                 return Math.max(float1, jesus.speed.getValue());
             }

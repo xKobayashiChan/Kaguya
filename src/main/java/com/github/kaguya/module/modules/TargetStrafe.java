@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
@@ -8,8 +8,8 @@ import com.github.kaguya.events.Render3DEvent;
 import com.github.kaguya.events.StrafeEvent;
 import com.github.kaguya.events.UpdateEvent;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.util.*;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.util.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.IntProperty;
@@ -36,9 +36,9 @@ public class TargetStrafe extends Module {
 
     private boolean canStrafe() {
         if (this.speedOnly.getValue()) {
-            Speed speed = (Speed) Myau.moduleManager.modules.get(Speed.class);
-            Fly fly = (Fly) Myau.moduleManager.modules.get(Fly.class);
-            LongJump longJump = (LongJump) Myau.moduleManager.modules.get(LongJump.class);
+            Speed speed = (Speed) Kaguya.moduleManager.modules.get(Speed.class);
+            Fly fly = (Fly) Kaguya.moduleManager.modules.get(Fly.class);
+            LongJump longJump = (LongJump) Kaguya.moduleManager.modules.get(LongJump.class);
             if (!speed.isEnabled() && !fly.isEnabled() && (!longJump.isEnabled() || !longJump.isJumping())) {
                 return false;
             }
@@ -47,7 +47,7 @@ public class TargetStrafe extends Module {
     }
 
     private EntityLivingBase getKillAuraTarget() {
-        KillAura killAura = (KillAura) Myau.moduleManager.modules.get(KillAura.class);
+        KillAura killAura = (KillAura) Kaguya.moduleManager.modules.get(KillAura.class);
         if (killAura.isEnabled() && killAura.isAttackAllowed()) {
             EntityLivingBase entityLivingBase = killAura.getTarget();
             return !TeamUtil.isEntityLoaded(entityLivingBase) ? null : entityLivingBase;
@@ -59,10 +59,10 @@ public class TargetStrafe extends Module {
     private Color getTargetColor(EntityLivingBase entityLivingBase) {
         if (entityLivingBase instanceof EntityPlayer) {
             if (TeamUtil.isFriend((EntityPlayer) entityLivingBase)) {
-                return Myau.friendManager.getColor();
+                return Kaguya.friendManager.getColor();
             }
             if (TeamUtil.isTarget((EntityPlayer) entityLivingBase)) {
-                return Myau.targetManager.getColor();
+                return Kaguya.targetManager.getColor();
             }
         }
         switch (this.showTarget.getValue()) {
@@ -72,7 +72,7 @@ public class TargetStrafe extends Module {
                 }
                 return TeamUtil.getTeamColor((EntityPlayer) entityLivingBase, 1.0F);
             case 2:
-                int color = ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis()).getRGB();
+                int color = ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis()).getRGB();
                 return new Color(color);
             default:
                 return new Color(-1);

@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
@@ -107,7 +107,7 @@ public class Freeze extends Module {
             // Check timeout
             if (this.delaying && ++this.timeout >= this.maxTimeout.getValue()) {
                 this.flush();
-                ChatUtil.sendFormatted(Myau.clientName + "&cFreeze timed out.");
+                ChatUtil.sendFormatted(Kaguya.clientName + "&cFreeze timed out.");
             }
 
             // Reset S08 flag

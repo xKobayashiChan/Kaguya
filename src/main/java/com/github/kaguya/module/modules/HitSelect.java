@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
@@ -180,7 +180,7 @@ public class HitSelect extends Module {
             return;
         }
 
-        KeepSprint keepSprint = (KeepSprint) Myau.moduleManager.modules.get(KeepSprint.class);
+        KeepSprint keepSprint = (KeepSprint) Kaguya.moduleManager.modules.get(KeepSprint.class);
         if (keepSprint == null) {
             return;
         }
@@ -206,7 +206,7 @@ public class HitSelect extends Module {
             return;
         }
 
-        KeepSprint keepSprint = (KeepSprint) Myau.moduleManager.modules.get(KeepSprint.class);
+        KeepSprint keepSprint = (KeepSprint) Kaguya.moduleManager.modules.get(KeepSprint.class);
         if (keepSprint == null) {
             return;
         }

@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class MixinLoader implements IFMLLoadingPlugin {
     public MixinLoader() {
-        System.out.println("[LexiyAddons] Injecting with IFMLLoadingPlugin.");
+        System.out.println("[Kaguya] Injecting with IFMLLoadingPlugin.");
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.lexiyaddons.json");
         MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
@@ -38,4 +38,3 @@ public class MixinLoader implements IFMLLoadingPlugin {
         return null;
     }
 }
-

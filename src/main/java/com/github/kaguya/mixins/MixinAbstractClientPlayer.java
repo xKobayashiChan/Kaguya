@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.Sprint;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -24,8 +24,8 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
     )
     private double getFovModifier(IAttributeInstance iAttributeInstance) {
         double attributeValue = iAttributeInstance.getAttributeValue();
-        if ((((Entity) (Object) this)) instanceof EntityPlayerSP && Myau.moduleManager != null) {
-            Sprint sprint = (Sprint) Myau.moduleManager.modules.get(Sprint.class);
+        if ((((Entity) (Object) this)) instanceof EntityPlayerSP && Kaguya.moduleManager != null) {
+            Sprint sprint = (Sprint) Kaguya.moduleManager.modules.get(Sprint.class);
             return sprint.isEnabled() && sprint.shouldApplyFovFix(iAttributeInstance) ? attributeValue * 1.300000011920929 : attributeValue;
         } else {
             return attributeValue;

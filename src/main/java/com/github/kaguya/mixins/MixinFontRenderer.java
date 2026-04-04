@@ -1,9 +1,9 @@
 package com.github.kaguya.mixins;
 
-import com.example.lexiyaddons.Myau;
-import com.example.lexiyaddons.module.modules.AntiObfuscate;
-import com.example.lexiyaddons.module.modules.NickHider;
-import com.example.lexiyaddons.util.LangFallback;
+import com.github.kaguya.Kaguya;
+import com.github.kaguya.module.modules.AntiObfuscate;
+import com.github.kaguya.module.modules.NickHider;
+import com.github.kaguya.util.LangFallback;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,14 +23,14 @@ public abstract class MixinFontRenderer {
     )
     private String renderString(String string) {
         string = translateIfKey(string);
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return string;
         } else {
-            AntiObfuscate antiObfuscate = (AntiObfuscate) Myau.moduleManager.modules.get(AntiObfuscate.class);
+            AntiObfuscate antiObfuscate = (AntiObfuscate) Kaguya.moduleManager.modules.get(AntiObfuscate.class);
             if (antiObfuscate.isEnabled()) {
                 string = antiObfuscate.stripObfuscated(string);
             }
-            NickHider nickHider = (NickHider) Myau.moduleManager.modules.get(NickHider.class);
+            NickHider nickHider = (NickHider) Kaguya.moduleManager.modules.get(NickHider.class);
             return nickHider.isEnabled() ? nickHider.replaceNick(string) : string;
         }
     }
@@ -43,14 +43,14 @@ public abstract class MixinFontRenderer {
     )
     private String getStringWidth(String string) {
         string = translateIfKey(string);
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return string;
         } else {
-            AntiObfuscate antiObfuscate = (AntiObfuscate) Myau.moduleManager.modules.get(AntiObfuscate.class);
+            AntiObfuscate antiObfuscate = (AntiObfuscate) Kaguya.moduleManager.modules.get(AntiObfuscate.class);
             if (antiObfuscate.isEnabled()) {
                 string = antiObfuscate.stripObfuscated(string);
             }
-            NickHider nickHider = (NickHider) Myau.moduleManager.modules.get(NickHider.class);
+            NickHider nickHider = (NickHider) Kaguya.moduleManager.modules.get(NickHider.class);
             return nickHider.isEnabled() ? nickHider.replaceNick(string) : string;
         }
     }

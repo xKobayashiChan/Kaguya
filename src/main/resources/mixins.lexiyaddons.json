@@ -1,9 +1,9 @@
 {
   "required": true,
   "minVersion": "0.7",
-  "package": "com.example.lexiyaddons.mixins",
-  "plugin": "com.example.lexiyaddons.init.FMLLoadingPlugin",
-  "refmap": "mixins.lexiyaddons.refmap.json",
+  "package": "com.github.kaguya.mixins",
+  "plugin": "com.github.kaguya.init.FMLLoadingPlugin",
+  "refmap": "mixins.kaguya.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "injectors": {
     "defaultRequire": 1

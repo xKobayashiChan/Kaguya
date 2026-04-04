@@ -1,12 +1,12 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.enums.ChatColors;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.Priority;
 import com.github.kaguya.events.Render2DEvent;
 import com.github.kaguya.module.Module;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.*;
 import com.github.kaguya.util.RenderUtil;
 import com.github.kaguya.util.TeamUtil;
@@ -59,10 +59,10 @@ public class Radar extends Module {
 
     private Color getEntityColor(EntityPlayer entityPlayer) {
         if (TeamUtil.isFriend(entityPlayer)) {
-            Color color = Myau.friendManager.getColor();
+            Color color = Kaguya.friendManager.getColor();
             return new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
         } else if (TeamUtil.isTarget(entityPlayer)) {
-            Color color = Myau.targetManager.getColor();
+            Color color = Kaguya.targetManager.getColor();
             return new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
         } else {
             switch (this.colorMode.getValue()) {
@@ -72,7 +72,7 @@ public class Radar extends Module {
                     int teamColor = TeamUtil.isSameTeam(entityPlayer) ? ChatColors.BLUE.toAwtColor() : ChatColors.RED.toAwtColor();
                     return new Color(teamColor | 255 << 24, true);
                 case 2:
-                    int color = ((HUD) Myau.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis()).getRGB();
+                    int color = ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis()).getRGB();
                     return new Color(color | 255 << 24, true);
                 default:
                     return Color.WHITE;
@@ -85,7 +85,7 @@ public class Radar extends Module {
         if (!this.isEnabled()) return;
 
         ScaledResolution sr = new ScaledResolution(mc);
-        HUD hud = (HUD) Myau.moduleManager.modules.get(HUD.class);
+        HUD hud = (HUD) Kaguya.moduleManager.modules.get(HUD.class);
 
         double centerX, centerY;
         if (position.getValue() == 4) {
@@ -214,7 +214,7 @@ public class Radar extends Module {
             GlStateManager.enableBlend();
             GlStateManager.enableTexture2D();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            HUD hud = (HUD) Myau.moduleManager.modules.get(HUD.class);
+            HUD hud = (HUD) Kaguya.moduleManager.modules.get(HUD.class);
             int color = hud.getColor(System.currentTimeMillis()).getRGB();
             mc.fontRendererObj.drawString("N",
                     (float) (x - dx1 * (radius + 5)) - mc.fontRendererObj.getStringWidth("N") / 2.0F,

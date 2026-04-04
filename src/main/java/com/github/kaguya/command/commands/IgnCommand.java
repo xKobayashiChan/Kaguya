@@ -1,6 +1,6 @@
 package com.github.kaguya.command.commands;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
 import com.github.kaguya.util.ChatUtil;
 import net.minecraft.client.Minecraft;
@@ -27,9 +27,9 @@ public class IgnCommand extends Command {
             if (!StringUtils.isNullOrEmpty(username)) {
                 try {
                     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(username), null);
-                    ChatUtil.sendFormatted(String.format("%sYour username has been copied to the clipboard (&o%s&r)&r", Myau.clientName, username));
+                    ChatUtil.sendFormatted(String.format("%sYour username has been copied to the clipboard (&o%s&r)&r", Kaguya.clientName, username));
                 } catch (Exception e) {
-                    ChatUtil.sendFormatted(String.format("%sFailed to copy&r", Myau.clientName));
+                    ChatUtil.sendFormatted(String.format("%sFailed to copy&r", Kaguya.clientName));
                 }
             }
         }

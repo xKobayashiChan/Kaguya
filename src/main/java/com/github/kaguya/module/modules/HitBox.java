@@ -1,6 +1,6 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.event.types.Priority;
@@ -53,7 +53,7 @@ public class HitBox extends Module {
     }
 
     public static float getExpansion(Entity entity) {
-        HitBox hitBox = (HitBox) Myau.moduleManager.modules.get(HitBox.class);
+        HitBox hitBox = (HitBox) Kaguya.moduleManager.modules.get(HitBox.class);
         if (hitBox != null && hitBox.isEnabled() && entity instanceof EntityLivingBase) {
             return hitBox.multiplier.getValue();
         }

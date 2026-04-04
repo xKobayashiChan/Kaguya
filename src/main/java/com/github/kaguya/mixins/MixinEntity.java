@@ -1,6 +1,6 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.events.KnockbackEvent;
 import com.github.kaguya.events.SafeWalkEvent;
@@ -73,7 +73,7 @@ public abstract class MixinEntity {
             cancellable = true
     )
     private void setAngles(CallbackInfo callbackInfo) {
-        if ((Entity) ((Object) this) instanceof EntityPlayerSP && Myau.rotationManager != null && Myau.rotationManager.isRotated()) {
+        if ((Entity) ((Object) this) instanceof EntityPlayerSP && Kaguya.rotationManager != null && Kaguya.rotationManager.isRotated()) {
             callbackInfo.cancel();
         }
     }

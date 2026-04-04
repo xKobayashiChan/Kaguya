@@ -1,12 +1,12 @@
 package com.github.kaguya.mixins;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.data.Box;
 import com.github.kaguya.event.EventManager;
 import com.github.kaguya.events.PickEvent;
 import com.github.kaguya.events.RaytraceEvent;
 import com.github.kaguya.events.Render3DEvent;
-import com.example.lexiyaddons.module.modules.*;
+import com.github.kaguya.module.modules.*;
 import com.github.kaguya.module.modules.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -49,7 +49,7 @@ public abstract class MixinEntityRenderer {
     )
     private void updateCameraAndRender(float float1, long long2, CallbackInfo callbackInfo) {
         if (this.mc.thePlayer != null) {
-            Scaffold scaffold = (Scaffold) Myau.moduleManager.modules.get(Scaffold.class);
+            Scaffold scaffold = (Scaffold) Kaguya.moduleManager.modules.get(Scaffold.class);
             if (scaffold.isEnabled() && scaffold.itemSpoof.getValue()) {
                 int slot = scaffold.getSlot();
                 if (slot >= 0) {
@@ -57,7 +57,7 @@ public abstract class MixinEntityRenderer {
                     this.mc.thePlayer.inventory.currentItem = slot;
                 }
             }
-            KillAura killAura = (KillAura) Myau.moduleManager.modules.get(KillAura.class);
+            KillAura killAura = (KillAura) Kaguya.moduleManager.modules.get(KillAura.class);
             if (killAura.isEnabled() && killAura.isBlocking()) {
                 this.using = new Box<>(((IAccessorEntityPlayer) this.mc.thePlayer).getItemInUse());
                 ((IAccessorEntityPlayer) this.mc.thePlayer).setItemInUse(this.mc.thePlayer.inventory.getCurrentItem());
@@ -91,7 +91,7 @@ public abstract class MixinEntityRenderer {
             at = {@At("HEAD")}
     )
     private void updateRenderer(CallbackInfo callbackInfo) {
-        Scaffold scaffold = (Scaffold) Myau.moduleManager.modules.get(Scaffold.class);
+        Scaffold scaffold = (Scaffold) Kaguya.moduleManager.modules.get(Scaffold.class);
         if (scaffold.isEnabled() && scaffold.itemSpoof.getValue()) {
             int slot = scaffold.getSlot();
             if (slot >= 0) {
@@ -100,7 +100,7 @@ public abstract class MixinEntityRenderer {
             }
         }
 
-        AutoBlockIn autoBlockIn = (AutoBlockIn) Myau.moduleManager.modules.get(AutoBlockIn.class);
+        AutoBlockIn autoBlockIn = (AutoBlockIn) Kaguya.moduleManager.modules.get(AutoBlockIn.class);
         if (autoBlockIn.isEnabled() && autoBlockIn.itemSpoof.getValue()) {
             int slot = autoBlockIn.getSlot();
             if (slot >= 0) {
@@ -141,10 +141,10 @@ public abstract class MixinEntityRenderer {
             )}
     )
     private float hurtCameraEffect(float float1) {
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return float1;
         } else {
-            NoHurtCam noHurtCam = (NoHurtCam) Myau.moduleManager.modules.get(NoHurtCam.class);
+            NoHurtCam noHurtCam = (NoHurtCam) Kaguya.moduleManager.modules.get(NoHurtCam.class);
             return noHurtCam.isEnabled() ? float1 * (float) noHurtCam.multiplier.getValue().intValue() / 100.0F : float1;
         }
     }
@@ -200,8 +200,8 @@ public abstract class MixinEntityRenderer {
             double double14,
             int integer15
     ) {
-        if (Myau.moduleManager != null) {
-            GhostHand event = (GhostHand) Myau.moduleManager.modules.get(GhostHand.class);
+        if (Kaguya.moduleManager != null) {
+            GhostHand event = (GhostHand) Kaguya.moduleManager.modules.get(GhostHand.class);
             if (event.isEnabled()) {
                 list.removeIf(event::shouldSkip);
             }
@@ -216,10 +216,10 @@ public abstract class MixinEntityRenderer {
             )
     )
     private double v(Vec3 vec31, Vec3 vec32) {
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return vec31.distanceTo(vec32);
         } else {
-            return Myau.moduleManager.modules.get(ViewClip.class).isEnabled() ? (double) this.thirdPersonDistance : vec31.distanceTo(vec32);
+            return Kaguya.moduleManager.modules.get(ViewClip.class).isEnabled() ? (double) this.thirdPersonDistance : vec31.distanceTo(vec32);
         }
     }
 
@@ -231,10 +231,10 @@ public abstract class MixinEntityRenderer {
             )
     )
     private Material x(Block block) {
-        if (Myau.moduleManager == null) {
+        if (Kaguya.moduleManager == null) {
             return block.getMaterial();
         } else {
-            return Myau.moduleManager.modules.get(ViewClip.class).isEnabled() ? Material.air : block.getMaterial();
+            return Kaguya.moduleManager.modules.get(ViewClip.class).isEnabled() ? Material.air : block.getMaterial();
         }
     }
 
@@ -246,8 +246,8 @@ public abstract class MixinEntityRenderer {
             )
     )
     private boolean y(EntityLivingBase entityLivingBase, Potion potion) {
-        if (potion == Potion.blindness && Myau.moduleManager != null) {
-            AntiDebuff antiDebuff = (AntiDebuff) Myau.moduleManager.modules.get(AntiDebuff.class);
+        if (potion == Potion.blindness && Kaguya.moduleManager != null) {
+            AntiDebuff antiDebuff = (AntiDebuff) Kaguya.moduleManager.modules.get(AntiDebuff.class);
             if (antiDebuff.isEnabled() && antiDebuff.blindness.getValue()) {
                 return false;
             }
@@ -263,8 +263,8 @@ public abstract class MixinEntityRenderer {
             )
     )
     private boolean q(EntityLivingBase entityLivingBase, Potion potion) {
-        if (potion == Potion.blindness && Myau.moduleManager != null) {
-            AntiDebuff antiDebuff = (AntiDebuff) Myau.moduleManager.modules.get(AntiDebuff.class);
+        if (potion == Potion.blindness && Kaguya.moduleManager != null) {
+            AntiDebuff antiDebuff = (AntiDebuff) Kaguya.moduleManager.modules.get(AntiDebuff.class);
             if (antiDebuff.isEnabled() && antiDebuff.blindness.getValue()) {
                 return false;
             }
@@ -280,8 +280,8 @@ public abstract class MixinEntityRenderer {
             )
     )
     private boolean c(EntityPlayerSP entityPlayerSP, Potion potion) {
-        if (potion == Potion.confusion && Myau.moduleManager != null) {
-            AntiDebuff antiDebuff = (AntiDebuff) Myau.moduleManager.modules.get(AntiDebuff.class);
+        if (potion == Potion.confusion && Kaguya.moduleManager != null) {
+            AntiDebuff antiDebuff = (AntiDebuff) Kaguya.moduleManager.modules.get(AntiDebuff.class);
             if (antiDebuff.isEnabled() && antiDebuff.nausea.getValue()) {
                 return false;
             }

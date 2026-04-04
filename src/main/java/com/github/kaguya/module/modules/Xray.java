@@ -10,7 +10,7 @@ import com.github.kaguya.module.Module;
 import com.github.kaguya.property.properties.IntProperty;
 import com.github.kaguya.property.properties.PercentProperty;
 import com.github.kaguya.util.RenderUtil;
-import com.example.lexiyaddons.property.properties.*;
+import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.ModeProperty;
 import net.minecraft.block.Block;

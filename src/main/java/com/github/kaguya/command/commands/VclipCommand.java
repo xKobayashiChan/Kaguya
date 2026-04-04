@@ -1,6 +1,6 @@
 package com.github.kaguya.command.commands;
 
-import com.github.kaguya.Myau;
+import com.github.kaguya.Kaguya;
 import com.github.kaguya.command.Command;
 import com.github.kaguya.util.ChatUtil;
 import net.minecraft.client.Minecraft;
@@ -28,12 +28,12 @@ public class VclipCommand extends Command {
             } catch (NumberFormatException e) {
             } finally {
                 mc.thePlayer.setPositionAndUpdate(mc.thePlayer.posX, mc.thePlayer.posY + distance, mc.thePlayer.posZ);
-                ChatUtil.sendFormatted(String.format("%sClipped (%s blocks)", Myau.clientName, df.format(distance)));
+                ChatUtil.sendFormatted(String.format("%sClipped (%s blocks)", Kaguya.clientName, df.format(distance)));
             }
             return;
         }
         ChatUtil.sendFormatted(
-                String.format("%sUsage: .%s <&odistance&r>&r", Myau.clientName, args.get(0).toLowerCase(Locale.ROOT))
+                String.format("%sUsage: .%s <&odistance&r>&r", Kaguya.clientName, args.get(0).toLowerCase(Locale.ROOT))
         );
     }
 }

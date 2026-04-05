@@ -23,11 +23,7 @@ public class Denick extends Module {
 
     private final ConcurrentHashMap<UUID, String> realNameCache = new ConcurrentHashMap<>();
     private final Set<UUID> pendingRequests = ConcurrentHashMap.newKeySet();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
-        Thread t = new Thread(r, "Denick-Lookup");
-        t.setDaemon(true);
-        return t;
-    });
+    private ExecutorService executor;
 
     public Denick() {
         super("Denick", false);
@@ -44,7 +40,22 @@ public class Denick extends Module {
     }
 
     @Override
+    public void onEnabled() {
+        executor = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "Denick-Lookup");
+            t.setDaemon(true);
+            return t;
+        });
+        realNameCache.clear();
+        pendingRequests.clear();
+    }
+
+    @Override
     public void onDisabled() {
+        if (executor != null) {
+            executor.shutdownNow();
+            executor = null;
+        }
         realNameCache.clear();
         pendingRequests.clear();
     }
@@ -60,8 +71,10 @@ public class Denick extends Module {
             if (uuid == null) continue;
             if (realNameCache.containsKey(uuid) || pendingRequests.contains(uuid)) continue;
 
+            ExecutorService localExecutor = executor;
+            if (localExecutor == null) continue;
             pendingRequests.add(uuid);
-            executor.submit(() -> fetchRealName(uuid));
+            localExecutor.submit(() -> fetchRealName(uuid));
         }
     }
 

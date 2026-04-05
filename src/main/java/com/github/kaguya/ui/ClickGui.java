@@ -100,6 +100,7 @@ public class ClickGui extends GuiScreen {
         miscModules.add(Kaguya.moduleManager.getModule(Spammer.class));
         miscModules.add(Kaguya.moduleManager.getModule(BedNuker.class));
         miscModules.add(Kaguya.moduleManager.getModule(BedTracker.class));
+        miscModules.add(Kaguya.moduleManager.getModule(Denick.class));
         miscModules.add(Kaguya.moduleManager.getModule(LightningTracker.class));
         miscModules.add(Kaguya.moduleManager.getModule(NoRotate.class));
         miscModules.add(Kaguya.moduleManager.getModule(NickHider.class));

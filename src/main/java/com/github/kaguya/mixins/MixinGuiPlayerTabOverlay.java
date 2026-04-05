@@ -50,14 +50,12 @@ public abstract class MixinGuiPlayerTabOverlay {
             Denick denick = (Denick) Kaguya.moduleManager.modules.get(Denick.class);
             if (denick != null && denick.isEnabled()) {
                 UUID uuid = networkPlayerInfo.getGameProfile().getId();
-                if (uuid != null) {
-                    String realName = denick.getRealName(uuid);
-                    if (realName != null) {
-                        String currentName = networkPlayerInfo.getGameProfile().getName();
-                        if (!realName.equalsIgnoreCase(currentName)) {
-                            String original = cir.getReturnValue();
-                            cir.setReturnValue(original + " §7(" + realName + ")");
-                        }
+                String realName = denick.getRealName(uuid);
+                if (realName != null) {
+                    String currentName = networkPlayerInfo.getGameProfile().getName();
+                    if (!realName.equalsIgnoreCase(currentName)) {
+                        String original = cir.getReturnValue();
+                        cir.setReturnValue(original + " §7(" + realName + ")");
                     }
                 }
             }

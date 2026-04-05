@@ -109,6 +109,7 @@ public class ClickGui extends GuiScreen {
         miscModules.add(Kaguya.moduleManager.getModule(AutoAnduril.class));
         miscModules.add(Kaguya.moduleManager.getModule(ChatCopy.class));
         miscModules.add(Kaguya.moduleManager.getModule(InventoryClicker.class));
+        miscModules.add(Kaguya.moduleManager.getModule(DiscordRichPresence.class));
 
         Comparator<Module> comparator = Comparator.comparing(m -> m.getName().toLowerCase());
         combatModules.sort(comparator);

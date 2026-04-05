@@ -168,7 +168,11 @@ public class NameTags extends Module {
                                     }
                                 }
                         }
-                        String color = ChatColors.formatColor(String.format("%s&f%s&r%s", distanceText, teamName, healText));
+                        String friendPrefix = "";
+                        if (entity instanceof EntityPlayer && TeamUtil.isFriend((EntityPlayer) entity)) {
+                            friendPrefix = "&b[FRIEND] ";
+                        }
+                        String color = ChatColors.formatColor(String.format("%s%s&f%s&r%s", distanceText, friendPrefix, teamName, healText));
                         int width = mc.fontRendererObj.getStringWidth(color);
                         boolean showHead = this.head.getValue() && entity instanceof EntityPlayer;
                         int headSize = mc.fontRendererObj.FONT_HEIGHT;

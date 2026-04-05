@@ -73,6 +73,7 @@ public class Kaguya {
         moduleManager.modules.put(BedESP.class, new BedESP());
         moduleManager.modules.put(BedTracker.class, new BedTracker());
         moduleManager.modules.put(Blink.class, new Blink());
+        moduleManager.modules.put(Cape.class, new Cape());
         moduleManager.modules.put(Chams.class, new Chams());
         moduleManager.modules.put(ChatCopy.class, new ChatCopy());
         moduleManager.modules.put(ClientHUD.class, new ClientHUD());
@@ -125,7 +126,7 @@ public class Kaguya {
         moduleManager.modules.put(Tracers.class, new Tracers());
         moduleManager.modules.put(Trajectories.class, new Trajectories());
         moduleManager.modules.put(Velocity.class, new Velocity());
-        moduleManager.modules.put(ViewClip.class, new ViewClip());
+        moduleManager.modules.put(Camera.class, new Camera());
         moduleManager.modules.put(Wtap.class, new Wtap());
         moduleManager.modules.put(Xray.class, new Xray());
         commandManager.commands.add(new BindCommand());

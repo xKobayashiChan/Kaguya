@@ -1,5 +1,6 @@
 package com.github.kaguya.module.modules;
 
+import com.github.kaguya.auth.AuthManager;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.events.Render2DEvent;
 import com.github.kaguya.module.Module;
@@ -25,13 +26,17 @@ public class ClientHUD extends Module {
         }
 
         String brandText = "Kaguya Client";
-        String buildText = "Build - " + BUILD_DATE + " - User";
+        String userName = AuthManager.isAuthenticated() ? AuthManager.getCurrentUserId() : "User";
+        String buildPrefix = "Build - " + BUILD_DATE + " - ";
+        String buildText = buildPrefix + userName;
         ScaledResolution resolution = new ScaledResolution(mc);
 
         mc.fontRendererObj.drawStringWithShadow(brandText, 4.0f, 4.0f, 0xFFFFFFFF);
         float buildX = resolution.getScaledWidth() - mc.fontRendererObj.getStringWidth(buildText) - 4.0f;
         float buildY = resolution.getScaledHeight() - mc.fontRendererObj.FONT_HEIGHT - 4.0f;
-        mc.fontRendererObj.drawStringWithShadow(buildText, buildX, buildY, 0xFFFFFFFF);
+        mc.fontRendererObj.drawStringWithShadow(buildPrefix, buildX, buildY, 0xFFFFFFFF);
+        float userX = buildX + mc.fontRendererObj.getStringWidth(buildPrefix);
+        mc.fontRendererObj.drawStringWithShadow(userName, userX, buildY, 0xFFAA00AA);
     }
 
     private static String loadBuildDate() {

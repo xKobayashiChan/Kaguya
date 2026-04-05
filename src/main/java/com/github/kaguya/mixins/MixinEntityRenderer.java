@@ -7,7 +7,6 @@ import com.github.kaguya.events.PickEvent;
 import com.github.kaguya.events.RaytraceEvent;
 import com.github.kaguya.events.Render3DEvent;
 import com.github.kaguya.module.modules.*;
-import com.github.kaguya.module.modules.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -40,8 +39,6 @@ public abstract class MixinEntityRenderer {
     private Box<Integer> useCount = null;
     @Shadow
     private Minecraft mc;
-    @Shadow
-    private float thirdPersonDistance;
 
     @Inject(
             method = {"updateCameraAndRender"},
@@ -208,6 +205,7 @@ public abstract class MixinEntityRenderer {
         }
     }
 
+
     @Redirect(
             method = {"orientCamera"},
             at = @At(
@@ -219,7 +217,8 @@ public abstract class MixinEntityRenderer {
         if (Kaguya.moduleManager == null) {
             return vec31.distanceTo(vec32);
         } else {
-            return Kaguya.moduleManager.modules.get(ViewClip.class).isEnabled() ? (double) this.thirdPersonDistance : vec31.distanceTo(vec32);
+            Camera camera = (Camera) Kaguya.moduleManager.modules.get(Camera.class);
+            return camera.isEnabled() ? (double) camera.distance.getValue() : vec31.distanceTo(vec32);
         }
     }
 
@@ -234,7 +233,7 @@ public abstract class MixinEntityRenderer {
         if (Kaguya.moduleManager == null) {
             return block.getMaterial();
         } else {
-            return Kaguya.moduleManager.modules.get(ViewClip.class).isEnabled() ? Material.air : block.getMaterial();
+            return Kaguya.moduleManager.modules.get(Camera.class).isEnabled() ? Material.air : block.getMaterial();
         }
     }
 

@@ -55,6 +55,7 @@
       "getBlockLayer": "Lnet/minecraft/block/BlockBush;func_180664_k()Lnet/minecraft/util/EnumWorldBlockLayer;"
     },
     "com/github/kaguya/mixins/IAccessorEntityRenderer": {
+      "thirdPersonDistance": "field_78490_B:F",
       "setupCameraTransform": "func_78479_a(FI)V"
     },
     "com/github/kaguya/mixins/MixinEntityLivingBase": {
@@ -123,6 +124,9 @@
       "blockHitDelay": "field_78781_i:I",
       "syncCurrentPlayItem": "func_78750_j()V"
     },
+    "com/github/kaguya/mixins/MixinGuiPlayerTabOverlay": {
+      "getPlayerName": "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;func_175243_a(Lnet/minecraft/client/network/NetworkPlayerInfo;)Ljava/lang/String;"
+    },
     "com/github/kaguya/mixins/MixinNetworkManager": {
       "sendPacket(Lnet/minecraft/network/Packet;)V": "Lnet/minecraft/network/NetworkManager;func_179290_a(Lnet/minecraft/network/Packet;)V",
       "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;[Lio/netty/util/concurrent/GenericFutureListener;)V": "Lnet/minecraft/network/NetworkManager;func_179288_a(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;[Lio/netty/util/concurrent/GenericFutureListener;)V",
@@ -161,7 +165,8 @@
     },
     "com/github/kaguya/mixins/MixinAbstractClientPlayer": {
       "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;getAttributeValue()D": "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;func_111126_e()D",
-      "getFovModifier": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_175156_o()F"
+      "getFovModifier": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_175156_o()F",
+      "getLocationCape": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_110303_q()Lnet/minecraft/util/ResourceLocation;"
     },
     "com/github/kaguya/mixins/MixinRendererLivingEntity": {
       "canRenderName(Lnet/minecraft/entity/EntityLivingBase;)Z": "Lnet/minecraft/client/renderer/entity/RendererLivingEntity;func_177070_b(Lnet/minecraft/entity/EntityLivingBase;)Z",
@@ -249,6 +254,7 @@
         "getBlockLayer": "Lafm;m()Ladf;"
       },
       "com/github/kaguya/mixins/IAccessorEntityRenderer": {
+        "thirdPersonDistance": "q:F",
         "setupCameraTransform": "a(FI)V"
       },
       "com/github/kaguya/mixins/MixinEntityLivingBase": {
@@ -317,6 +323,9 @@
         "blockHitDelay": "g:I",
         "syncCurrentPlayItem": "n()V"
       },
+      "com/github/kaguya/mixins/MixinGuiPlayerTabOverlay": {
+        "getPlayerName": "Lawh;a(Lbdc;)Ljava/lang/String;"
+      },
       "com/github/kaguya/mixins/MixinNetworkManager": {
         "sendPacket(Lnet/minecraft/network/Packet;)V": "Lek;a(Lff;)V",
         "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;[Lio/netty/util/concurrent/GenericFutureListener;)V": "Lek;a(Lff;Lio/netty/util/concurrent/GenericFutureListener;[Lio/netty/util/concurrent/GenericFutureListener;)V",
@@ -355,7 +364,8 @@
       },
       "com/github/kaguya/mixins/MixinAbstractClientPlayer": {
         "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;getAttributeValue()D": "Lqc;e()D",
-        "getFovModifier": "Lbet;o()F"
+        "getFovModifier": "Lbet;o()F",
+        "getLocationCape": "Lbet;k()Ljy;"
       },
       "com/github/kaguya/mixins/MixinRendererLivingEntity": {
         "canRenderName(Lnet/minecraft/entity/EntityLivingBase;)Z": "Lbjl;a(Lpr;)Z",
@@ -442,6 +452,7 @@
         "getBlockLayer": "Lnet/minecraft/block/BlockBush;func_180664_k()Lnet/minecraft/util/EnumWorldBlockLayer;"
       },
       "com/github/kaguya/mixins/IAccessorEntityRenderer": {
+        "thirdPersonDistance": "field_78490_B:F",
         "setupCameraTransform": "func_78479_a(FI)V"
       },
       "com/github/kaguya/mixins/MixinEntityLivingBase": {
@@ -510,6 +521,9 @@
         "blockHitDelay": "field_78781_i:I",
         "syncCurrentPlayItem": "func_78750_j()V"
       },
+      "com/github/kaguya/mixins/MixinGuiPlayerTabOverlay": {
+        "getPlayerName": "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;func_175243_a(Lnet/minecraft/client/network/NetworkPlayerInfo;)Ljava/lang/String;"
+      },
       "com/github/kaguya/mixins/MixinNetworkManager": {
         "sendPacket(Lnet/minecraft/network/Packet;)V": "Lnet/minecraft/network/NetworkManager;func_179290_a(Lnet/minecraft/network/Packet;)V",
         "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;[Lio/netty/util/concurrent/GenericFutureListener;)V": "Lnet/minecraft/network/NetworkManager;func_179288_a(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;[Lio/netty/util/concurrent/GenericFutureListener;)V",
@@ -548,7 +562,8 @@
       },
       "com/github/kaguya/mixins/MixinAbstractClientPlayer": {
         "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;getAttributeValue()D": "Lnet/minecraft/entity/ai/attributes/IAttributeInstance;func_111126_e()D",
-        "getFovModifier": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_175156_o()F"
+        "getFovModifier": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_175156_o()F",
+        "getLocationCape": "Lnet/minecraft/client/entity/AbstractClientPlayer;func_110303_q()Lnet/minecraft/util/ResourceLocation;"
       },
       "com/github/kaguya/mixins/MixinRendererLivingEntity": {
         "canRenderName(Lnet/minecraft/entity/EntityLivingBase;)Z": "Lnet/minecraft/client/renderer/entity/RendererLivingEntity;func_177070_b(Lnet/minecraft/entity/EntityLivingBase;)Z",

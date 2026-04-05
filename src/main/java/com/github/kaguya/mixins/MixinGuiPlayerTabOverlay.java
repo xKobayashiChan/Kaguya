@@ -1,6 +1,7 @@
 package com.github.kaguya.mixins;
 
 import com.github.kaguya.Kaguya;
+import com.github.kaguya.auth.AuthManager;
 import com.github.kaguya.enums.ChatColors;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -23,11 +24,23 @@ public abstract class MixinGuiPlayerTabOverlay {
     private void getPlayerName(NetworkPlayerInfo networkPlayerInfo, CallbackInfoReturnable<String> cir) {
         if (Kaguya.friendManager != null) {
             String name = networkPlayerInfo.getGameProfile().getName();
+            String original = cir.getReturnValue();
+
+            // フレンド表示
             if (Kaguya.friendManager.isFriend(name)) {
-                String original = cir.getReturnValue();
                 String prefix = ChatColors.formatColor("&b[FRIEND] &r");
-                cir.setReturnValue(prefix + original);
+                original = prefix + original;
             }
+
+            // KaguyaユーザーならIDを紫色で表示（自分含む全員）
+            if (AuthManager.isAuthenticated()) {
+                String kaguyaId = AuthManager.getUserIdByMcName(name);
+                if (kaguyaId != null) {
+                    original = original + ChatColors.formatColor(" &5- " + kaguyaId);
+                }
+            }
+
+            cir.setReturnValue(original);
         }
     }
 }

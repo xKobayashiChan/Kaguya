@@ -1,6 +1,7 @@
 package com.github.kaguya.module;
 
 import com.github.kaguya.Kaguya;
+import com.github.kaguya.auth.AuthManager;
 import com.github.kaguya.module.modules.HUD;
 import com.github.kaguya.util.KeyBindUtil;
 
@@ -46,6 +47,10 @@ public abstract class Module {
     }
 
     public void setEnabled(boolean enabled) {
+        // 認証されていない場合、モジュールの有効化をブロック
+        if (enabled && !AuthManager.isAuthenticated()) {
+            return;
+        }
         if (this.enabled != enabled) {
             this.enabled = enabled;
             if (enabled) {

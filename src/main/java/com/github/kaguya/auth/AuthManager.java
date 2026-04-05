@@ -8,6 +8,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Firebase Realtime Database を使った認証マネージャー。
@@ -40,13 +42,19 @@ import java.nio.charset.StandardCharsets;
 public class AuthManager {
 
     // ========== ★ ここを自分のFirebaseプロジェクトに書き換えてください ★ ==========
-    private static final String FIREBASE_URL = "https://YOUR-PROJECT-ID.firebaseio.com";
-    private static final String FIREBASE_SECRET = "YOUR-DATABASE-SECRET";
+    private static final String FIREBASE_URL = "https://kaguya-auth-default-rtdb.firebaseio.com";
+    private static final String FIREBASE_SECRET = "x4oa1n8gabAWUBj3VUCw8C3xnfxSFquxux7WDuyg";
     // ===========================================================================
 
     private static boolean authenticated = false;
     private static String currentUserId = null;
     private static String statusMessage = "";
+
+    // MC名 → KaguyaユーザーID のマッピング（全ユーザー分）
+    private static final ConcurrentHashMap<String, String> mcNameToUserId = new ConcurrentHashMap<>();
+    private static long lastFetchTime = 0;
+    private static final long FETCH_INTERVAL = 60_000; // 60秒ごとに更新
+    private static String lastSavedMcName = ""; // 前回Firebaseに保存したMC名
 
     /**
      * 認証済みかどうか
@@ -128,6 +136,20 @@ public class AuthManager {
 
             authenticated = true;
             currentUserId = userId;
+
+            // MC名をFirebaseに保存（別スレッドで）
+            new Thread(() -> {
+                try {
+                    net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
+                    if (mc.getSession() != null) {
+                        String mcName = mc.getSession().getUsername();
+                        updateMcName(userId, mcName);
+                    }
+                } catch (Exception ignored) {}
+                // ユーザー一覧を取得
+                fetchAllUsers();
+            }, "KaguyaMcName").start();
+
             return true;
 
         } catch (Exception e) {
@@ -144,6 +166,76 @@ public class AuthManager {
         authenticated = false;
         currentUserId = null;
         statusMessage = "";
+        mcNameToUserId.clear();
+    }
+
+    /**
+     * MC名からKaguyaユーザーIDを取得する。
+     * 該当なしならnullを返す。
+     */
+    public static String getUserIdByMcName(String mcName) {
+        // キャッシュが古ければバックグラウンドで更新
+        if (authenticated && System.currentTimeMillis() - lastFetchTime > FETCH_INTERVAL) {
+            new Thread(AuthManager::fetchAllUsers, "KaguyaFetch").start();
+        }
+        return mcNameToUserId.get(mcName);
+    }
+
+    /**
+     * Firebaseから全ユーザーを取得して mcName → userId マッピングを更新する。
+     * MC名が変わっていたらFirebaseも自動更新する。
+     */
+    private static void fetchAllUsers() {
+        try {
+            // MC名が変わっていたらFirebaseを更新（アカウントスイッチャー対応）
+            if (authenticated && currentUserId != null) {
+                try {
+                    net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
+                    if (mc.getSession() != null) {
+                        String currentMcName = mc.getSession().getUsername();
+                        if (!currentMcName.equals(lastSavedMcName)) {
+                            updateMcName(currentUserId, currentMcName);
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            String url = String.format("%s/users.json?auth=%s", FIREBASE_URL, FIREBASE_SECRET);
+            String response = httpGet(url);
+            if (response == null || response.equals("null")) return;
+
+            JsonElement element = new JsonParser().parse(response);
+            if (!element.isJsonObject()) return;
+
+            JsonObject users = element.getAsJsonObject();
+            ConcurrentHashMap<String, String> newMap = new ConcurrentHashMap<>();
+            for (Map.Entry<String, JsonElement> entry : users.entrySet()) {
+                String userId = entry.getKey();
+                JsonElement val = entry.getValue();
+                if (val.isJsonObject()) {
+                    JsonObject user = val.getAsJsonObject();
+                    if (user.has("mcName") && !user.get("mcName").getAsString().isEmpty()) {
+                        newMap.put(user.get("mcName").getAsString(), userId);
+                    }
+                }
+            }
+            mcNameToUserId.clear();
+            mcNameToUserId.putAll(newMap);
+            lastFetchTime = System.currentTimeMillis();
+        } catch (Exception ignored) {}
+    }
+
+    /**
+     * MC名をFirebaseに保存する
+     */
+    private static void updateMcName(String userId, String mcName) {
+        try {
+            JsonObject mcUpdate = new JsonObject();
+            mcUpdate.addProperty("mcName", mcName);
+            String mcUrl = String.format("%s/users/%s.json?auth=%s", FIREBASE_URL, userId, FIREBASE_SECRET);
+            httpPatch(mcUrl, mcUpdate.toString());
+            lastSavedMcName = mcName;
+        } catch (Exception ignored) {}
     }
 
     // ==================== HTTP ユーティリティ ====================

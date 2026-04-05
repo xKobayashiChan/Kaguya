@@ -37,6 +37,9 @@ public class Denick extends Module {
      * キャッシュから本名を取得する。未取得の場合はnullを返す。
      */
     public String getRealName(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
         return realNameCache.get(uuid);
     }
 

@@ -21,7 +21,7 @@ public abstract class MixinGuiPlayerTabOverlay {
             at = {@At("RETURN")},
             cancellable = true
     )
-    private void getPlayerName(NetworkPlayerInfo networkPlayerInfo, CallbackInfoReturnable<String> cir) {
+    private void onGetPlayerName(NetworkPlayerInfo networkPlayerInfo, CallbackInfoReturnable<String> cir) {
         if (Kaguya.friendManager != null) {
             String name = networkPlayerInfo.getGameProfile().getName();
             String original = cir.getReturnValue();

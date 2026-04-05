@@ -7,7 +7,6 @@ import com.github.kaguya.events.PickEvent;
 import com.github.kaguya.events.RaytraceEvent;
 import com.github.kaguya.events.Render3DEvent;
 import com.github.kaguya.module.modules.*;
-import com.github.kaguya.module.modules.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;

@@ -36,8 +36,21 @@ public abstract class MixinGuiPlayerTabOverlay {
             }
 
             // KaguyaユーザーならIDを紫色で表示（自分含む全員）
+            // nick中でも Denick で解決した本名から照合する
             if (AuthManager.isAuthenticated()) {
                 String kaguyaId = AuthManager.getUserIdByMcName(name);
+
+                if (kaguyaId == null && Kaguya.moduleManager != null) {
+                    Denick denick = (Denick) Kaguya.moduleManager.modules.get(Denick.class);
+                    if (denick != null && denick.isEnabled()) {
+                        UUID uuid = networkPlayerInfo.getGameProfile().getId();
+                        String realName = denick.getRealName(uuid);
+                        if (realName != null && !realName.equals(name)) {
+                            kaguyaId = AuthManager.getUserIdByMcName(realName);
+                        }
+                    }
+                }
+
                 if (kaguyaId != null) {
                     original = original + ChatColors.formatColor(" &5- " + kaguyaId);
                 }

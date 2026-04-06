@@ -4,12 +4,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
 import java.io.IOException;
 
 /**
  * ログイン画面。
- * mod起動時に表示され、認証が完了するまでメインメニューに進めない。
+ * 起動時にHWID自動ログインを試みる。
+ * 自動ログイン失敗時のみユーザーID・パスワード入力欄を表示する。
  */
 public class GuiLogin extends GuiScreen {
 
@@ -18,6 +18,7 @@ public class GuiLogin extends GuiScreen {
     private GuiButton loginButton;
     private String status = "";
     private boolean loggingIn = false;
+    private boolean autoLoginDone = false;
 
     @Override
     public void initGui() {
@@ -26,19 +27,34 @@ public class GuiLogin extends GuiScreen {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
-        // ユーザーID入力
         userIdField = new GuiTextField(0, this.fontRendererObj, centerX - 100, centerY - 30, 200, 20);
         userIdField.setMaxStringLength(64);
-        userIdField.setFocused(true);
 
-        // パスワード入力
         passwordField = new PasswordTextField(1, this.fontRendererObj, centerX - 100, centerY + 5, 200, 20);
         passwordField.setMaxStringLength(128);
 
-        // ボタン
         this.buttonList.clear();
         loginButton = new GuiButton(0, centerX - 100, centerY + 40, 200, 20, "Login");
         this.buttonList.add(loginButton);
+
+        setInputEnabled(false);
+        status = "\u00a7eConnecting...";
+
+        // HWID自動ログインを別スレッドで試行
+        new Thread(() -> {
+            boolean success = AuthManager.autoLogin();
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                autoLoginDone = true;
+                if (success) {
+                    Minecraft.getMinecraft().displayGuiScreen(null);
+                } else {
+                    // 自動ログイン失敗 → 入力欄を有効化
+                    status = "";
+                    setInputEnabled(true);
+                    userIdField.setFocused(true);
+                }
+            });
+        }, "KaguyaAutoLogin").start();
     }
 
     @Override
@@ -50,14 +66,11 @@ public class GuiLogin extends GuiScreen {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
-        if (userIdField.isFocused()) {
-            userIdField.textboxKeyTyped(typedChar, keyCode);
-        }
-        if (passwordField.isFocused()) {
-            passwordField.textboxKeyTyped(typedChar, keyCode);
-        }
+        if (!autoLoginDone) return;
 
-        // Tabキーでフォーカス切り替え
+        if (userIdField.isFocused()) userIdField.textboxKeyTyped(typedChar, keyCode);
+        if (passwordField.isFocused()) passwordField.textboxKeyTyped(typedChar, keyCode);
+
         if (keyCode == Keyboard.KEY_TAB) {
             if (userIdField.isFocused()) {
                 userIdField.setFocused(false);
@@ -68,13 +81,9 @@ public class GuiLogin extends GuiScreen {
             }
         }
 
-        // Enterキーでログイン
-        if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) {
-            if (!loggingIn) {
-                attemptLogin();
-            }
+        if ((keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) && !loggingIn) {
+            attemptLogin();
         }
-
         // ESCは無効（ログインを強制）
     }
 
@@ -85,32 +94,30 @@ public class GuiLogin extends GuiScreen {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        userIdField.mouseClicked(mouseX, mouseY, mouseButton);
-        passwordField.mouseClicked(mouseX, mouseY, mouseButton);
+        if (autoLoginDone) {
+            userIdField.mouseClicked(mouseX, mouseY, mouseButton);
+            passwordField.mouseClicked(mouseX, mouseY, mouseButton);
+        }
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
 
-        // タイトル
         drawCenteredString(fontRendererObj, "\u00a76\u00a7lKaguya Client", width / 2, height / 2 - 70, 0xFFFFFF);
         drawCenteredString(fontRendererObj, "\u00a77Authentication Required", width / 2, height / 2 - 55, 0xAAAAAA);
 
-        // ラベル
-        drawString(fontRendererObj, "User ID:", width / 2 - 100, height / 2 - 42, 0xBBBBBB);
-        drawString(fontRendererObj, "Password:", width / 2 - 100, height / 2 - 7, 0xBBBBBB);
+        if (autoLoginDone) {
+            drawString(fontRendererObj, "User ID:", width / 2 - 100, height / 2 - 42, 0xBBBBBB);
+            drawString(fontRendererObj, "Password:", width / 2 - 100, height / 2 - 7, 0xBBBBBB);
+            userIdField.drawTextBox();
+            passwordField.drawTextBox();
+        }
 
-        // テキストフィールド
-        userIdField.drawTextBox();
-        passwordField.drawTextBox();
-
-        // ステータスメッセージ
         if (!status.isEmpty()) {
             drawCenteredString(fontRendererObj, status, width / 2, height / 2 + 67, 0xFFFFFF);
         }
 
-        // HWID表示（デバッグ用、本番では消してもOK）
         String hwid = HWIDUtil.getHWID();
         drawString(fontRendererObj, "\u00a78HWID: " + hwid.substring(0, Math.min(16, hwid.length())) + "...", 2, height - 12, 0x555555);
 
@@ -128,6 +135,13 @@ public class GuiLogin extends GuiScreen {
         Keyboard.enableRepeatEvents(false);
     }
 
+    private void setInputEnabled(boolean enabled) {
+        userIdField.setEnabled(enabled);
+        passwordField.setEnabled(enabled);
+        loginButton.enabled = enabled;
+        loginButton.visible = enabled;
+    }
+
     private void attemptLogin() {
         String userId = userIdField.getText().trim();
         String password = passwordField.getText();
@@ -142,21 +156,18 @@ public class GuiLogin extends GuiScreen {
         }
 
         loggingIn = true;
-        loginButton.enabled = false;
+        setInputEnabled(false);
         status = "\u00a7eLogging in...";
 
-        // 別スレッドでFirebaseに通信（UIフリーズ防止）
         new Thread(() -> {
             boolean success = AuthManager.login(userId, password);
-            // メインスレッドに戻してUI更新
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 loggingIn = false;
-                loginButton.enabled = true;
                 status = AuthManager.getStatusMessage();
-
                 if (success) {
-                    // 認証成功 → メインメニューへ
                     Minecraft.getMinecraft().displayGuiScreen(null);
+                } else {
+                    setInputEnabled(true);
                 }
             });
         }, "KaguyaAuth").start();
@@ -174,29 +185,21 @@ public class GuiLogin extends GuiScreen {
 
         @Override
         public boolean textboxKeyTyped(char typedChar, int keyCode) {
-            // テキストの変更前の値を保存
             String before = super.getText();
             boolean result = super.textboxKeyTyped(typedChar, keyCode);
             String after = super.getText();
 
-            // 実際のテキストを追跡
             if (!before.equals(after)) {
-                // マスクされた文字列から実テキストを再構築
-                // GuiTextFieldの内部動作に合わせて実テキストを管理
                 int lenDiff = after.length() - before.length();
                 int cursor = getCursorPosition();
 
                 if (lenDiff > 0) {
-                    // 文字追加
                     String added = "";
-                    for (int i = 0; i < lenDiff; i++) {
-                        added += typedChar;
-                    }
+                    for (int i = 0; i < lenDiff; i++) added += typedChar;
                     actualText = actualText.substring(0, Math.min(cursor - lenDiff, actualText.length()))
                             + added
                             + actualText.substring(Math.min(cursor - lenDiff, actualText.length()));
                 } else if (lenDiff < 0) {
-                    // 文字削除
                     int deleteStart = Math.max(0, cursor);
                     int deleteEnd = Math.min(deleteStart - lenDiff, actualText.length());
                     if (deleteStart <= actualText.length() && deleteEnd <= actualText.length()) {
@@ -204,7 +207,6 @@ public class GuiLogin extends GuiScreen {
                     }
                 }
 
-                // マスク文字で表示を上書き
                 String masked = repeatChar('*', after.length());
                 int savedCursor = getCursorPosition();
                 super.setText(masked);
@@ -227,11 +229,8 @@ public class GuiLogin extends GuiScreen {
 
         private static String repeatChar(char c, int count) {
             StringBuilder sb = new StringBuilder(count);
-            for (int i = 0; i < count; i++) {
-                sb.append(c);
-            }
+            for (int i = 0; i < count; i++) sb.append(c);
             return sb.toString();
         }
     }
 }
-

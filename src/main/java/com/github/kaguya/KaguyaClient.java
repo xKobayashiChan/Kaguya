@@ -5,9 +5,9 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
 @Mod(modid = KaguyaClient.MODID, name = KaguyaClient.NAME, version = KaguyaClient.VERSION)
 public class KaguyaClient {
-    public static final String MODID = "Kaguya";
+    public static final String MODID = "kaguya";
     public static final String NAME = "Kaguya Client";
-    public static final String VERSION = "v1.3.0";
+    public static final String VERSION = BuildConstants.VERSION;
 
     @Mod.Instance(MODID)
     private static KaguyaClient instance;

@@ -65,6 +65,7 @@ public class ClickGui extends GuiScreen {
         renderModules.add(Kaguya.moduleManager.getModule(Cape.class));
         renderModules.add(Kaguya.moduleManager.getModule(ESP.class));
         renderModules.add(Kaguya.moduleManager.getModule(Chams.class));
+        renderModules.add(Kaguya.moduleManager.getModule(FriendTransparency.class));
         renderModules.add(Kaguya.moduleManager.getModule(FullBright.class));
         renderModules.add(Kaguya.moduleManager.getModule(Tracers.class));
         renderModules.add(Kaguya.moduleManager.getModule(NameTags.class));

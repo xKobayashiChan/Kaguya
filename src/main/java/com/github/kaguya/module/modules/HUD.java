@@ -42,8 +42,8 @@ public class HUD extends Module {
     public final ColorProperty custom3 = new ColorProperty("custom-color-3", Color.WHITE.getRGB(), () -> this.colorMode.getValue() == 5);
     public final ModeProperty posX = new ModeProperty("position-x", 0, new String[]{"LEFT", "RIGHT"});
     public final ModeProperty posY = new ModeProperty("position-y", 0, new String[]{"TOP", "BOTTOM"});
-    public final IntProperty offsetX = new IntProperty("offset-x", 2, 0, 255);
-    public final IntProperty offsetY = new IntProperty("offset-y", 2, 0, 255);
+    public final IntProperty offsetX = new IntProperty("offset-x", 2, 0, 9999);
+    public final IntProperty offsetY = new IntProperty("offset-y", 2, 0, 9999);
     public final FloatProperty scale = new FloatProperty("scale", 1.0F, 0.5F, 1.5F);
     public final PercentProperty background = new PercentProperty("background", 25);
     public final BooleanProperty showBar = new BooleanProperty("bar", true);
@@ -335,8 +335,8 @@ public class HUD extends Module {
                         int deltaY = mouseY - this.dragStartMouseY;
                         int newOffsetX = this.dragStartOffsetX + (this.posX.getValue() == 1 ? -deltaX : deltaX);
                         int newOffsetY = this.dragStartOffsetY + (this.posY.getValue() == 1 ? -deltaY : deltaY);
-                        this.offsetX.setValue(Math.max(0, Math.min(255, newOffsetX)));
-                        this.offsetY.setValue(Math.max(0, Math.min(255, newOffsetY)));
+                        this.offsetX.setValue(Math.max(0, newOffsetX));
+                        this.offsetY.setValue(Math.max(0, newOffsetY));
                     }
                 } else {
                     this.isDragging = false;

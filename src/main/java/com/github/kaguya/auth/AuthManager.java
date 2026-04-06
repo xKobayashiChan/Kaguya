@@ -1,5 +1,6 @@
 package com.github.kaguya.auth;
 
+import com.github.kaguya.update.AutoUpdater;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -140,6 +141,7 @@ public class AuthManager {
                     }
                 } catch (Exception ignored) {}
                 fetchMcNames();
+                AutoUpdater.checkForUpdate();
             }, "KaguyaAuth-Post").start();
 
             return true;
@@ -237,6 +239,7 @@ public class AuthManager {
                     }
                 } catch (Exception ignored) {}
                 fetchMcNames();
+                AutoUpdater.checkForUpdate();
             }, "KaguyaAuth-Post").start();
 
             return true;

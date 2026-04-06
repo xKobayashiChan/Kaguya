@@ -3,6 +3,8 @@ package com.github.kaguya.event;
 import com.github.kaguya.event.events.Event;
 import com.github.kaguya.event.events.EventStoppable;
 import com.github.kaguya.event.types.Priority;
+import com.github.kaguya.module.Module;
+import com.github.kaguya.util.ChatUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -243,6 +245,16 @@ public final class EventManager {
             data.getTarget().invoke(data.getSource(), argument);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
+            Throwable cause = (e instanceof InvocationTargetException && e.getCause() != null) ? e.getCause() : e;
+            String source = data.getSource() instanceof Module
+                    ? ((Module) data.getSource()).getName()
+                    : data.getSource().getClass().getSimpleName();
+            ChatUtil.sendFormatted(String.format(
+                    "&7[&6Kaguya&7]&r &c[ERROR] %s &8(%s)&r: %s",
+                    source,
+                    cause.getClass().getSimpleName(),
+                    cause.getMessage() != null ? cause.getMessage() : "null"
+            ));
         }
     }
 

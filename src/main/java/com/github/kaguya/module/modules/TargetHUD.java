@@ -53,8 +53,8 @@ public class TargetHUD extends Module {
     private int dragStartOffY = 0;
     public final ModeProperty posX = new ModeProperty("position-x", 1, new String[]{"LEFT", "MIDDLE", "RIGHT"});
     public final ModeProperty posY = new ModeProperty("position-y", 1, new String[]{"TOP", "MIDDLE", "BOTTOM"});
-    public final IntProperty offX = new IntProperty("offset-x", 0, -255, 255);
-    public final IntProperty offY = new IntProperty("offset-y", 40, -255, 255);
+    public final IntProperty offX = new IntProperty("offset-x", 0, -9999, 9999);
+    public final IntProperty offY = new IntProperty("offset-y", 40, -9999, 9999);
     public final BooleanProperty entity = new BooleanProperty("entity", true);
     public final BooleanProperty outline = new BooleanProperty("outline", false);
     public final BooleanProperty animations = new BooleanProperty("animations", true);
@@ -239,8 +239,8 @@ public class TargetHUD extends Module {
                             int deltaY = mouseY - this.dragStartMouseY;
                             int newOffX = this.dragStartOffX + (this.posX.getValue() == 2 ? -deltaX : deltaX);
                             int newOffY = this.dragStartOffY + (this.posY.getValue() == 2 ? -deltaY : deltaY);
-                            this.offX.setValue(Math.max(-255, Math.min(255, newOffX)));
-                            this.offY.setValue(Math.max(-255, Math.min(255, newOffY)));
+                            this.offX.setValue(newOffX);
+                            this.offY.setValue(newOffY);
                         }
                     } else {
                         this.isDragging = false;

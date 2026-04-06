@@ -46,3 +46,4 @@ Desktop.ini
 # Local environment
 *.env
 local.properties
+src/main/resources/firebase.properties

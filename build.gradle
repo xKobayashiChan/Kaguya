@@ -18,7 +18,7 @@ apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: 'org.spongepowered.mixin'
 
 //TODO: Change the version, group, and archivesBaseName to your own.
-version = "v1.3.0" // The version number of your mod.
+version = "v1.4.5" // The version number of your mod.
 group = "com.example" // This is the group of the mod (usually domain or your name -> at.manuthebyte)
 archivesBaseName = "KaguyaClient" // This is the name of the jar that is generated.
 
@@ -51,7 +51,7 @@ def systemOs = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
  * compile -> library only available at compile time (not accessible at runtime)
  */
 dependencies {
-    shade('org.spongepowered:mixin:0.7.10-SNAPSHOT') {
+    shade('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
         exclude module: 'gson'
@@ -105,6 +105,28 @@ if (systemOs.contains("mac"))
 
 
 def buildDate = new Date().format('yyMMdd')
+
+// ビルド時に BuildConstants.java を自動生成（バージョンをJavaコードに埋め込む）
+def generatedSrcDir = file("$buildDir/generated/java")
+
+task generateBuildConstants {
+    outputs.dir generatedSrcDir
+    doFirst {
+        def f = new File(generatedSrcDir, "com/github/kaguya/BuildConstants.java")
+        f.parentFile.mkdirs()
+        f.text = """\
+package com.github.kaguya;
+
+public final class BuildConstants {
+    public static final String VERSION = "${project.version}";
+    private BuildConstants() {}
+}
+"""
+    }
+}
+
+compileJava.dependsOn generateBuildConstants
+sourceSets.main.java.srcDirs += generatedSrcDir
 
 processResources {
     inputs.property "version", project.version
@@ -190,6 +212,33 @@ task buildAndCopyToMods(type: Copy, dependsOn: 'build') {
     from "build/libs"
     into "<yourRealInstance>/.minecraft/mods"
     include "${archivesBaseName}*.jar"
+}
+
+// ==================== HWID Grabber ====================
+
+task compileHwidGrabber(type: JavaCompile) {
+    source = fileTree('hwid-grabber') { include '**/*.java' }
+    classpath = files()
+    destinationDir = file('build/hwid-grabber/classes')
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+    options.encoding = 'UTF-8'
+}
+
+task buildHwidGrabber(type: Jar, dependsOn: compileHwidGrabber) {
+    from 'build/hwid-grabber/classes'
+    archiveName = 'HwidGrabber.jar'
+    destinationDir = file('build/hwid-grabber')
+    manifest {
+        attributes 'Main-Class': 'HwidGrabber'
+    }
+    doLast {
+        // ダブルクリックで起動できる .bat も生成
+        def bat = file('build/hwid-grabber/HwidGrabber.bat')
+        bat.text = "@echo off\r\njavaw -jar \"%~dp0HwidGrabber.jar\"\r\n"
+        println ">>> build/hwid-grabber/HwidGrabber.jar"
+        println ">>> build/hwid-grabber/HwidGrabber.bat"
+    }
 }
 
 // run/mods 内の古い jar を削除するタスク

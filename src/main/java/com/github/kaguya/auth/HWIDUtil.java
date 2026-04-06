@@ -95,9 +95,17 @@ public class HWIDUtil {
     }
 
     /**
-     * パスワードをSHA-256でハッシュ化する
+     * パスワードをSHA-256でハッシュ化する（userIdをソルトとして使用）。
+     * 保存形式: SHA-256("{userId}:{password}")
      */
-    public static String hashPassword(String password) {
+    public static String hashPassword(String userId, String password) {
+        return sha256(userId + ":" + password);
+    }
+
+    /**
+     * 旧形式のパスワードハッシュ（ソルトなし）。移行処理用。
+     */
+    public static String hashPasswordLegacy(String password) {
         return sha256(password);
     }
 }

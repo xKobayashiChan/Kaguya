@@ -142,6 +142,7 @@ public class Kaguya {
         commandManager.commands.add(new ItemCommand());
         commandManager.commands.add(new ListCommand());
         commandManager.commands.add(new ModuleCommand());
+        commandManager.commands.add(new NickCommand());
         commandManager.commands.add(new PlayerCommand());
         commandManager.commands.add(new ShowCommand());
         commandManager.commands.add(new TargetCommand());

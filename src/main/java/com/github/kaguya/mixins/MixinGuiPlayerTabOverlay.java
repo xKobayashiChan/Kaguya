@@ -52,7 +52,8 @@ public abstract class MixinGuiPlayerTabOverlay {
                 }
 
                 if (kaguyaId != null) {
-                    original = original + ChatColors.formatColor(" &5- " + kaguyaId);
+                    // §d = 薄い紫、§8 = 濃い灰色
+                    original = ChatColors.formatColor("&d" + kaguyaId + " &8- &r") + original;
                 }
             }
 

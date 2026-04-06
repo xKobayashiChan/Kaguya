@@ -25,18 +25,33 @@ public class ClientHUD extends Module {
             return;
         }
 
-        String brandText = "Kaguya Client";
         String userName = AuthManager.isAuthenticated() ? AuthManager.getCurrentUserId() : "User";
-        String buildPrefix = "Build - " + BUILD_DATE + " - ";
-        String buildText = buildPrefix + userName;
         ScaledResolution resolution = new ScaledResolution(mc);
 
-        mc.fontRendererObj.drawStringWithShadow(brandText, 4.0f, 4.0f, 0xFFFFFFFF);
-        float buildX = resolution.getScaledWidth() - mc.fontRendererObj.getStringWidth(buildText) - 4.0f;
+        // 左上: クライアント名
+        mc.fontRendererObj.drawStringWithShadow("Kaguya Client", 4.0f, 4.0f, 0xFFFFFFFF);
+
+        // 右下: Build - <日付> - <ユーザーID>
+        String partBuild = "Build - ";
+        String partSep = " - ";
+        String fullText = partBuild + BUILD_DATE + partSep + userName;
         float buildY = resolution.getScaledHeight() - mc.fontRendererObj.FONT_HEIGHT - 4.0f;
-        mc.fontRendererObj.drawStringWithShadow(buildPrefix, buildX, buildY, 0xFFFFFFFF);
-        float userX = buildX + mc.fontRendererObj.getStringWidth(buildPrefix);
-        mc.fontRendererObj.drawStringWithShadow(userName, userX, buildY, 0xFFAA00AA);
+        float x = resolution.getScaledWidth() - mc.fontRendererObj.getStringWidth(fullText) - 4.0f;
+
+        // "Build - " 薄いグレー
+        mc.fontRendererObj.drawStringWithShadow(partBuild, x, buildY, 0xFFAAAAAA);
+        x += mc.fontRendererObj.getStringWidth(partBuild);
+
+        // ビルド日 真っ白
+        mc.fontRendererObj.drawStringWithShadow(BUILD_DATE, x, buildY, 0xFFFFFFFF);
+        x += mc.fontRendererObj.getStringWidth(BUILD_DATE);
+
+        // " - " 薄いグレー
+        mc.fontRendererObj.drawStringWithShadow(partSep, x, buildY, 0xFFAAAAAA);
+        x += mc.fontRendererObj.getStringWidth(partSep);
+
+        // ユーザーID 黄緑色
+        mc.fontRendererObj.drawStringWithShadow(userName, x, buildY, 0xFF55FF55);
     }
 
     private static String loadBuildDate() {

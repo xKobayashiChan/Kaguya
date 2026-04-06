@@ -206,12 +206,14 @@ public class TargetHUD extends Module {
                     boolean wasHideGUI = mc.gameSettings.hideGUI;
                     mc.gameSettings.hideGUI = true;
                     float entityFeetY = entityCenterY + scaledEntityHeight / 2.0F;
+                    GlStateManager.enableDepth();
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     GuiInventory.drawEntityOnScreen(
                             (int) entityCenterX, (int) entityFeetY, (int) entityRenderScale,
                             30.0F, -(float) (hudHeight / 2.0F),
                             this.target
                     );
+                    GlStateManager.disableDepth();
                     mc.gameSettings.hideGUI = wasHideGUI;
                 }
                 GlStateManager.disableBlend();

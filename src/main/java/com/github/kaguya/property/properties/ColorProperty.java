@@ -32,11 +32,12 @@ public class ColorProperty extends Property<Integer> {
 
     @Override
     public boolean read(JsonObject jsonObject) {
-        return this.parseString(jsonObject.get(this.getName()).getAsString().substring(0,6));
+        int rgb = Integer.parseInt(jsonObject.get(this.getName()).getAsString().substring(0, 6), 16);
+        return this.setValue(rgb | 0xFF000000);
     }
 
     @Override
     public void write(JsonObject jsonObject) {
-        jsonObject.addProperty(this.getName(), String.format("%06X", this.getValue()));
+        jsonObject.addProperty(this.getName(), String.format("%06X", this.getValue() & 0xFFFFFF));
     }
 }

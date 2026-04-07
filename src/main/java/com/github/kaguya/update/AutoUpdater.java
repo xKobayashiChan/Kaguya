@@ -135,14 +135,20 @@ public class AutoUpdater {
             File currentJar = new File(
                 AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().toURI()
             );
-            if (currentJar.exists() && currentJar.getName().endsWith(".jar")) {
-                File renamed = new File(currentJar.getParentFile(), currentJar.getName() + ".old");
-                currentJar.renameTo(renamed);
+            if (!currentJar.exists() || !currentJar.getName().endsWith(".jar")) return;
+
+            // まずリネームを試みる（非 Windows や unlocked な場合に有効）
+            File renamed = new File(currentJar.getParentFile(), currentJar.getName() + ".old");
+            boolean renameSuccess = currentJar.renameTo(renamed);
+
+            if (renameSuccess) {
+                // リネームできた .old ファイルも JVM 終了時に削除
+                renamed.deleteOnExit();
+            } else {
+                // Windows でロックされている場合: JVM 終了後に直接削除を予約
+                currentJar.deleteOnExit();
             }
-        } catch (Exception ignored) {
-            // Windows でファイルがロックされている場合は失敗するが無視
-            // 起動時クリーンアップで対応
-        }
+        } catch (Exception ignored) {}
     }
 
     private static HttpURLConnection openGitHubConnection(String url, String accept) throws IOException {

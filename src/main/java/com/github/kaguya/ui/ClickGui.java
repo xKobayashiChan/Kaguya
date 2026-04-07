@@ -77,6 +77,7 @@ public class ClickGui extends GuiScreen {
         renderModules.add(Kaguya.moduleManager.getModule(Camera.class));
         renderModules.add(Kaguya.moduleManager.getModule(NoHurtCam.class));
         renderModules.add(Kaguya.moduleManager.getModule(HUD.class));
+        renderModules.add(Kaguya.moduleManager.getModule(Health.class));
         renderModules.add(Kaguya.moduleManager.getModule(ClientHUD.class));
         renderModules.add(Kaguya.moduleManager.getModule(GuiModule.class));
         renderModules.add(Kaguya.moduleManager.getModule(ChestESP.class));

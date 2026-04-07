@@ -9,6 +9,8 @@ import com.github.kaguya.property.Property;
 import net.minecraft.client.Minecraft;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 public class Config {
@@ -50,7 +52,8 @@ public class Config {
                 parsed = new JsonParser().parse(reader);
             }
             if (parsed == null || !parsed.isJsonObject()) {
-                ChatUtil.sendFormatted(String.format("%sInvalid config format (&c&o%s&r)&r", Kaguya.clientName, file.getName()));
+                ChatUtil.sendFormatted(String.format("%sInvalid config format (&c&o%s&r). Recreating...&r", Kaguya.clientName, file.getName()));
+                save();
                 return;
             }
 
@@ -133,9 +136,15 @@ public class Config {
                 object.add(module.getName(), moduleObject);
             }
 
-            try (PrintWriter printWriter = new PrintWriter(new FileWriter(file))) {
+            // まず一時ファイルに書き込み、完了後にリネームする（アトミックセーブ）。
+            // FileWriter(file) を直接開くと即座にトランケートされるため、
+            // 書き込み途中で JVM が終了した場合に元ファイルが 0 バイトになる問題を防ぐ。
+            File tmpFile = new File(file.getParentFile(), file.getName() + ".tmp");
+            try (PrintWriter printWriter = new PrintWriter(new FileWriter(tmpFile))) {
                 printWriter.println(gson.toJson(object));
             }
+            Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
             ChatUtil.sendFormatted(String.format("%sConfig has been saved (&a&o%s&r)&r", Kaguya.clientName, file.getName()));
         } catch (IOException e) {
             ((IAccessorMinecraft) mc).getLogger().error("Error saving config: " + e.getMessage());

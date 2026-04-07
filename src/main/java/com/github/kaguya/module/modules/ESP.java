@@ -191,7 +191,14 @@ public class ESP extends Module {
                 if (player.ignoreFrustumCheck || RenderUtil.isInViewFrustum(player.getEntityBoundingBox(), 0.1F)) {
                     if (this.mode.getValue() == 2) {
                         Color color = this.getEntityColor(player);
-                        RenderUtil.drawEntityBoundingBox(player, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha(), 1.5F, 0.1F);
+                        if (TeamUtil.isFriend(player)) {
+                            // 枠: 濃い水色
+                            RenderUtil.drawEntityBoundingBox(player, 0, 170, 204, 255, 1.5F, 0.1F);
+                            // 塗りつぶし: 薄い水色（半透明）
+                            RenderUtil.drawEntityBoundingBoxFilled(player, 0, 210, 255, 45, 0.1F);
+                        } else {
+                            RenderUtil.drawEntityBoundingBox(player, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha(), 1.5F, 0.1F);
+                        }
                         GlStateManager.resetColor();
                     }
                     if (this.mode.getValue() == 4) {

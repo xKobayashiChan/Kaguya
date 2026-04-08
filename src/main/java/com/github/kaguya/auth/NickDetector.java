@@ -108,15 +108,24 @@ public class NickDetector {
             return;
         }
 
-        String displayName = data.getDisplayName().getUnformattedText();
         String realName = getRealName();
-        if (realName == null || displayName.equals(realName)) return;
+        if (realName == null) return;
 
-        // 表示名が本名と違う = nick中
-        if (!displayName.equals(AuthManager.getCurrentNick())) {
-            AuthManager.setNick(displayName);
+        // displayName はサーバー装飾("[1.8] Name (Vanilla)"等)が混入するため使わない。
+        // 代わりに既存のNetworkPlayerInfoからGameProfile名を取得する。
+        NetworkPlayerInfo info = mc.getNetHandler() != null
+                ? mc.getNetHandler().getPlayerInfo(data.getProfile().getId())
+                : null;
+        String nickName = (info != null && info.getGameProfile() != null)
+                ? info.getGameProfile().getName()
+                : null;
+
+        if (nickName == null || nickName.equals(realName)) return;
+
+        if (!nickName.equals(AuthManager.getCurrentNick())) {
+            AuthManager.setNick(nickName);
             ChatUtil.sendFormatted(
-                Kaguya.clientName + "&6Nick auto-detected: &b" + displayName + "&r (registered automatically)"
+                Kaguya.clientName + "&6Nick: &b" + nickName
             );
         }
     }
@@ -143,15 +152,14 @@ public class NickDetector {
                 if (info == null || info.getGameProfile() == null) continue;
                 if (!localUUID.equals(info.getGameProfile().getId())) continue;
 
-                if (info.getDisplayName() != null) {
-                    String displayName = info.getDisplayName().getUnformattedText();
-                    if (!displayName.isEmpty() && !displayName.equals(realName)) {
-                        AuthManager.setNick(displayName);
-                        ChatUtil.sendFormatted(
-                            Kaguya.clientName + "&6Nick auto-detected: &b" + displayName + "&r (registered automatically)"
-                        );
-                        return true;
-                    }
+                // displayName はサーバー装飾が混入するため、GameProfile名を使う
+                String profileName = info.getGameProfile().getName();
+                if (profileName != null && !profileName.isEmpty() && !profileName.equals(realName)) {
+                    AuthManager.setNick(profileName);
+                    ChatUtil.sendFormatted(
+                        Kaguya.clientName + "&6Nick: &b" + profileName
+                    );
+                    return true;
                 }
                 // UUID エントリはあるが displayName が本名と同じ = nick なし
                 return false;
@@ -164,7 +172,7 @@ public class NickDetector {
             if (entityName != null && !entityName.isEmpty() && !entityName.equals(realName)) {
                 AuthManager.setNick(entityName);
                 ChatUtil.sendFormatted(
-                    Kaguya.clientName + "&6Nick auto-detected: &b" + entityName + "&r (registered automatically)"
+                    Kaguya.clientName + "&6Nick: &b" + entityName
                 );
                 return true;
             }

@@ -2,6 +2,7 @@ package com.github.kaguya.ui;
 
 import com.github.kaguya.KaguyaClient;
 import com.github.kaguya.Kaguya;
+import com.github.kaguya.config.Config;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.module.modules.*;
 import com.github.kaguya.ui.components.CategoryComponent;
@@ -54,6 +55,11 @@ public class ClickGui extends GuiScreen {
     private double animListScroll = 0;
     private int    settScroll     = 0;
     private double animSettScroll = 0;
+
+    // Save button
+    private static final int BTN_W = 62;
+    private static final int BTN_H = 11;
+    private long saveFlashUntil = 0;
 
     public ClickGui() {
         instance = this;
@@ -235,6 +241,11 @@ public class ClickGui extends GuiScreen {
             handleScroll(wheel, mouseX, mouseY, px, contentY, contentH, settX);
         }
 
+        // save button (bottom-right of panel)
+        int btnX = px + PANEL_W - BTN_W - 4;
+        int btnY = py + PANEL_H - BTN_H - 4;
+        drawSaveButton(mouseX, mouseY, btnX, btnY);
+
         mc.fontRendererObj.drawStringWithShadow(
             "Kaguya " + KaguyaClient.VERSION,
             4, sh - 3 - mc.fontRendererObj.FONT_HEIGHT,
@@ -371,6 +382,23 @@ public class ClickGui extends GuiScreen {
     }
 
     // ---- scroll ----
+    private void drawSaveButton(int mouseX, int mouseY, int bx, int by) {
+        boolean flashing = System.currentTimeMillis() < saveFlashUntil;
+        boolean hovered  = mouseX >= bx && mouseX < bx + BTN_W && mouseY >= by && mouseY < by + BTN_H;
+        int bg = flashing ? new Color(80, 200, 80).getRGB()
+                          : (hovered ? C_TAB_HOVER : C_TAB_IDLE);
+        Gui.drawRect(bx, by, bx + BTN_W, by + BTN_H, bg);
+        // thin orange border
+        Gui.drawRect(bx, by, bx + BTN_W, by + 1, C_ORANGE);
+        Gui.drawRect(bx, by + BTN_H - 1, bx + BTN_W, by + BTN_H, C_ORANGE);
+        Gui.drawRect(bx, by, bx + 1, by + BTN_H, C_ORANGE);
+        Gui.drawRect(bx + BTN_W - 1, by, bx + BTN_W, by + BTN_H, C_ORANGE);
+        String label = flashing ? "Saved!" : "Save Config";
+        int lx = bx + BTN_W / 2 - mc.fontRendererObj.getStringWidth(label) / 2;
+        int ly = by + BTN_H / 2 - mc.fontRendererObj.FONT_HEIGHT / 2;
+        mc.fontRendererObj.drawStringWithShadow(label, lx, ly, C_WHITE);
+    }
+
     private void handleScroll(int wheel, int mouseX, int mouseY,
                                int px, int contentY, int contentH, int settX) {
         int amount = wheel > 0 ? -1 : 1; // -1 = scroll up
@@ -402,6 +430,15 @@ public class ClickGui extends GuiScreen {
         int sh = sr.getScaledHeight();
         int px = panelX(sw);
         int py = panelY(sh);
+
+        // save button
+        int btnX = px + PANEL_W - BTN_W - 4;
+        int btnY = py + PANEL_H - BTN_H - 4;
+        if (mouseButton == 0 && x >= btnX && x < btnX + BTN_W && y >= btnY && y < btnY + BTN_H) {
+            new Config(Config.lastConfig != null ? Config.lastConfig : "default", false).save();
+            saveFlashUntil = System.currentTimeMillis() + 800;
+            return;
+        }
 
         int contentY = py + TAB_H;
         int contentH = PANEL_H - TAB_H;

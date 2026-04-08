@@ -139,6 +139,7 @@ public class ClickGui extends GuiScreen {
         player.sort(byName);
 
         List<Module> misc = new ArrayList<>();
+        misc.add(Kaguya.moduleManager.getModule(AuthSync.class));
         misc.add(Kaguya.moduleManager.getModule(Spammer.class));
         misc.add(Kaguya.moduleManager.getModule(BedNuker.class));
         misc.add(Kaguya.moduleManager.getModule(BedTracker.class));

@@ -180,4 +180,39 @@ public class ModuleComponent implements Component {
     public boolean isVisible() {
         return true;
     }
+
+    public void drawSettings(java.util.concurrent.atomic.AtomicInteger offset) {
+        for (Component c : this.settings) {
+            if (c.isVisible()) {
+                c.draw(offset);
+                offset.incrementAndGet();
+            }
+        }
+    }
+
+    public int getSettingsHeight() {
+        int h = 0;
+        for (Component c : this.settings) {
+            if (c.isVisible()) h += c.getHeight();
+        }
+        return h;
+    }
+
+    public void mouseDownSettings(int x, int y, int button) {
+        for (Component c : this.settings) {
+            if (c.isVisible()) c.mouseDown(x, y, button);
+        }
+    }
+
+    public void mouseReleasedSettings(int x, int y, int button) {
+        for (Component c : this.settings) {
+            if (c.isVisible()) c.mouseReleased(x, y, button);
+        }
+    }
+
+    public void keyTypedSettings(char ch, int key) {
+        for (Component c : this.settings) {
+            if (c.isVisible()) c.keyTyped(ch, key);
+        }
+    }
 }

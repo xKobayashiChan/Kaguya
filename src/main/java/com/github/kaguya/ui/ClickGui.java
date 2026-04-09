@@ -3,6 +3,7 @@ package com.github.kaguya.ui;
 import com.github.kaguya.KaguyaClient;
 import com.github.kaguya.Kaguya;
 import com.github.kaguya.config.Config;
+import com.github.kaguya.util.KeyBindUtil;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.module.modules.*;
 import com.github.kaguya.ui.components.CategoryComponent;
@@ -307,10 +308,20 @@ public class ClickGui extends GuiScreen {
 
             mc.fontRendererObj.drawStringWithShadow(mod.mod.getName(), px + 5, iy + 3, enabled ? C_WHITE : C_DIM);
 
-            // orange dot when enabled
+            // dot固定位置、その左に<KEY>
+            int dotX = px + LIST_W - 8;
             if (enabled) {
-                Gui.drawRect(px + LIST_W - 8, iy + ITEM_H / 2 - 2,
-                             px + LIST_W - 4, iy + ITEM_H / 2 + 2, C_ORANGE);
+                Gui.drawRect(dotX, iy + ITEM_H / 2 - 2,
+                             dotX + 4, iy + ITEM_H / 2 + 2, C_ORANGE);
+            }
+
+            // bind key label: <KEY> ← dotの左
+            int key = mod.mod.getKey();
+            if (key != 0) {
+                String keyLabel = "<" + KeyBindUtil.getKeyName(key) + ">";
+                int keyW = mc.fontRendererObj.getStringWidth(keyLabel);
+                int keyX = dotX - 3 - keyW;
+                mc.fontRendererObj.drawStringWithShadow(keyLabel, keyX, iy + 3, C_WHITE);
             }
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);

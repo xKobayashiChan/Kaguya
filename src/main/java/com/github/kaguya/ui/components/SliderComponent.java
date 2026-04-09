@@ -36,11 +36,9 @@ public class SliderComponent implements Component {
 
     public void draw(AtomicInteger offset) {
         Gui.drawRect(this.parentModule.category.getX() + 4, this.parentModule.category.getY() + this.offsetY + 11, this.parentModule.category.getX() + 4 + this.parentModule.category.getWidth() - 8, this.parentModule.category.getY() + this.offsetY + 15, -12302777);
+        int trackWidth = this.parentModule.category.getWidth() - 8;
         int sliderStart = this.parentModule.category.getX() + 4;
-        int sliderEnd = this.parentModule.category.getX() + 4 + (int) this.sliderWidth;
-        if (sliderEnd - sliderStart > 84) {
-            sliderEnd = sliderStart + 84;
-        }
+        int sliderEnd = sliderStart + Math.min((int) this.sliderWidth, trackWidth);
         Gui.drawRect(sliderStart, this.parentModule.category.getY() + this.offsetY + 11, sliderEnd, this.parentModule.category.getY() + this.offsetY + 15, ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis(), offset.get()).getRGB());
         GL11.glPushMatrix();
         GL11.glScaled(0.5D, 0.5D, 0.5D);

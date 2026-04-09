@@ -37,6 +37,9 @@ public class ItemESP extends Module {
     public final BooleanProperty goldd = new BooleanProperty("gold", true);
     public final BooleanProperty iron = new BooleanProperty("iron", true);
     public final BooleanProperty potions = new BooleanProperty("potions", true);
+    public final BooleanProperty enderPearl = new BooleanProperty("ender-pearl", true);
+    public final BooleanProperty netherWart = new BooleanProperty("nether-wart", true);
+    public final BooleanProperty blazeRod = new BooleanProperty("blaze-rod", true);
 
     private boolean shouldHighlightItem(ItemStack stack) {
         int itemId = Item.getIdFromItem(stack.getItem());
@@ -44,7 +47,10 @@ public class ItemESP extends Module {
                 || this.emeralds.getValue() && this.isEmeraldItem(itemId)
                 || this.diamonds.getValue() && this.isDiamondItem(itemId)
                 || this.goldd.getValue() && this.isGoldItem(itemId)
-                || this.iron.getValue() && this.isIronItem(itemId);
+                || this.iron.getValue() && this.isIronItem(itemId)
+                || this.enderPearl.getValue() && Item.getItemById(itemId) == Items.ender_pearl
+                || this.netherWart.getValue() && Item.getItemById(itemId) == Items.nether_wart
+                || this.blazeRod.getValue() && Item.getItemById(itemId) == Items.blaze_rod;
     }
 
     private boolean isPotionItem(ItemStack stack) {

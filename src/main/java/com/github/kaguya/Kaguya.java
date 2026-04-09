@@ -62,6 +62,7 @@ public class Kaguya {
         EventManager.register(commandManager);
         nickDetector = new NickDetector();
         EventManager.register(nickDetector);
+        moduleManager.modules.put(AuthSync.class, new AuthSync());
         moduleManager.modules.put(AimAssist.class, new AimAssist());
         moduleManager.modules.put(AntiAFK.class, new AntiAFK());
         moduleManager.modules.put(AntiDebuff.class, new AntiDebuff());

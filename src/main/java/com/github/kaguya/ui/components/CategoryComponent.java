@@ -63,6 +63,10 @@ public class CategoryComponent {
         this.y = y;
     }
 
+    public void setWidth(int w) {
+        this.width = w;
+    }
+
     public void mousePressed(boolean d) {
         this.dragging = d;
     }

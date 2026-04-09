@@ -3,6 +3,7 @@ package com.github.kaguya.mixins;
 import com.github.kaguya.Kaguya;
 import com.github.kaguya.auth.AuthManager;
 import com.github.kaguya.enums.ChatColors;
+import com.github.kaguya.module.modules.AuthSync;
 import com.github.kaguya.module.modules.Denick;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -52,8 +53,13 @@ public abstract class MixinGuiPlayerTabOverlay {
                 }
 
                 if (kaguyaId != null) {
-                    // §d = 薄い紫、§8 = 濃い灰色
-                    original = ChatColors.formatColor("&d" + kaguyaId + " &8- &r") + original;
+                    AuthSync authSync = Kaguya.moduleManager != null
+                            ? (AuthSync) Kaguya.moduleManager.modules.get(AuthSync.class)
+                            : null;
+                    if (authSync != null && authSync.isEnabled()) {
+                        // §d = 薄い紫、§8 = 濃い灰色
+                        original = ChatColors.formatColor("&d" + kaguyaId + " &8- &r") + original;
+                    }
                 }
             }
 

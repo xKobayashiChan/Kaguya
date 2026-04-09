@@ -26,7 +26,7 @@ public class Health extends Module {
     private int dragStartX = 0;
     private int dragStartY = 0;
 
-    private static final Color HEART_COLOR = new Color(255, 120, 120);
+    private static final Color HEART_COLOR = new Color(255, 45, 45);
 
     public Health() {
         super("Health", false);

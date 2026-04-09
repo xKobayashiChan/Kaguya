@@ -1,327 +1,538 @@
 package com.github.kaguya.ui;
 
 import com.github.kaguya.KaguyaClient;
-import com.github.kaguya.module.modules.*;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.github.kaguya.Kaguya;
+import com.github.kaguya.config.Config;
+import com.github.kaguya.util.KeyBindUtil;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.module.modules.*;
 import com.github.kaguya.ui.components.CategoryComponent;
+import com.github.kaguya.ui.components.ModuleComponent;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClickGui extends GuiScreen {
+
     private static ClickGui instance;
-    private final File configFile = new File("./config/Myau/", "clickgui.txt");
-    private final ArrayList<CategoryComponent> categoryList;
+
+    // ---- Color palette (orange × nezumi-gray × white) ----
+    private static final int C_ORANGE      = new Color(230, 126,  34).getRGB();
+    private static final int C_OVERLAY     = new Color(  0,   0,   0, 120).getRGB();
+    private static final int C_PANEL       = new Color( 36,  36,  36, 250).getRGB();
+    private static final int C_LIST        = new Color( 28,  28,  28, 250).getRGB();
+    private static final int C_SETTINGS    = new Color( 42,  42,  42, 250).getRGB();
+    private static final int C_TAB_IDLE    = new Color( 52,  52,  52).getRGB();
+    private static final int C_TAB_HOVER   = new Color( 68,  68,  68).getRGB();
+    private static final int C_ITEM_SEL    = new Color( 58,  58,  58).getRGB();
+    private static final int C_ITEM_HOVER  = new Color( 48,  48,  48).getRGB();
+    private static final int C_DIVIDER     = new Color( 18,  18,  18).getRGB();
+    private static final int C_SEPARATOR   = new Color( 62,  62,  62).getRGB();
+    private static final int C_WHITE       = Color.WHITE.getRGB();
+    private static final int C_DIM         = new Color(140, 140, 140).getRGB();
+    private static final int C_SCROLLBAR   = new Color(255, 255, 255,  55).getRGB();
+
+    // ---- Layout ----
+    private static final int PANEL_W  = 340;
+    private static final int PANEL_H  = 210;
+    private static final int TAB_H    = 16;
+    private static final int LIST_W   = 110;
+    private static final int ITEM_H   = 14;
+    private static final int HEADER_H = 16;
+
+    // ---- State ----
+    private final ArrayList<CategoryComponent> categories;
+    private int selectedTab = 0;
+    private ModuleComponent selectedModule = null;
+
+    private int    listScroll     = 0;
+    private double animListScroll = 0;
+    private int    settScroll     = 0;
+    private double animSettScroll = 0;
+
+    // Save button
+    private static final int BTN_W = 62;
+    private static final int BTN_H = 11;
+    private long saveFlashUntil = 0;
 
     public ClickGui() {
         instance = this;
+        categories = new ArrayList<>();
+        buildCategories();
+    }
 
-        List<Module> combatModules = new ArrayList<>();
-        combatModules.add(Kaguya.moduleManager.getModule(AimAssist.class));
-        combatModules.add(Kaguya.moduleManager.getModule(AutoClicker.class));
-        combatModules.add(Kaguya.moduleManager.getModule(KillAura.class));
-        combatModules.add(Kaguya.moduleManager.getModule(Wtap.class));
-        combatModules.add(Kaguya.moduleManager.getModule(Velocity.class));
-        combatModules.add(Kaguya.moduleManager.getModule(Freeze.class));
-        combatModules.add(Kaguya.moduleManager.getModule(Reach.class));
-        combatModules.add(Kaguya.moduleManager.getModule(TargetStrafe.class));
-        combatModules.add(Kaguya.moduleManager.getModule(NoHitDelay.class));
-        combatModules.add(Kaguya.moduleManager.getModule(AntiFireball.class));
-        combatModules.add(Kaguya.moduleManager.getModule(LagRange.class));
-        combatModules.add(Kaguya.moduleManager.getModule(HitBox.class));
-        combatModules.add(Kaguya.moduleManager.getModule(MoreKB.class));
-        combatModules.add(Kaguya.moduleManager.getModule(Refill.class));
-        combatModules.add(Kaguya.moduleManager.getModule(HitSelect.class));
+    private void buildCategories() {
+        Comparator<Module> byName = Comparator.comparing(m -> m.getName().toLowerCase());
 
-        List<Module> movementModules = new ArrayList<>();
-        movementModules.add(Kaguya.moduleManager.getModule(AntiAFK.class));
-        movementModules.add(Kaguya.moduleManager.getModule(Fly.class));
-        movementModules.add(Kaguya.moduleManager.getModule(Speed.class));
-        movementModules.add(Kaguya.moduleManager.getModule(LongJump.class));
-        movementModules.add(Kaguya.moduleManager.getModule(Sprint.class));
-        movementModules.add(Kaguya.moduleManager.getModule(SafeWalk.class));
-        movementModules.add(Kaguya.moduleManager.getModule(Jesus.class));
-        movementModules.add(Kaguya.moduleManager.getModule(Blink.class));
-        movementModules.add(Kaguya.moduleManager.getModule(NoFall.class));
-        movementModules.add(Kaguya.moduleManager.getModule(NoSlow.class));
-        movementModules.add(Kaguya.moduleManager.getModule(KeepSprint.class));
-        movementModules.add(Kaguya.moduleManager.getModule(Eagle.class));
-        movementModules.add(Kaguya.moduleManager.getModule(NoJumpDelay.class));
-        movementModules.add(Kaguya.moduleManager.getModule(AntiVoid.class));
+        List<Module> combat = new ArrayList<>();
+        combat.add(Kaguya.moduleManager.getModule(AimAssist.class));
+        combat.add(Kaguya.moduleManager.getModule(AutoClicker.class));
+        combat.add(Kaguya.moduleManager.getModule(KillAura.class));
+        combat.add(Kaguya.moduleManager.getModule(Wtap.class));
+        combat.add(Kaguya.moduleManager.getModule(Velocity.class));
+        combat.add(Kaguya.moduleManager.getModule(Freeze.class));
+        combat.add(Kaguya.moduleManager.getModule(Reach.class));
+        combat.add(Kaguya.moduleManager.getModule(TargetStrafe.class));
+        combat.add(Kaguya.moduleManager.getModule(NoHitDelay.class));
+        combat.add(Kaguya.moduleManager.getModule(AntiFireball.class));
+        combat.add(Kaguya.moduleManager.getModule(LagRange.class));
+        combat.add(Kaguya.moduleManager.getModule(HitBox.class));
+        combat.add(Kaguya.moduleManager.getModule(MoreKB.class));
+        combat.add(Kaguya.moduleManager.getModule(Refill.class));
+        combat.add(Kaguya.moduleManager.getModule(HitSelect.class));
+        combat.sort(byName);
 
-        List<Module> renderModules = new ArrayList<>();
-        renderModules.add(Kaguya.moduleManager.getModule(Cape.class));
-        renderModules.add(Kaguya.moduleManager.getModule(ESP.class));
-        renderModules.add(Kaguya.moduleManager.getModule(Chams.class));
-        renderModules.add(Kaguya.moduleManager.getModule(FriendTransparency.class));
-        renderModules.add(Kaguya.moduleManager.getModule(FullBright.class));
-        renderModules.add(Kaguya.moduleManager.getModule(Tracers.class));
-        renderModules.add(Kaguya.moduleManager.getModule(NameTags.class));
-        renderModules.add(Kaguya.moduleManager.getModule(Xray.class));
-        renderModules.add(Kaguya.moduleManager.getModule(TargetHUD.class));
-        renderModules.add(Kaguya.moduleManager.getModule(Indicators.class));
-        renderModules.add(Kaguya.moduleManager.getModule(BedESP.class));
-        renderModules.add(Kaguya.moduleManager.getModule(ItemESP.class));
-        renderModules.add(Kaguya.moduleManager.getModule(Camera.class));
-        renderModules.add(Kaguya.moduleManager.getModule(NoHurtCam.class));
-        renderModules.add(Kaguya.moduleManager.getModule(HUD.class));
-        renderModules.add(Kaguya.moduleManager.getModule(Health.class));
-        renderModules.add(Kaguya.moduleManager.getModule(ClientHUD.class));
-        renderModules.add(Kaguya.moduleManager.getModule(GuiModule.class));
-        renderModules.add(Kaguya.moduleManager.getModule(ChestESP.class));
-        renderModules.add(Kaguya.moduleManager.getModule(Trajectories.class));
-        renderModules.add(Kaguya.moduleManager.getModule(Radar.class));
+        List<Module> movement = new ArrayList<>();
+        movement.add(Kaguya.moduleManager.getModule(AntiAFK.class));
+        movement.add(Kaguya.moduleManager.getModule(Fly.class));
+        movement.add(Kaguya.moduleManager.getModule(Speed.class));
+        movement.add(Kaguya.moduleManager.getModule(LongJump.class));
+        movement.add(Kaguya.moduleManager.getModule(Sprint.class));
+        movement.add(Kaguya.moduleManager.getModule(SafeWalk.class));
+        movement.add(Kaguya.moduleManager.getModule(Jesus.class));
+        movement.add(Kaguya.moduleManager.getModule(Blink.class));
+        movement.add(Kaguya.moduleManager.getModule(NoFall.class));
+        movement.add(Kaguya.moduleManager.getModule(NoSlow.class));
+        movement.add(Kaguya.moduleManager.getModule(KeepSprint.class));
+        movement.add(Kaguya.moduleManager.getModule(Eagle.class));
+        movement.add(Kaguya.moduleManager.getModule(NoJumpDelay.class));
+        movement.add(Kaguya.moduleManager.getModule(AntiVoid.class));
+        movement.sort(byName);
 
-        List<Module> playerModules = new ArrayList<>();
-        playerModules.add(Kaguya.moduleManager.getModule(AutoHeal.class));
-        playerModules.add(Kaguya.moduleManager.getModule(AutoTool.class));
-        playerModules.add(Kaguya.moduleManager.getModule(ChestStealer.class));
-        playerModules.add(Kaguya.moduleManager.getModule(InvManager.class));
-        playerModules.add(Kaguya.moduleManager.getModule(InvWalk.class));
-        playerModules.add(Kaguya.moduleManager.getModule(Scaffold.class));
-        playerModules.add(Kaguya.moduleManager.getModule(AutoBlockIn.class));
-        playerModules.add(Kaguya.moduleManager.getModule(SpeedMine.class));
-        playerModules.add(Kaguya.moduleManager.getModule(FastPlace.class));
-        playerModules.add(Kaguya.moduleManager.getModule(GhostHand.class));
-        playerModules.add(Kaguya.moduleManager.getModule(MCF.class));
-        playerModules.add(Kaguya.moduleManager.getModule(AntiDebuff.class));
+        List<Module> render = new ArrayList<>();
+        render.add(Kaguya.moduleManager.getModule(Cape.class));
+        render.add(Kaguya.moduleManager.getModule(ESP.class));
+        render.add(Kaguya.moduleManager.getModule(Chams.class));
+        render.add(Kaguya.moduleManager.getModule(FriendTransparency.class));
+        render.add(Kaguya.moduleManager.getModule(FullBright.class));
+        render.add(Kaguya.moduleManager.getModule(Tracers.class));
+        render.add(Kaguya.moduleManager.getModule(NameTags.class));
+        render.add(Kaguya.moduleManager.getModule(Xray.class));
+        render.add(Kaguya.moduleManager.getModule(TargetHUD.class));
+        render.add(Kaguya.moduleManager.getModule(Indicators.class));
+        render.add(Kaguya.moduleManager.getModule(BedESP.class));
+        render.add(Kaguya.moduleManager.getModule(ItemESP.class));
+        render.add(Kaguya.moduleManager.getModule(Camera.class));
+        render.add(Kaguya.moduleManager.getModule(NoHurtCam.class));
+        render.add(Kaguya.moduleManager.getModule(HUD.class));
+        render.add(Kaguya.moduleManager.getModule(Health.class));
+        render.add(Kaguya.moduleManager.getModule(ClientHUD.class));
+        render.add(Kaguya.moduleManager.getModule(GuiModule.class));
+        render.add(Kaguya.moduleManager.getModule(ChestESP.class));
+        render.add(Kaguya.moduleManager.getModule(Trajectories.class));
+        render.add(Kaguya.moduleManager.getModule(Radar.class));
+        render.sort(byName);
 
-        List<Module> miscModules = new ArrayList<>();
-        miscModules.add(Kaguya.moduleManager.getModule(Spammer.class));
-        miscModules.add(Kaguya.moduleManager.getModule(BedNuker.class));
-        miscModules.add(Kaguya.moduleManager.getModule(BedTracker.class));
-        miscModules.add(Kaguya.moduleManager.getModule(Denick.class));
-        miscModules.add(Kaguya.moduleManager.getModule(LightningTracker.class));
-        miscModules.add(Kaguya.moduleManager.getModule(NoRotate.class));
-        miscModules.add(Kaguya.moduleManager.getModule(NickHider.class));
-        miscModules.add(Kaguya.moduleManager.getModule(AntiObbyTrap.class));
-        miscModules.add(Kaguya.moduleManager.getModule(AntiObfuscate.class));
-        miscModules.add(Kaguya.moduleManager.getModule(AutoAnduril.class));
-        miscModules.add(Kaguya.moduleManager.getModule(ChatCopy.class));
-        miscModules.add(Kaguya.moduleManager.getModule(InventoryClicker.class));
-        miscModules.add(Kaguya.moduleManager.getModule(DiscordRichPresence.class));
+        List<Module> player = new ArrayList<>();
+        player.add(Kaguya.moduleManager.getModule(AutoHeal.class));
+        player.add(Kaguya.moduleManager.getModule(AutoTool.class));
+        player.add(Kaguya.moduleManager.getModule(ChestStealer.class));
+        player.add(Kaguya.moduleManager.getModule(InvManager.class));
+        player.add(Kaguya.moduleManager.getModule(InvWalk.class));
+        player.add(Kaguya.moduleManager.getModule(Scaffold.class));
+        player.add(Kaguya.moduleManager.getModule(AutoBlockIn.class));
+        player.add(Kaguya.moduleManager.getModule(SpeedMine.class));
+        player.add(Kaguya.moduleManager.getModule(FastPlace.class));
+        player.add(Kaguya.moduleManager.getModule(GhostHand.class));
+        player.add(Kaguya.moduleManager.getModule(MCF.class));
+        player.add(Kaguya.moduleManager.getModule(AntiDebuff.class));
+        player.sort(byName);
 
-        Comparator<Module> comparator = Comparator.comparing(m -> m.getName().toLowerCase());
-        combatModules.sort(comparator);
-        movementModules.sort(comparator);
-        renderModules.sort(comparator);
-        playerModules.sort(comparator);
-        miscModules.sort(comparator);
+        List<Module> misc = new ArrayList<>();
+        misc.add(Kaguya.moduleManager.getModule(AuthSync.class));
+        misc.add(Kaguya.moduleManager.getModule(Spammer.class));
+        misc.add(Kaguya.moduleManager.getModule(BedNuker.class));
+        misc.add(Kaguya.moduleManager.getModule(BedTracker.class));
+        misc.add(Kaguya.moduleManager.getModule(Denick.class));
+        misc.add(Kaguya.moduleManager.getModule(LightningTracker.class));
+        misc.add(Kaguya.moduleManager.getModule(NoRotate.class));
+        misc.add(Kaguya.moduleManager.getModule(NickHider.class));
+        misc.add(Kaguya.moduleManager.getModule(AntiObbyTrap.class));
+        misc.add(Kaguya.moduleManager.getModule(AntiObfuscate.class));
+        misc.add(Kaguya.moduleManager.getModule(AutoAnduril.class));
+        misc.add(Kaguya.moduleManager.getModule(ChatCopy.class));
+        misc.add(Kaguya.moduleManager.getModule(InventoryClicker.class));
+        misc.add(Kaguya.moduleManager.getModule(DiscordRichPresence.class));
+        misc.sort(byName);
 
         Set<Module> registered = new HashSet<>();
-        registered.addAll(combatModules);
-        registered.addAll(movementModules);
-        registered.addAll(renderModules);
-        registered.addAll(playerModules);
-        registered.addAll(miscModules);
-
-        for (Module module : Kaguya.moduleManager.modules.values()) {
-            if (!registered.contains(module)) {
-                throw new RuntimeException(module.getClass().getName() + " is unregistered to click gui.");
+        registered.addAll(combat);
+        registered.addAll(movement);
+        registered.addAll(render);
+        registered.addAll(player);
+        registered.addAll(misc);
+        for (Module m : Kaguya.moduleManager.modules.values()) {
+            if (!registered.contains(m)) {
+                throw new RuntimeException(m.getClass().getName() + " is unregistered to click gui.");
             }
         }
 
-        this.categoryList = new ArrayList<>();
-        int topOffset = 5;
-
-
-        CategoryComponent combat = new CategoryComponent("Combat", combatModules);
-        combat.setY(topOffset);
-        categoryList.add(combat);
-        topOffset += 20;
-
-        CategoryComponent movement = new CategoryComponent("Movement", movementModules);
-        movement.setY(topOffset);
-        categoryList.add(movement);
-        topOffset += 20;
-
-        CategoryComponent render = new CategoryComponent("Render", renderModules);
-        render.setY(topOffset);
-        categoryList.add(render);
-        topOffset += 20;
-
-        CategoryComponent player = new CategoryComponent("Player", playerModules);
-        player.setY(topOffset);
-        categoryList.add(player);
-        topOffset += 20;
-
-        CategoryComponent misc = new CategoryComponent("Misc", miscModules);
-        misc.setY(topOffset);
-        categoryList.add(misc);
-
-        loadPositions();
+        categories.add(new CategoryComponent("Combat",   combat));
+        categories.add(new CategoryComponent("Movement", movement));
+        categories.add(new CategoryComponent("Render",   render));
+        categories.add(new CategoryComponent("Player",   player));
+        categories.add(new CategoryComponent("Misc",     misc));
     }
 
     public static ClickGui getInstance() {
         return instance;
     }
 
-    public void initGui() {
-        super.initGui();
-    }
+    // ---- coordinate helpers ----
+    private int panelX(int sw) { return (sw - PANEL_W) / 2; }
+    private int panelY(int sh) { return (sh - PANEL_H) / 2; }
 
-    public void drawScreen(int x, int y, float p) {
-        drawRect(0, 0, this.width, this.height, new Color(0, 0, 0, 100).getRGB());
+    // =====================================================================
+    // drawScreen
+    // =====================================================================
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        ScaledResolution sr = new ScaledResolution(mc);
+        int sw = sr.getScaledWidth();
+        int sh = sr.getScaledHeight();
+        int px = panelX(sw);
+        int py = panelY(sh);
 
-        mc.fontRendererObj.drawStringWithShadow("Kaguya Client " + KaguyaClient.VERSION, 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, new Color(60, 162, 253).getRGB());
+        int contentY = py + TAB_H;
+        int contentH = PANEL_H - TAB_H;
+        int settX    = px + LIST_W + 1;
+        int settW    = PANEL_W - LIST_W - 1;
 
-        for (CategoryComponent category : categoryList) {
-            category.render(this.fontRendererObj);
-            category.handleDrag(x, y);
+        // dim the world behind
+        drawRect(0, 0, sw, sh, C_OVERLAY);
 
-            for (Component module : category.getModules()) {
-                module.update(x, y);
-            }
+        // main panel
+        Gui.drawRect(px, py, px + PANEL_W, py + PANEL_H, C_PANEL);
+
+        // tab bar
+        drawTabBar(mouseX, mouseY, px, py);
+
+        // list area
+        Gui.drawRect(px, contentY, px + LIST_W, contentY + contentH, C_LIST);
+
+        // divider
+        Gui.drawRect(px + LIST_W, contentY, px + LIST_W + 1, contentY + contentH, C_DIVIDER);
+
+        // settings area
+        Gui.drawRect(settX, contentY, px + PANEL_W, contentY + contentH, C_SETTINGS);
+
+        // animate scroll
+        animListScroll += (listScroll - animListScroll) * 0.2;
+        animSettScroll += (settScroll - animSettScroll) * 0.2;
+
+        // module list
+        drawModuleList(mouseX, mouseY, px, contentY, contentH, sr);
+
+        // settings panel
+        if (selectedModule != null) {
+            drawSettingsPanel(mouseX, mouseY, settX, settW, contentY, contentH, sr);
+            selectedModule.update(mouseX, mouseY);
         }
 
+        // scroll from mouse wheel
         int wheel = Mouse.getDWheel();
         if (wheel != 0) {
-            int scrollDir = wheel > 0 ? 1 : -1;
-            for (CategoryComponent category : categoryList) {
-                category.onScroll(x, y, scrollDir);
-            }
+            handleScroll(wheel, mouseX, mouseY, px, contentY, contentH, settX);
+        }
+
+        // save button (bottom-right of panel)
+        int btnX = px + PANEL_W - BTN_W - 4;
+        int btnY = py + PANEL_H - BTN_H - 4;
+        drawSaveButton(mouseX, mouseY, btnX, btnY);
+
+        mc.fontRendererObj.drawStringWithShadow(
+            "Kaguya " + KaguyaClient.VERSION,
+            4, sh - 3 - mc.fontRendererObj.FONT_HEIGHT,
+            C_ORANGE
+        );
+    }
+
+    // ---- tab bar ----
+    private void drawTabBar(int mouseX, int mouseY, int px, int py) {
+        int n    = categories.size();
+        int tabW = PANEL_W / n;
+        for (int i = 0; i < n; i++) {
+            int tx      = px + i * tabW;
+            boolean act = (i == selectedTab);
+            boolean hov = mouseX >= tx && mouseX < tx + tabW && mouseY >= py && mouseY < py + TAB_H;
+            Gui.drawRect(tx, py, tx + tabW, py + TAB_H, act ? C_ORANGE : (hov ? C_TAB_HOVER : C_TAB_IDLE));
+            if (i > 0) Gui.drawRect(tx, py, tx + 1, py + TAB_H, C_DIVIDER);
+            String name  = categories.get(i).getName();
+            int    textX = tx + tabW / 2 - mc.fontRendererObj.getStringWidth(name) / 2;
+            int    textY = py + TAB_H / 2 - mc.fontRendererObj.FONT_HEIGHT / 2;
+            mc.fontRendererObj.drawStringWithShadow(name, textX, textY, act ? C_WHITE : C_DIM);
         }
     }
 
+    // ---- module list ----
+    private void drawModuleList(int mouseX, int mouseY, int px, int contentY, int contentH, ScaledResolution sr) {
+        CategoryComponent cat     = categories.get(selectedTab);
+        List<Component>   modules = cat.getModules();
+        int totalH   = modules.size() * ITEM_H;
+        int maxScroll = Math.max(0, totalH - contentH);
+        if (listScroll > maxScroll)     listScroll     = maxScroll;
+        if (animListScroll > maxScroll) animListScroll = maxScroll;
+
+        double scale  = sr.getScaleFactor();
+        int    bottom = contentY + contentH;
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(
+            (int)(px * scale),
+            (int)((sr.getScaledHeight() - bottom) * scale),
+            (int)(LIST_W * scale),
+            (int)(contentH * scale)
+        );
+
+        for (int i = 0; i < modules.size(); i++) {
+            ModuleComponent mod = (ModuleComponent) modules.get(i);
+            int iy = contentY + i * ITEM_H - (int) animListScroll;
+            if (iy + ITEM_H <= contentY || iy >= contentY + contentH) continue;
+
+            boolean isSel  = (selectedModule == mod);
+            boolean isHov  = mouseX >= px && mouseX < px + LIST_W && mouseY >= iy && mouseY < iy + ITEM_H;
+            boolean enabled = mod.mod.isEnabled();
+
+            if (isSel) {
+                Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, C_ITEM_SEL);
+                Gui.drawRect(px, iy, px + 2,       iy + ITEM_H, C_ORANGE);
+            } else if (isHov) {
+                Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, C_ITEM_HOVER);
+            }
+
+            mc.fontRendererObj.drawStringWithShadow(mod.mod.getName(), px + 5, iy + 3, enabled ? C_WHITE : C_DIM);
+
+            // dot固定位置、その左に<KEY>
+            int dotX = px + LIST_W - 8;
+            if (enabled) {
+                Gui.drawRect(dotX, iy + ITEM_H / 2 - 2,
+                             dotX + 4, iy + ITEM_H / 2 + 2, C_ORANGE);
+            }
+
+            // bind key label: <KEY> ← dotの左
+            int key = mod.mod.getKey();
+            if (key != 0) {
+                String keyLabel = "<" + KeyBindUtil.getKeyName(key) + ">";
+                int keyW = mc.fontRendererObj.getStringWidth(keyLabel);
+                int keyX = dotX - 3 - keyW;
+                mc.fontRendererObj.drawStringWithShadow(keyLabel, keyX, iy + 3, C_WHITE);
+            }
+        }
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        // list scrollbar
+        if (totalH > contentH) {
+            float barY = contentY + (float) animListScroll * contentH / totalH;
+            float barH = (float) contentH * contentH / totalH;
+            Gui.drawRect(px + LIST_W - 2, (int) barY,
+                         px + LIST_W,     (int)(barY + barH), C_SCROLLBAR);
+        }
+    }
+
+    // ---- settings panel ----
+    private void drawSettingsPanel(int mouseX, int mouseY, int settX, int settW,
+                                   int contentY, int contentH, ScaledResolution sr) {
+        // header: module name
+        String name    = selectedModule.mod.getName();
+        boolean enabled = selectedModule.mod.isEnabled();
+        mc.fontRendererObj.drawStringWithShadow(name, settX + 7, contentY + 4, C_ORANGE);
+
+        // ON / OFF badge on the right
+        String badge   = enabled ? "ON" : "OFF";
+        int badgeColor = enabled ? C_ORANGE : C_DIM;
+        int badgeX     = settX + settW - mc.fontRendererObj.getStringWidth(badge) - 6;
+        mc.fontRendererObj.drawStringWithShadow(badge, badgeX, contentY + 4, badgeColor);
+
+        // thin separator
+        Gui.drawRect(settX + 4, contentY + HEADER_H - 1, settX + settW - 4, contentY + HEADER_H, C_SEPARATOR);
+
+        int settingsAreaTop = contentY + HEADER_H;
+        int settingsAreaH   = contentH - HEADER_H;
+
+        // total height of settings
+        int totalH    = selectedModule.getSettingsHeight();
+        int maxScroll = Math.max(0, totalH - settingsAreaH);
+        if (settScroll > maxScroll)     settScroll     = maxScroll;
+        if (animSettScroll > maxScroll) animSettScroll = maxScroll;
+
+        // point category at settings panel (used by all child components)
+        // children start at offsetY=16 (setComponentStartAt(0) → y = 0+16),
+        // so category.y = contentY puts first item at contentY+16 = settingsAreaTop
+        selectedModule.category.setX(settX + 4);
+        selectedModule.category.setY(contentY - (int) animSettScroll);
+        selectedModule.category.setWidth(settW - 8);
+        selectedModule.setComponentStartAt(0);
+
+        double scale  = sr.getScaleFactor();
+        int    bottom = settingsAreaTop + settingsAreaH;
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(
+            (int)(settX * scale),
+            (int)((sr.getScaledHeight() - bottom) * scale),
+            (int)(settW * scale),
+            (int)(settingsAreaH * scale)
+        );
+
+        selectedModule.drawSettings(new AtomicInteger(0));
+
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        // settings scrollbar
+        if (totalH > settingsAreaH) {
+            float barY = settingsAreaTop + (float) animSettScroll * settingsAreaH / totalH;
+            float barH = (float) settingsAreaH * settingsAreaH / totalH;
+            Gui.drawRect(settX + settW - 2, (int) barY,
+                         settX + settW,     (int)(barY + barH), C_SCROLLBAR);
+        }
+    }
+
+    // ---- scroll ----
+    private void drawSaveButton(int mouseX, int mouseY, int bx, int by) {
+        boolean flashing = System.currentTimeMillis() < saveFlashUntil;
+        boolean hovered  = mouseX >= bx && mouseX < bx + BTN_W && mouseY >= by && mouseY < by + BTN_H;
+        int bg = flashing ? new Color(80, 200, 80).getRGB()
+                          : (hovered ? C_TAB_HOVER : C_TAB_IDLE);
+        Gui.drawRect(bx, by, bx + BTN_W, by + BTN_H, bg);
+        // thin orange border
+        Gui.drawRect(bx, by, bx + BTN_W, by + 1, C_ORANGE);
+        Gui.drawRect(bx, by + BTN_H - 1, bx + BTN_W, by + BTN_H, C_ORANGE);
+        Gui.drawRect(bx, by, bx + 1, by + BTN_H, C_ORANGE);
+        Gui.drawRect(bx + BTN_W - 1, by, bx + BTN_W, by + BTN_H, C_ORANGE);
+        String label = flashing ? "Saved!" : "Save Config";
+        int lx = bx + BTN_W / 2 - mc.fontRendererObj.getStringWidth(label) / 2;
+        int ly = by + BTN_H / 2 - mc.fontRendererObj.FONT_HEIGHT / 2;
+        mc.fontRendererObj.drawStringWithShadow(label, lx, ly, C_WHITE);
+    }
+
+    private void handleScroll(int wheel, int mouseX, int mouseY,
+                               int px, int contentY, int contentH, int settX) {
+        int amount = wheel > 0 ? -1 : 1; // -1 = scroll up
+        int settW  = PANEL_W - LIST_W - 1;
+
+        if (mouseX >= px && mouseX < px + LIST_W
+                && mouseY >= contentY && mouseY < contentY + contentH) {
+            int totalH    = categories.get(selectedTab).getModules().size() * ITEM_H;
+            int maxScroll = Math.max(0, totalH - contentH);
+            listScroll = Math.max(0, Math.min(listScroll + amount * 12, maxScroll));
+
+        } else if (selectedModule != null
+                && mouseX >= settX && mouseX < settX + settW
+                && mouseY >= contentY && mouseY < contentY + contentH) {
+            int totalH    = selectedModule.getSettingsHeight();
+            int avail     = contentH - HEADER_H;
+            int maxScroll = Math.max(0, totalH - avail);
+            settScroll = Math.max(0, Math.min(settScroll + amount * 12, maxScroll));
+        }
+    }
+
+    // =====================================================================
+    // Input
+    // =====================================================================
+    @Override
     public void mouseClicked(int x, int y, int mouseButton) {
-        Iterator<CategoryComponent> btnCat = categoryList.iterator();
-        while (true) {
-            CategoryComponent category;
-            do {
-                do {
-                    if (!btnCat.hasNext()) {
-                        return;
-                    }
+        ScaledResolution sr = new ScaledResolution(mc);
+        int sw = sr.getScaledWidth();
+        int sh = sr.getScaledHeight();
+        int px = panelX(sw);
+        int py = panelY(sh);
 
-                    category = btnCat.next();
-                    if (category.insideArea(x, y) && !category.isHovered(x, y) && !category.mousePressed(x, y) && mouseButton == 0) {
-                        category.mousePressed(true);
-                        category.xx = x - category.getX();
-                        category.yy = y - category.getY();
-                    }
-
-                    if (category.mousePressed(x, y) && mouseButton == 0) {
-                        category.setOpened(!category.isOpened());
-                    }
-
-                    if (category.isHovered(x, y) && mouseButton == 0) {
-                        category.setPin(!category.isPin());
-                    }
-                } while (!category.isOpened());
-            } while (category.getModules().isEmpty());
-
-            for (Component c : category.getModules()) {
-                c.mouseDown(x, y, mouseButton);
-            }
+        // save button
+        int btnX = px + PANEL_W - BTN_W - 4;
+        int btnY = py + PANEL_H - BTN_H - 4;
+        if (mouseButton == 0 && x >= btnX && x < btnX + BTN_W && y >= btnY && y < btnY + BTN_H) {
+            new Config(Config.lastConfig != null ? Config.lastConfig : "default", false).save();
+            saveFlashUntil = System.currentTimeMillis() + 800;
+            return;
         }
 
-    }
+        int contentY = py + TAB_H;
+        int contentH = PANEL_H - TAB_H;
+        int settX    = px + LIST_W + 1;
+        int settW    = PANEL_W - LIST_W - 1;
 
-    public void mouseReleased(int x, int y, int mouseButton) {
-        Iterator<CategoryComponent> iterator = categoryList.iterator();
-
-        CategoryComponent categoryComponent;
-        while (iterator.hasNext()) {
-            categoryComponent = iterator.next();
-            if (mouseButton == 0) {
-                categoryComponent.mousePressed(false);
-            }
-        }
-
-        iterator = categoryList.iterator();
-
-        while (true) {
-            do {
-                do {
-                    if (!iterator.hasNext()) {
-                        return;
+        // tab bar
+        if (y >= py && y < py + TAB_H && x >= px && x < px + PANEL_W) {
+            int n    = categories.size();
+            int tabW = PANEL_W / n;
+            for (int i = 0; i < n; i++) {
+                int tx = px + i * tabW;
+                if (x >= tx && x < tx + tabW) {
+                    if (selectedTab != i) {
+                        selectedTab    = i;
+                        listScroll     = 0;
+                        animListScroll = 0;
+                        setSelectedModule(null);
                     }
-
-                    categoryComponent = iterator.next();
-                } while (!categoryComponent.isOpened());
-            } while (categoryComponent.getModules().isEmpty());
-
-            for (Component component : categoryComponent.getModules()) {
-                component.mouseReleased(x, y, mouseButton);
-            }
-        }
-    }
-
-    public void keyTyped(char typedChar, int key) {
-        if (key == 1) {
-            this.mc.displayGuiScreen(null);
-        } else {
-            Iterator<CategoryComponent> btnCat = categoryList.iterator();
-
-            while (true) {
-                CategoryComponent cat;
-                do {
-                    do {
-                        if (!btnCat.hasNext()) {
-                            return;
-                        }
-
-                        cat = btnCat.next();
-                    } while (!cat.isOpened());
-                } while (cat.getModules().isEmpty());
-
-                for (Component component : cat.getModules()) {
-                    component.keyTyped(typedChar, key);
+                    return;
                 }
             }
         }
+
+        // settings header → toggle ON/OFF
+        if (selectedModule != null
+                && x >= settX && x < settX + settW
+                && y >= contentY && y < contentY + HEADER_H
+                && mouseButton == 0) {
+            selectedModule.mod.toggle();
+            return;
+        }
+
+        // module list → toggle + select
+        if (x >= px && x < px + LIST_W
+                && y >= contentY && y < contentY + contentH) {
+            List<Component> modules = categories.get(selectedTab).getModules();
+            for (int i = 0; i < modules.size(); i++) {
+                ModuleComponent mod = (ModuleComponent) modules.get(i);
+                int iy = contentY + i * ITEM_H - (int) animListScroll;
+                if (y >= iy && y < iy + ITEM_H) {
+                    if (mouseButton == 0) mod.mod.toggle();
+                    setSelectedModule(mod);
+                    return;
+                }
+            }
+        }
+
+        // settings panel → forward to components
+        if (selectedModule != null
+                && x >= settX && x < settX + settW
+                && y >= contentY + HEADER_H && y < contentY + contentH) {
+            selectedModule.mouseDownSettings(x, y, mouseButton);
+        }
     }
 
-    public void onGuiClosed() {
-        savePositions();
+    @Override
+    public void mouseReleased(int x, int y, int mouseButton) {
+        if (selectedModule != null) {
+            selectedModule.mouseReleasedSettings(x, y, mouseButton);
+        }
     }
 
+    @Override
+    public void keyTyped(char typedChar, int key) {
+        if (key == 1) {
+            mc.displayGuiScreen(null);
+        } else if (selectedModule != null) {
+            selectedModule.keyTypedSettings(typedChar, key);
+        }
+    }
+
+    @Override
     public boolean doesGuiPauseGame() {
         return false;
     }
 
-    private void savePositions() {
-        JsonObject json = new JsonObject();
-        for (CategoryComponent cat : categoryList) {
-            JsonObject pos = new JsonObject();
-            pos.addProperty("x", cat.getX());
-            pos.addProperty("y", cat.getY());
-            pos.addProperty("open", cat.isOpened());
-            json.add(cat.getName(), pos);
-        }
-        try (FileWriter writer = new FileWriter(configFile)) {
-            new GsonBuilder().setPrettyPrinting().create().toJson(json, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadPositions() {
-        if (!configFile.exists()) return;
-        try (FileReader reader = new FileReader(configFile)) {
-            JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
-            for (CategoryComponent cat : categoryList) {
-                if (json.has(cat.getName())) {
-                    JsonObject pos = json.getAsJsonObject(cat.getName());
-                    cat.setX(pos.get("x").getAsInt());
-                    cat.setY(pos.get("y").getAsInt());
-                    cat.setOpened(pos.get("open").getAsBoolean());
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    // ---- helper ----
+    private void setSelectedModule(ModuleComponent mod) {
+        if (selectedModule != null) selectedModule.panelExpand = false;
+        selectedModule    = mod;
+        settScroll        = 0;
+        animSettScroll    = 0;
+        if (selectedModule != null) selectedModule.panelExpand = true;
     }
 }

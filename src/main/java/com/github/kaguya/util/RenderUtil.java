@@ -119,13 +119,6 @@ public class RenderUtil {
         GlStateManager.disableBlend();
         GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(0.5f, 0.5f, 0.5f);
-        GlStateManager.disableDepth();
-        RenderUtil.renderEnchantmentText(itemStack, x, y, 0.5f);
-        GlStateManager.enableDepth();
-        GlStateManager.scale(2.0f, 2.0f, 2.0f);
-        GlStateManager.popMatrix();
     }
 
     public static void renderPotionEffect(PotionEffect potionEffect, int x, int y) {

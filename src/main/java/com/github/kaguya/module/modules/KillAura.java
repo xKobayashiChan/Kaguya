@@ -69,7 +69,8 @@ public class KillAura extends Module {
     private boolean isBlocking = false;
     private boolean fakeBlockState = false;
     private boolean blinkReset = false;
-    private long attackDelayMS = 0L;
+    private final TimerUtil attackTimer = new TimerUtil();
+    private long currentAttackDelay = 0L;
     private int blockTick = 0;
     private int lastTickProcessed;
     public final ModeProperty mode;
@@ -114,13 +115,17 @@ public class KillAura extends Module {
         if (!Kaguya.playerStateManager.digging && !Kaguya.playerStateManager.placing) {
             if (this.isPlayerBlocking() && this.autoBlock.getValue() != 1) {
                 return false;
-            } else if (this.attackDelayMS > 0L) {
+            } else if (!this.attackTimer.hasTimeElapsed(this.currentAttackDelay)) {
+                return false;
+            } else if (this.target.getEntity().hurtResistantTime > 0) {
                 return false;
             } else {
-                this.attackDelayMS = this.attackDelayMS + this.getAttackDelay();
+                this.currentAttackDelay = this.getAttackDelay();
+                this.attackTimer.reset();
                 mc.thePlayer.swingItem();
+                AxisAlignedBB checkBox = this.target.getBox().expand(0.15, 0.1, 0.15);
                 if ((this.rotations.getValue() != 0 || !this.isBoxInAttackRange(this.target.getBox()))
-                        && RotationUtil.rayTrace(this.target.getBox(), yaw, pitch, this.attackRange.getValue()) == null) {
+                        && RotationUtil.rayTrace(checkBox, yaw, pitch, this.attackRange.getValue()) == null) {
                     return false;
                 } else {
                     AttackEvent event = new AttackEvent(this.target.getEntity());
@@ -418,9 +423,6 @@ public class KillAura extends Module {
             if (this.hitColorTicks > 0) {
                 this.hitColorTicks--;
             }
-            if (this.attackDelayMS > 0L) {
-                this.attackDelayMS -= 50L;
-            }
             boolean attack = this.target != null && this.canAttack();
             boolean block = attack && this.canAutoBlock();
             if (!block) {
@@ -470,7 +472,7 @@ public class KillAura extends Module {
                                         || Kaguya.playerStateManager.placing
                                         || mc.thePlayer.inventory.currentItem != item
                                         || this.isPlayerBlocking() && this.blockTick != 0
-                                        || this.attackDelayMS > 0L && this.attackDelayMS <= 50L) {
+                                        || !this.attackTimer.hasTimeElapsed(this.currentAttackDelay) && this.attackTimer.getElapsedTime() >= this.currentAttackDelay - 50L) {
                                     this.blockTick = 0;
                                 } else {
                                     int slot = this.findEmptySlot(item);
@@ -512,7 +514,7 @@ public class KillAura extends Module {
                                                 this.stopBlock();
                                                 attack = false;
                                             }
-                                            if (this.attackDelayMS <= 50L) {
+                                            if (this.attackTimer.getElapsedTime() >= this.currentAttackDelay - 50L) {
                                                 this.blockTick = 0;
                                             }
                                             break;
@@ -544,7 +546,7 @@ public class KillAura extends Module {
                                                 this.stopBlock();
                                                 attack = false;
                                             }
-                                            if (this.attackDelayMS <= 50L) {
+                                            if (this.attackTimer.getElapsedTime() >= this.currentAttackDelay - 50L) {
                                                 this.blockTick = 0;
                                             }
                                             break;
@@ -579,7 +581,7 @@ public class KillAura extends Module {
                                                 ((IAccessorPlayerControllerMP) mc.playerController).setCurrentPlayerItem(slot);
                                                 attack = false;
                                             }
-                                            if (this.attackDelayMS <= 50L) {
+                                            if (this.attackTimer.getElapsedTime() >= this.currentAttackDelay - 50L) {
                                                 this.blockTick = 0;
                                             }
                                             break;
@@ -615,7 +617,7 @@ public class KillAura extends Module {
                                                 this.blockTick = 0;
                                             } else if (!this.isPlayerBlocking()) {
                                                 swap = true;
-                                            } else if (this.attackDelayMS <= 50L) {
+                                            } else if (this.attackTimer.getElapsedTime() >= this.currentAttackDelay - 50L) {
                                                 PacketUtil.sendPacket(new C09PacketHeldItemChange(swordsSlot));
                                                 ((IAccessorPlayerControllerMP) mc.playerController).setCurrentPlayerItem(swordsSlot);
                                                 this.startBlock(mc.thePlayer.inventory.getStackInSlot(swordsSlot));
@@ -651,7 +653,7 @@ public class KillAura extends Module {
                                                 this.stopBlock();
                                                 attack = false;
                                             }
-                                            if (this.attackDelayMS <= 50L) {
+                                            if (this.attackTimer.getElapsedTime() >= this.currentAttackDelay - 50L) {
                                                 this.blockTick = 0;
                                             }
                                             break;
@@ -937,7 +939,8 @@ public class KillAura extends Module {
         this.switchTick = 0;
         this.hitRegistered = false;
         this.hitColorTicks = 0;
-        this.attackDelayMS = 0L;
+        this.attackTimer.setTime();
+        this.currentAttackDelay = 0L;
         this.blockTick = 0;
     }
 

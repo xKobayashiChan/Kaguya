@@ -10,6 +10,7 @@ import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.PercentProperty;
 import com.github.kaguya.util.ColorUtil;
 import com.github.kaguya.util.RenderUtil;
+import com.github.kaguya.util.RotationUtil;
 import com.github.kaguya.util.TeamUtil;
 import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
@@ -68,6 +69,7 @@ public class NameTags extends Module {
     public final BooleanProperty self = new BooleanProperty("self", false);
     public final BooleanProperty bots = new BooleanProperty("bots", false);
     public final BooleanProperty head = new BooleanProperty("head", true);
+    public final BooleanProperty legit = new BooleanProperty("legit", false);
 
     public NameTags() {
         super("NameTags", false);
@@ -112,7 +114,8 @@ public class NameTags extends Module {
             for (Entity entity : TeamUtil.getLoadedEntitiesSorted()) {
                 if (entity instanceof EntityLivingBase
                         && this.shouldRenderTags((EntityLivingBase) entity)
-                        && (entity.ignoreFrustumCheck || RenderUtil.isInViewFrustum(entity.getEntityBoundingBox(), 10.0))) {
+                        && (entity.ignoreFrustumCheck || RenderUtil.isInViewFrustum(entity.getEntityBoundingBox(), 10.0))
+                        && (!this.legit.getValue() || RotationUtil.rayTrace(entity) == null)) {
                     String teamName = TeamUtil.stripName(entity);
                     if (!StringUtils.isBlank(EnumChatFormatting.getTextWithoutFormattingCodes(teamName))) {
                         double x = RenderUtil.lerpDouble(entity.posX, entity.lastTickPosX, event.getPartialTicks())

@@ -12,6 +12,7 @@ import com.github.kaguya.mixins.IAccessorRenderManager;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.util.ColorUtil;
 import com.github.kaguya.util.RenderUtil;
+import com.github.kaguya.util.RotationUtil;
 import com.github.kaguya.util.TeamUtil;
 import com.github.kaguya.util.shader.GlowShader;
 import com.github.kaguya.util.shader.OutlineShader;
@@ -43,6 +44,7 @@ public class ESP extends Module {
     public final BooleanProperty enemies = new BooleanProperty("enemies", true);
     public final BooleanProperty self = new BooleanProperty("self", false);
     public final BooleanProperty bots = new BooleanProperty("bots", false);
+    public final BooleanProperty legit = new BooleanProperty("legit", false);
 
     private boolean shouldRenderPlayer(EntityPlayer entityPlayer) {
         if (entityPlayer.deathTime > 0) {
@@ -50,6 +52,8 @@ public class ESP extends Module {
         } else if (mc.getRenderViewEntity().getDistanceToEntity(entityPlayer) > 512.0F) {
             return false;
         } else if (!entityPlayer.ignoreFrustumCheck && !RenderUtil.isInViewFrustum(entityPlayer.getEntityBoundingBox(), 0.1F)) {
+            return false;
+        } else if (this.legit.getValue() && RotationUtil.rayTrace(entityPlayer) != null) {
             return false;
         } else if (entityPlayer != mc.thePlayer && entityPlayer != mc.getRenderViewEntity()) {
             if (TeamUtil.isBot(entityPlayer)) {

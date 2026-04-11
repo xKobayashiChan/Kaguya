@@ -117,8 +117,6 @@ public class KillAura extends Module {
                 return false;
             } else if (!this.attackTimer.hasTimeElapsed(this.currentAttackDelay)) {
                 return false;
-            } else if (this.target.getEntity().hurtResistantTime > 0) {
-                return false;
             } else {
                 this.currentAttackDelay = this.getAttackDelay();
                 this.attackTimer.reset();

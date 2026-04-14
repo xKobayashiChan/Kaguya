@@ -3,10 +3,12 @@ package com.github.kaguya.module.modules;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.Render3DEvent;
+import com.github.kaguya.events.TickEvent;
 import com.github.kaguya.events.UpdateEvent;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.property.properties.FloatProperty;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 
 public class Zenith extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
@@ -26,6 +28,18 @@ public class Zenith extends Module {
         if (mc.thePlayer != null) {
             spinYaw = mc.thePlayer.rotationYaw;
             prevSpinYaw = spinYaw;
+        }
+    }
+
+    @EventTarget
+    public void onTick(TickEvent event) {
+        if (!this.isEnabled() || mc.thePlayer == null) return;
+        if (event.getType() != EventType.PRE) return;
+
+        GameSettings gs = mc.gameSettings;
+        if (gs.keyBindForward.isKeyDown() || gs.keyBindBack.isKeyDown()
+                || gs.keyBindLeft.isKeyDown() || gs.keyBindRight.isKeyDown()) {
+            this.setEnabled(false);
         }
     }
 

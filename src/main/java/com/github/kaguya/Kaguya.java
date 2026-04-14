@@ -138,6 +138,7 @@ public class Kaguya {
         moduleManager.modules.put(Trajectories.class, new Trajectories());
         moduleManager.modules.put(Velocity.class, new Velocity());
         moduleManager.modules.put(Camera.class, new Camera());
+        moduleManager.modules.put(Zenith.class, new Zenith());
         moduleManager.modules.put(Wtap.class, new Wtap());
         moduleManager.modules.put(Xray.class, new Xray());
         commandManager.commands.add(new BindCommand());

@@ -35,11 +35,19 @@ public class SliderComponent implements Component {
     }
 
     public void draw(AtomicInteger offset) {
-        Gui.drawRect(this.parentModule.category.getX() + 4, this.parentModule.category.getY() + this.offsetY + 11, this.parentModule.category.getX() + 4 + this.parentModule.category.getWidth() - 8, this.parentModule.category.getY() + this.offsetY + 15, -12302777);
         int trackWidth = this.parentModule.category.getWidth() - 8;
         int sliderStart = this.parentModule.category.getX() + 4;
-        int sliderEnd = sliderStart + Math.min((int) this.sliderWidth, trackWidth);
-        Gui.drawRect(sliderStart, this.parentModule.category.getY() + this.offsetY + 11, sliderEnd, this.parentModule.category.getY() + this.offsetY + 15, ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis(), offset.get()).getRGB());
+        int trackCenterY = this.parentModule.category.getY() + this.offsetY + 13;
+        int knobX = sliderStart + Math.min((int) this.sliderWidth, trackWidth);
+        int accentColor = ((HUD) Kaguya.moduleManager.modules.get(HUD.class)).getColor(System.currentTimeMillis(), offset.get()).getRGB();
+
+        // トラック右側（グレー線）
+        Gui.drawRect(sliderStart, trackCenterY, sliderStart + trackWidth, trackCenterY + 1, -12302777);
+        // トラック左側（アクセントカラー線）
+        Gui.drawRect(sliderStart, trackCenterY, knobX, trackCenterY + 1, accentColor);
+        // ノブ（縦長矩形）
+        Gui.drawRect(knobX - 1, trackCenterY - 3, knobX + 2, trackCenterY + 4, accentColor);
+
         GL11.glPushMatrix();
         GL11.glScaled(0.5D, 0.5D, 0.5D);
         Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(this.slider.getName() + ": " + this.slider.getValueColorString(), (float) ((int) ((float) (this.parentModule.category.getX() + 4) * 2.0F)), (float) ((int) ((float) (this.parentModule.category.getY() + this.offsetY + 3) * 2.0F)), -1);

@@ -7,11 +7,17 @@ import com.github.kaguya.events.LoadWorldEvent;
 import com.github.kaguya.events.TickEvent;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.util.ChatUtil;
+import com.github.kaguya.util.SoundUtil;
 import com.github.kaguya.util.TeamUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+
+import java.util.List;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +48,8 @@ public class HeldItemDetect extends Module {
 
             String current = "";
             if (held != null) {
-                if (isSplashPotion(held)) current = "splash";
+                if (isWeaknessPotion(held)) current = "weakness";
+                else if (isSplashPotion(held)) current = "splash";
                 else if (isNotchApple(held)) current = "notch";
             }
 
@@ -56,8 +63,22 @@ public class HeldItemDetect extends Module {
                 ChatUtil.sendFormatted(
                         String.format("%s&b%s &fis holding a %s&f.", Kaguya.clientName, name, itemName)
                 );
+                if (current.equals("weakness")) {
+                    SoundUtil.playSound("note.pling");
+                }
             }
         }
+    }
+
+    private boolean isWeaknessPotion(ItemStack stack) {
+        if (stack.getItem() != Items.potionitem) return false;
+        if ((stack.getMetadata() & 16384) != 16384) return false; // splash only
+        List<PotionEffect> effects = ((ItemPotion) stack.getItem()).getEffects(stack);
+        if (effects == null) return false;
+        for (PotionEffect effect : effects) {
+            if (effect.getPotionID() == Potion.weakness.id) return true;
+        }
+        return false;
     }
 
     private boolean isSplashPotion(ItemStack stack) {

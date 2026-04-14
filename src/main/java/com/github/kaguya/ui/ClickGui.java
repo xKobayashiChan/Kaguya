@@ -104,6 +104,7 @@ public class ClickGui extends GuiScreen {
         movement.add(Kaguya.moduleManager.getModule(Eagle.class));
         movement.add(Kaguya.moduleManager.getModule(NoJumpDelay.class));
         movement.add(Kaguya.moduleManager.getModule(AntiVoid.class));
+        movement.add(Kaguya.moduleManager.getModule(Zenith.class));
         movement.sort(byName);
 
         List<Module> render = new ArrayList<>();
@@ -143,6 +144,7 @@ public class ClickGui extends GuiScreen {
         player.add(Kaguya.moduleManager.getModule(GhostHand.class));
         player.add(Kaguya.moduleManager.getModule(MCF.class));
         player.add(Kaguya.moduleManager.getModule(AntiDebuff.class));
+        player.add(Kaguya.moduleManager.getModule(AutoWater.class));
         player.sort(byName);
 
         List<Module> misc = new ArrayList<>();

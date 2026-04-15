@@ -57,8 +57,8 @@ public class KillAura extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private static final DecimalFormat df = new DecimalFormat("+0.0;-0.0", new DecimalFormatSymbols(Locale.US));
     private static final Color TARGET_IDLE_COLOR = new Color(228, 93, 93, 128);
-    private static final Color TARGET_HIT_COLOR = new Color(228, 93, 93, 191);
-    private static final Color TARGET_DAMAGE_COLOR = new Color(255, 10, 10 ,255);
+    private static final Color TARGET_HIT_COLOR = new Color(228, 93, 93, 150 );
+    private static final Color TARGET_DAMAGE_COLOR = new Color(255, 10, 10 ,200);
     private static final int HIT_COLOR_TICKS = 6;
     private final TimerUtil timer = new TimerUtil();
     private AttackData target = null;
@@ -885,7 +885,7 @@ public class KillAura extends Module {
                         break;
                 }
                 RenderUtil.enableRenderState();
-                RenderUtil.drawEntityBox(this.target.getEntity(), color.getRed(), color.getGreen(), color.getBlue());
+                RenderUtil.drawEntityBoundingBoxFilled(this.target.getEntity(), color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha(), 0.1);
                 RenderUtil.disableRenderState();
             }
         }

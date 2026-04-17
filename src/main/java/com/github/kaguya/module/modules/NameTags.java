@@ -10,6 +10,7 @@ import com.github.kaguya.property.properties.FloatProperty;
 import com.github.kaguya.property.properties.PercentProperty;
 import com.github.kaguya.util.ColorUtil;
 import com.github.kaguya.util.RenderUtil;
+import com.github.kaguya.util.RotationUtil;
 import com.github.kaguya.util.TeamUtil;
 import com.github.kaguya.property.properties.*;
 import com.github.kaguya.property.properties.BooleanProperty;
@@ -68,6 +69,7 @@ public class NameTags extends Module {
     public final BooleanProperty self = new BooleanProperty("self", false);
     public final BooleanProperty bots = new BooleanProperty("bots", false);
     public final BooleanProperty head = new BooleanProperty("head", true);
+    public final BooleanProperty legit = new BooleanProperty("legit", false);
 
     public NameTags() {
         super("NameTags", false);
@@ -112,7 +114,8 @@ public class NameTags extends Module {
             for (Entity entity : TeamUtil.getLoadedEntitiesSorted()) {
                 if (entity instanceof EntityLivingBase
                         && this.shouldRenderTags((EntityLivingBase) entity)
-                        && (entity.ignoreFrustumCheck || RenderUtil.isInViewFrustum(entity.getEntityBoundingBox(), 10.0))) {
+                        && (entity.ignoreFrustumCheck || RenderUtil.isInViewFrustum(entity.getEntityBoundingBox(), 10.0))
+                        && (!this.legit.getValue() || RotationUtil.rayTrace(entity) == null)) {
                     String teamName = TeamUtil.stripName(entity);
                     if (!StringUtils.isBlank(EnumChatFormatting.getTextWithoutFormattingCodes(teamName))) {
                         double x = RenderUtil.lerpDouble(entity.posX, entity.lastTickPosX, event.getPartialTicks())
@@ -145,14 +148,12 @@ public class NameTags extends Module {
                         String healText = "";
                         switch (this.healthMode.getValue()) {
                             case 1:
-                                healText = String.format(" %d%s", (int) health, absorption > 0.0F ? String.format(" &6%d&r", (int) absorption) : "&r");
+                                healText = String.format(" &f[%d&c\u2764&f]&r", (int) health)
+                                        + (absorption > 0.0F ? String.format(" &6[%d&c\u2764&6]&r", (int) absorption) : "");
                                 break;
                             case 2:
-                                healText = String.format(
-                                        " %s%s",
-                                        healthFormatter.format((double) health / 2.0),
-                                        absorption > 0.0F ? String.format(" &6%s&r", healthFormatter.format((double) absorption / 2.0)) : "&r"
-                                );
+                                healText = String.format(" &f[%s&c\u2764&f]&r", healthFormatter.format((double) health / 2.0))
+                                        + (absorption > 0.0F ? String.format(" &6[%s&c\u2764&6]&r", healthFormatter.format((double) absorption / 2.0)) : "");
                                 break;
                             case 3:
                                 if (entity instanceof EntityPlayer) {

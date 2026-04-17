@@ -6,6 +6,7 @@ import com.github.kaguya.events.Render3DEvent;
 import com.github.kaguya.mixins.IAccessorRenderManager;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.util.RenderUtil;
+import com.github.kaguya.util.RotationUtil;
 import com.github.kaguya.util.TeamUtil;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.PercentProperty;
@@ -40,6 +41,7 @@ public class ItemESP extends Module {
     public final BooleanProperty enderPearl = new BooleanProperty("ender-pearl", true);
     public final BooleanProperty netherWart = new BooleanProperty("nether-wart", true);
     public final BooleanProperty blazeRod = new BooleanProperty("blaze-rod", true);
+    public final BooleanProperty legit = new BooleanProperty("legit", false);
 
     private boolean shouldHighlightItem(ItemStack stack) {
         int itemId = Item.getIdFromItem(stack.getItem());
@@ -166,7 +168,8 @@ public class ItemESP extends Module {
             for (Entity entity : TeamUtil.getLoadedEntitiesSorted()) {
                 if (entity.ticksExisted >= 3
                         && (entity.ignoreFrustumCheck || RenderUtil.isInViewFrustum(entity.getEntityBoundingBox(), 0.125))
-                        && entity instanceof EntityItem) {
+                        && entity instanceof EntityItem
+                        && (!this.legit.getValue() || RotationUtil.rayTrace(entity) == null)) {
                     EntityItem entityItem = (EntityItem) entity;
                     ItemStack stack = entityItem.getEntityItem();
                     if (stack.stackSize > 0) {

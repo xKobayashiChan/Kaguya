@@ -54,6 +54,7 @@ public class HUD extends Module {
     public final BooleanProperty blinkTimer = new BooleanProperty("blink-timer", true);
     public final BooleanProperty toggleSound = new BooleanProperty("toggle-sounds", true);
     public final BooleanProperty toggleAlerts = new BooleanProperty("toggle-alerts", false);
+    public final FloatProperty gap = new FloatProperty("gap", 0.0F, -2.0F, 5.0F);
     private boolean isDragging = false;
     private int dragStartMouseX = 0;
     private int dragStartMouseY = 0;
@@ -274,7 +275,7 @@ public class HUD extends Module {
                         width += (float) mc.fontRendererObj.getStringWidth(string) + (this.shadow.getValue() ? 3.0F : 2.0F);
                     }
                 }
-                y += (height + (this.shadow.getValue() ? 1.0F : 0.0F)) * this.scale.getValue() * (this.posY.getValue() == 0 ? 1.0F : -1.0F);
+                y += (height + (this.shadow.getValue() ? 1.0F : 0.0F) + this.gap.getValue()) * this.scale.getValue() * (this.posY.getValue() == 0 ? 1.0F : -1.0F);
                 offset++;
             }
             if (this.blinkTimer.getValue()) {
@@ -308,7 +309,7 @@ public class HUD extends Module {
                         maxWidth = moduleWidth;
                     }
                 }
-                float lineHeight = (height + (this.shadow.getValue() ? 1.0F : 0.0F)) * this.scale.getValue();
+                float lineHeight = (height + (this.shadow.getValue() ? 1.0F : 0.0F) + this.gap.getValue()) * this.scale.getValue();
                 float totalHeight = (this.activeModules.isEmpty() ? 1.0F : (float) this.activeModules.size()) * lineHeight;
                 float left = this.posX.getValue() == 0
                         ? startX - (this.showBar.getValue() ? (this.shadow.getValue() ? 3.0F : 2.0F) * this.scale.getValue() : 1.0F)

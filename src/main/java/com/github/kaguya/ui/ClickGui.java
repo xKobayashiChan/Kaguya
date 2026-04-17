@@ -163,6 +163,7 @@ public class ClickGui extends GuiScreen {
         misc.add(Kaguya.moduleManager.getModule(InventoryClicker.class));
         misc.add(Kaguya.moduleManager.getModule(DiscordRichPresence.class));
         misc.add(Kaguya.moduleManager.getModule(HeldItemDetect.class));
+        misc.add(Kaguya.moduleManager.getModule(PacketListener.class));
         misc.sort(byName);
 
         Set<Module> registered = new HashSet<>();
@@ -342,15 +343,15 @@ public class ClickGui extends GuiScreen {
     private void drawSettingsPanel(int mouseX, int mouseY, int settX, int settW,
                                    int contentY, int contentH, ScaledResolution sr) {
         // header: module name
-        String name    = selectedModule.mod.getName();
-        boolean enabled = selectedModule.mod.isEnabled();
+        String name = selectedModule.mod.getName();
         mc.fontRendererObj.drawStringWithShadow(name, settX + 7, contentY + 4, C_ORANGE);
 
-        // ON / OFF badge on the right
-        String badge   = enabled ? "ON" : "OFF";
-        int badgeColor = enabled ? C_ORANGE : C_DIM;
-        int badgeX     = settX + settW - mc.fontRendererObj.getStringWidth(badge) - 6;
-        mc.fontRendererObj.drawStringWithShadow(badge, badgeX, contentY + 4, badgeColor);
+        // HIDE / SHOW button on the right
+        boolean isHidden    = selectedModule.mod.isHidden();
+        String  hideLabel   = isHidden ? "HIDE" : "SHOW";
+        int     hideLabelW  = mc.fontRendererObj.getStringWidth(hideLabel);
+        int     hideLabelX  = settX + settW - hideLabelW - 6;
+        mc.fontRendererObj.drawStringWithShadow(hideLabel, hideLabelX, contentY + 4, isHidden ? C_DIM : C_ORANGE);
 
         // thin separator
         Gui.drawRect(settX + 4, contentY + HEADER_H - 1, settX + settW - 4, contentY + HEADER_H, C_SEPARATOR);
@@ -477,12 +478,20 @@ public class ClickGui extends GuiScreen {
             }
         }
 
-        // settings header → toggle ON/OFF
+        // settings header → HIDE/SHOW or toggle ON/OFF
         if (selectedModule != null
                 && x >= settX && x < settX + settW
                 && y >= contentY && y < contentY + HEADER_H
                 && mouseButton == 0) {
-            selectedModule.mod.toggle();
+            boolean isHid      = selectedModule.mod.isHidden();
+            String  hideLabel  = isHid ? "HIDE" : "SHOW";
+            int     hideLabelW = mc.fontRendererObj.getStringWidth(hideLabel);
+            int     hideLabelX = settX + settW - hideLabelW - 6;
+            if (x >= hideLabelX && x < hideLabelX + hideLabelW) {
+                selectedModule.mod.setHidden(!isHid);
+            } else {
+                selectedModule.mod.toggle();
+            }
             return;
         }
 

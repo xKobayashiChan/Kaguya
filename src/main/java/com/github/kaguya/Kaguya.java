@@ -144,6 +144,7 @@ public class Kaguya {
         moduleManager.modules.put(Xray.class, new Xray());
         commandManager.commands.add(new BindCommand());
         commandManager.commands.add(new ChatCopyCommand());
+        commandManager.commands.add(new CnameCommand());
         commandManager.commands.add(new ConfigCommand());
         commandManager.commands.add(new DenickCommand());
         commandManager.commands.add(new FriendCommand());

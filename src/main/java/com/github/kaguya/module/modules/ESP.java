@@ -45,6 +45,7 @@ public class ESP extends Module {
     public final BooleanProperty self = new BooleanProperty("self", false);
     public final BooleanProperty bots = new BooleanProperty("bots", false);
     public final BooleanProperty legit = new BooleanProperty("legit", false);
+    public final BooleanProperty hideOnHit = new BooleanProperty("hide-on-hit", false);
 
     private boolean shouldRenderPlayer(EntityPlayer entityPlayer) {
         if (entityPlayer.deathTime > 0) {
@@ -55,7 +56,13 @@ public class ESP extends Module {
             return false;
         } else if (this.legit.getValue() && RotationUtil.rayTrace(entityPlayer) != null) {
             return false;
-        } else if (entityPlayer != mc.thePlayer && entityPlayer != mc.getRenderViewEntity()) {
+        } else if (this.hideOnHit.getValue()) {
+            KillAura killAura = (KillAura) Kaguya.moduleManager.modules.get(KillAura.class);
+            if (killAura.isEnabled() && killAura.isHitting() && entityPlayer == killAura.getTarget()) {
+                return false;
+            }
+        }
+        if (entityPlayer != mc.thePlayer && entityPlayer != mc.getRenderViewEntity()) {
             if (TeamUtil.isBot(entityPlayer)) {
                 return this.bots.getValue();
             } else if (TeamUtil.isFriend(entityPlayer)) {

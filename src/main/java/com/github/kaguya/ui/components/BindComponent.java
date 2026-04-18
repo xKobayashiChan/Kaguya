@@ -65,6 +65,7 @@ public class BindComponent implements Component {
     public void keyTyped(char chatTyped, int keyCode) {
         if (this.isBinding) {
             if (keyCode == 1) {
+                this.parentModule.mod.setKey(0);
                 this.isBinding = false;
                 return;
             }
@@ -86,6 +87,10 @@ public class BindComponent implements Component {
     @Override
     public void setComponentStartAt(int newOffsetY) {
         this.offsetY = newOffsetY;
+    }
+
+    public boolean isBinding() {
+        return this.isBinding;
     }
 
     public boolean isHovered(int x, int y) {

@@ -55,6 +55,7 @@ public class NameTags extends Module {
     public final BooleanProperty shadow = new BooleanProperty("shadow", true);
     public final ModeProperty distanceMode = new ModeProperty("distance", 0, new String[]{"NONE", "DEFAULT", "VAPE"});
     public final ModeProperty healthMode = new ModeProperty("health", 2, new String[]{"NONE", "HP", "HEARTS", "TAB"});
+    public final BooleanProperty bracket = new BooleanProperty("bracket", true);
     public final BooleanProperty armor = new BooleanProperty("armor", true);
     public final BooleanProperty effects = new BooleanProperty("effects", true);
     public final BooleanProperty players = new BooleanProperty("players", true);
@@ -146,14 +147,19 @@ public class NameTags extends Module {
                         float max = ((EntityLivingBase) entity).getMaxHealth();
                         float percent = Math.min(Math.max((health + absorption) / max, 0.0F), 1.0F);
                         String healText = "";
+                        boolean showBracket = this.bracket.getValue();
+                        String bl = showBracket ? "&f[&r" : " &r";
+                        String br = showBracket ? "&c\u2764&f]&r" : "&r";
+                        String abl = showBracket ? "&6[&r" : " &r";
+                        String abr = showBracket ? "&c\u2764&6]&r" : "&r";
                         switch (this.healthMode.getValue()) {
                             case 1:
-                                healText = String.format(" &f[%d&c\u2764&f]&r", (int) health)
-                                        + (absorption > 0.0F ? String.format(" &6[%d&c\u2764&6]&r", (int) absorption) : "");
+                                healText = String.format(" %s%d%s", bl, (int) health, br)
+                                        + (absorption > 0.0F ? String.format(" %s%d%s", abl, (int) absorption, abr) : "");
                                 break;
                             case 2:
-                                healText = String.format(" &f[%s&c\u2764&f]&r", healthFormatter.format((double) health / 2.0))
-                                        + (absorption > 0.0F ? String.format(" &6[%s&c\u2764&6]&r", healthFormatter.format((double) absorption / 2.0)) : "");
+                                healText = String.format(" %s%s%s", bl, healthFormatter.format((double) health / 2.0), br)
+                                        + (absorption > 0.0F ? String.format(" %s%s%s", abl, healthFormatter.format((double) absorption / 2.0), abr) : "");
                                 break;
                             case 3:
                                 if (entity instanceof EntityPlayer) {

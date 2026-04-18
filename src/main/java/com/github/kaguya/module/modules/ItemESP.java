@@ -41,6 +41,7 @@ public class ItemESP extends Module {
     public final BooleanProperty enderPearl = new BooleanProperty("ender-pearl", true);
     public final BooleanProperty netherWart = new BooleanProperty("nether-wart", true);
     public final BooleanProperty blazeRod = new BooleanProperty("blaze-rod", true);
+    public final BooleanProperty heads = new BooleanProperty("heads", true);
     public final BooleanProperty legit = new BooleanProperty("legit", false);
 
     private boolean shouldHighlightItem(ItemStack stack) {
@@ -52,7 +53,16 @@ public class ItemESP extends Module {
                 || this.iron.getValue() && this.isIronItem(itemId)
                 || this.enderPearl.getValue() && Item.getItemById(itemId) == Items.ender_pearl
                 || this.netherWart.getValue() && Item.getItemById(itemId) == Items.nether_wart
-                || this.blazeRod.getValue() && Item.getItemById(itemId) == Items.blaze_rod;
+                || this.blazeRod.getValue() && Item.getItemById(itemId) == Items.blaze_rod
+                || this.heads.getValue() && this.isHeadItem(itemId);
+    }
+
+    private boolean isHeadItem(int itemId) {
+        return Item.getItemById(itemId) == Items.skull;
+    }
+
+    private boolean isHeadItem(ItemData data) {
+        return this.isHeadItem(data.itemId);
     }
 
     private boolean isPotionItem(ItemStack stack) {
@@ -98,6 +108,8 @@ public class ItemESP extends Module {
             return new Color(ChatColors.AQUA.toAwtColor());
         } else if (this.isGoldItem(data)) {
             return new Color(ChatColors.YELLOW.toAwtColor());
+        } else if (this.isHeadItem(data)) {
+            return new Color(ChatColors.RED.toAwtColor());
         } else {
             return this.isIronItem(data) ? new Color(ChatColors.WHITE.toAwtColor()) : new Color(ChatColors.GRAY.toAwtColor());
         }
@@ -105,14 +117,16 @@ public class ItemESP extends Module {
 
     private int getItemPriority(ItemData data) {
         if (this.isSplashPotion(data)) {
-            return 6;
+            return 7;
         } else if (this.isPotionItem(data)) {
-            return 5;
+            return 6;
         } else if (this.isEmeraldItem(data)) {
-            return 4;
+            return 5;
         } else if (this.isDiamondItem(data)) {
-            return 3;
+            return 4;
         } else if (this.isGoldItem(data)) {
+            return 3;
+        } else if (this.isHeadItem(data)) {
             return 2;
         } else {
             return this.isIronItem(data) ? 1 : 0;

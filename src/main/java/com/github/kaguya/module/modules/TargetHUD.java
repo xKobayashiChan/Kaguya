@@ -20,7 +20,6 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -38,7 +37,6 @@ import java.util.Locale;
 public class TargetHUD extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private static final DecimalFormat healthFormat = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.US));
-    private static final float ENTITY_TEXT_GAP = 10.0F;
 
     private final TimerUtil lastAttackTimer = new TimerUtil();
     private final TimerUtil animTimer = new TimerUtil();
@@ -119,50 +117,42 @@ public class TargetHUD extends Module {
                 float healthRatio = Math.min(Math.max(RenderUtil.lerpFloat(this.newHealth, this.oldHealth, elapsedTime / 150.0F) / this.maxHealth, 0.0F), 1.0F);
                 Color targetColor = this.getTargetColor(this.target);
                 Color healthBarColor = ColorUtil.getHealthBlend(healthRatio);
-                ItemStack heldItem = this.target.getEquipmentInSlot(0);
-                boolean holdingNone = heldItem == null;
-                String holdingLabel = "Holding: ";
-                String holdingValue = holdingNone ? "None" : heldItem.getDisplayName();
                 ScaledResolution scaledResolution = new ScaledResolution(mc);
                 String targetNameText = ChatColors.formatColor(String.format("&r%s&r", TeamUtil.stripName(this.target)));
                 int targetNameWidth = mc.fontRendererObj.getStringWidth(targetNameText);
-                String healthText = String.format("%s❤", healthFormat.format(heal));
+                String healthText = String.format("%s ❤", healthFormat.format(heal));
                 int healthTextWidth = mc.fontRendererObj.getStringWidth(healthText);
                 float fontH = mc.fontRendererObj.FONT_HEIGHT;
-                float hpScale = 1.5F;
+                float hpScale = 2.0F;
                 float paddingTop = 3.0F;
-                float paddingSides = 3.0F;
+                float paddingSides = 0.0F;
                 float gapText = 2.0F;
                 float gapEntityToBar = 3.0F;
                 float barHeight = 3.0F;
                 float paddingBottom = 4.0F;
                 float hpTextHeight = fontH * hpScale;
-                int holdingWidth = mc.fontRendererObj.getStringWidth(holdingLabel + holdingValue);
-                float contentWidth = Math.max(Math.max((float) targetNameWidth, (float) healthTextWidth * 1.5F), (float) holdingWidth);
+                boolean isBlocking = this.target instanceof EntityPlayer && ((EntityPlayer) this.target).isBlocking();
+                String blockingText = "§fBlocking: " + (isBlocking ? "§atrue" : "§cfalse");
+                int blockingTextWidth = mc.fontRendererObj.getStringWidth(blockingText);
+                float contentWidth = Math.max(Math.max((float) targetNameWidth, (float) healthTextWidth * hpScale), (float) blockingTextWidth);
+
+                float gapBlocking = 2.0F;
+                float textBlockHeight = fontH + gapText + hpTextHeight + gapBlocking + fontH;
+                float hudHeight = Math.max(paddingTop + textBlockHeight + paddingBottom, 44.0F);
+                float barTop = hudHeight - barHeight;
 
                 float entityRenderScale = 0.0F;
                 float entityOffset = 0.0F;
                 float scaledEntityHeight = 0.0F;
                 if (this.entity.getValue()) {
-                    entityRenderScale = 16.0F;
-                    scaledEntityHeight = Math.max(18.0F, entityRenderScale * Math.max(this.target.height, 0.5F));
-                    entityOffset = entityRenderScale + ENTITY_TEXT_GAP;
+                    scaledEntityHeight = barTop - paddingTop;
+                    entityRenderScale = scaledEntityHeight / Math.max(this.target.height, 0.5F);
+                    entityOffset = entityRenderScale;
                 }
 
-                float holdingTextGap = 2.0F;
-                float textBlockHeight = fontH + gapText + hpTextHeight + holdingTextGap + fontH;
                 float textStartX = this.entity.getValue() ? entityOffset : 0.0F;
-                float entityTop = this.entity.getValue() ? paddingTop : 0.0F;
-                float textTop = this.entity.getValue()
-                        ? paddingTop + Math.max(0.0F, (scaledEntityHeight - textBlockHeight) / 2.0F)
-                        : paddingTop;
-                float holdingTextTop = textTop + fontH + gapText + hpTextHeight + holdingTextGap;
-                float contentBottom = this.entity.getValue()
-                        ? Math.max(entityTop + scaledEntityHeight, textTop + textBlockHeight)
-                        : textTop + textBlockHeight;
-                float hudHeight = contentBottom + paddingBottom;
-                hudHeight = Math.max(hudHeight, 44.0F);
-                float barTop = hudHeight - barHeight;
+                float textTop = paddingTop + Math.max(0.0F, (hudHeight - paddingTop - paddingBottom - textBlockHeight) / 2.0F);
+                float blockingTextTop = textTop + fontH + gapText + hpTextHeight + gapBlocking;
 
                 float barTotalWidth = Math.max(textStartX + 80.0F, textStartX + paddingSides + contentWidth + paddingSides);
                 float entityCenterX = paddingSides + entityRenderScale / 2.0F;
@@ -210,15 +200,11 @@ public class TargetHUD extends Module {
                 GlStateManager.scale(hpScale, hpScale, 1.0F);
                 mc.fontRendererObj.drawString(healthText, (textStartX + paddingSides) / hpScale, (textTop + fontH + gapText) / hpScale, healthBarColor.getRGB(), this.shadow.getValue());
                 GlStateManager.popMatrix();
-                // Holding text
-                String holdingDisplay = holdingNone
-                        ? holdingLabel + "\u00a7cNone"
-                        : holdingLabel + holdingValue;
-                mc.fontRendererObj.drawString(holdingDisplay, textStartX + paddingSides, holdingTextTop, -1, this.shadow.getValue());
+                mc.fontRendererObj.drawString(ChatColors.formatColor(blockingText), textStartX + paddingSides, blockingTextTop, -1, this.shadow.getValue());
                 if (this.entity.getValue()) {
                     boolean wasHideGUI = mc.gameSettings.hideGUI;
                     mc.gameSettings.hideGUI = true;
-                    float entityFeetY = entityCenterY + scaledEntityHeight / 2.0F;
+                    float entityFeetY = barTop;
                     GlStateManager.enableDepth();
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     GuiInventory.drawEntityOnScreen(

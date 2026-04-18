@@ -15,7 +15,7 @@ public class DiscordRichPresence extends Module {
 
     private static final Minecraft mc = Minecraft.getMinecraft();
 
-    public final TextProperty appId      = new TextProperty("appId", "1490352070098682058");
+    public final TextProperty appId      = new TextProperty("appId", "1490352070098682058", () -> false);
     public final BooleanProperty showServer = new BooleanProperty("showServer", true);
 
     private DiscordIPC ipc;

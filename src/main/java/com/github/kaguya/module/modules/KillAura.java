@@ -56,9 +56,9 @@ import java.util.Random;
 public class KillAura extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private static final DecimalFormat df = new DecimalFormat("+0.0;-0.0", new DecimalFormatSymbols(Locale.US));
-    private static final Color TARGET_IDLE_COLOR = new Color(255, 10, 10 ,10);
-    private static final Color TARGET_HIT_COLOR = new Color(255, 10, 10 ,70);
-    private static final Color TARGET_DAMAGE_COLOR = new Color(255, 10, 10 ,100);
+    private static final Color TARGET_IDLE_COLOR = new Color(255, 0, 0,10);
+    private static final Color TARGET_HIT_COLOR = new Color(255, 0, 0,30);
+    private static final Color TARGET_DAMAGE_COLOR = new Color(255, 0, 0,80);
     private static final int HIT_COLOR_TICKS = 6;
     private final TimerUtil timer = new TimerUtil();
     private AttackData target = null;
@@ -375,6 +375,10 @@ public class KillAura extends Module {
 
     public EntityLivingBase getTarget() {
         return this.target != null ? this.target.getEntity() : null;
+    }
+
+    public boolean isHitting() {
+        return this.hitColorTicks > 0;
     }
 
     public boolean isAttackAllowed() {

@@ -528,7 +528,11 @@ public class ClickGui extends GuiScreen {
     @Override
     public void keyTyped(char typedChar, int key) {
         if (key == 1) {
-            mc.displayGuiScreen(null);
+            if (selectedModule != null && selectedModule.isAnyBinding()) {
+                selectedModule.keyTypedSettings(typedChar, key);
+            } else {
+                mc.displayGuiScreen(null);
+            }
         } else if (selectedModule != null) {
             selectedModule.keyTypedSettings(typedChar, key);
         }

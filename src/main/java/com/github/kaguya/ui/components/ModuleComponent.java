@@ -215,4 +215,11 @@ public class ModuleComponent implements Component {
             if (c.isVisible()) c.keyTyped(ch, key);
         }
     }
+
+    public boolean isAnyBinding() {
+        for (Component c : this.settings) {
+            if (c instanceof BindComponent && ((BindComponent) c).isBinding()) return true;
+        }
+        return false;
+    }
 }

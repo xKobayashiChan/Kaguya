@@ -89,6 +89,7 @@ public class Kaguya {
         moduleManager.modules.put(ChestStealer.class, new ChestStealer());
         moduleManager.modules.put(Eagle.class, new Eagle());
         moduleManager.modules.put(ESP.class, new ESP());
+        moduleManager.modules.put(FriendHUD.class, new FriendHUD());
         moduleManager.modules.put(FriendTransparency.class, new FriendTransparency());
         moduleManager.modules.put(FastPlace.class, new FastPlace());
         moduleManager.modules.put(Freeze.class, new Freeze());

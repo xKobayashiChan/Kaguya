@@ -4,6 +4,7 @@ import com.github.kaguya.mixins.IAccessorEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -123,8 +124,24 @@ public class RotationUtil {
     public static MovingObjectPosition rayTrace(Entity entity) {
         Vec3 eyePos = RotationUtil.mc.thePlayer.getPositionEyes(1.0f);
         float borderSize = entity.getCollisionBorderSize();
-        Vec3 targetPos = RotationUtil.clampVecToBox(eyePos, entity.getEntityBoundingBox().expand(borderSize, borderSize, borderSize));
-        return RotationUtil.mc.theWorld.rayTraceBlocks(eyePos, targetPos);
+        AxisAlignedBB box = entity.getEntityBoundingBox().expand(borderSize, borderSize, borderSize);
+        double cx = (box.minX + box.maxX) / 2.0;
+        double cz = (box.minZ + box.maxZ) / 2.0;
+        int entityFloorY = (int) Math.floor(entity.posY);
+        double[] checkYs = {
+            box.minY + 0.1 * (box.maxY - box.minY),
+            box.minY + 0.5 * (box.maxY - box.minY),
+            box.minY + 0.9 * (box.maxY - box.minY)
+        };
+        for (double y : checkYs) {
+            MovingObjectPosition hit = RotationUtil.mc.theWorld.rayTraceBlocks(eyePos, new Vec3(cx, y, cz));
+            // No block hit, or hit block is below entity's feet (foundation block, not a wall)
+            if (hit == null || hit.getBlockPos().getY() < entityFloorY) {
+                return null;
+            }
+        }
+        Vec3 closestPoint = RotationUtil.clampVecToBox(eyePos, box);
+        return RotationUtil.mc.theWorld.rayTraceBlocks(eyePos, closestPoint);
     }
 
     public static MovingObjectPosition rayTrace(AxisAlignedBB boundingBox, float yaw, float pitch, double distance) {

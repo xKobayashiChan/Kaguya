@@ -65,6 +65,8 @@ public class KillAura extends Module {
     private int switchTick = 0;
     private boolean hitRegistered = false;
     private int hitColorTicks = 0;
+    private int damageColorTicks = 0;
+    private int prevTargetHurtTime = 0;
     private boolean blockingState = false;
     private boolean isBlocking = false;
     private boolean fakeBlockState = false;
@@ -424,6 +426,18 @@ public class KillAura extends Module {
         if (this.isEnabled() && event.getType() == EventType.PRE) {
             if (this.hitColorTicks > 0) {
                 this.hitColorTicks--;
+            }
+            if (this.damageColorTicks > 0) {
+                this.damageColorTicks--;
+            }
+            if (this.target != null) {
+                int curHurtTime = this.target.getEntity().hurtTime;
+                if (curHurtTime > this.prevTargetHurtTime) {
+                    this.damageColorTicks = 3;
+                }
+                this.prevTargetHurtTime = curHurtTime;
+            } else {
+                this.prevTargetHurtTime = 0;
             }
             boolean attack = this.target != null && this.canAttack();
             boolean block = attack && this.canAutoBlock();
@@ -875,18 +889,16 @@ public class KillAura extends Module {
                     && TeamUtil.isEntityLoaded(this.target.getEntity())
                     && this.isAttackAllowed()) {
                 Color color = new Color(-1);
-                switch (this.showTarget.getValue()) {
-                    case 1:
-                        if (this.hitColorTicks > 0 && this.target.getEntity().hurtTime > 0) {
-                            color = TARGET_DAMAGE_COLOR;
-                        } else if (this.hitColorTicks > 0) {
-                            color = TARGET_HIT_COLOR;
-                        } else if (this.target.getEntity().hurtTime > 0) {
-                            color = TARGET_IDLE_COLOR;
-                        } else {
-                            color = TARGET_IDLE_COLOR;
-                        }
-                        break;
+                if (this.showTarget.getValue() == 1) {
+                    if (this.damageColorTicks > 0) {
+                        color = TARGET_DAMAGE_COLOR;
+                    } else if (this.hitColorTicks > 0) {
+                        color = TARGET_HIT_COLOR;
+                    } else if (this.target.getEntity().hurtTime > 0) {
+                        color = TARGET_IDLE_COLOR;
+                    } else {
+                        color = TARGET_IDLE_COLOR;
+                    }
                 }
                 RenderUtil.enableRenderState();
                 RenderUtil.drawEntityBoundingBoxFilled(this.target.getEntity(), color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha(), 0.1);
@@ -941,6 +953,8 @@ public class KillAura extends Module {
         this.switchTick = 0;
         this.hitRegistered = false;
         this.hitColorTicks = 0;
+        this.damageColorTicks = 0;
+        this.prevTargetHurtTime = 0;
         this.attackTimer.setTime();
         this.currentAttackDelay = 0L;
         this.blockTick = 0;

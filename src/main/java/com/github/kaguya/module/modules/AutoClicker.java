@@ -77,7 +77,8 @@ public class AutoClicker extends Module {
                         borderSize + this.hitBoxHorizontal.getValue(),
                         borderSize + this.hitBoxVertical.getValue(),
                         borderSize + this.hitBoxHorizontal.getValue()
-                ), mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, this.range.getValue()) != null;
+                ), mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, this.range.getValue()) != null
+                        && RotationUtil.rayTrace(entityPlayer) == null;
             }
         } else {
             return false;

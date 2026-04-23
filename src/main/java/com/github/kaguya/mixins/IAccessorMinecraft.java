@@ -28,4 +28,7 @@ public interface IAccessorMinecraft {
 
     @Accessor("leftClickCounter")
     void setLeftClickCounter(int value);
+
+    @Accessor("debugFPS")
+    int getDebugFPS();
 }

@@ -52,8 +52,8 @@ public class TargetHUD extends Module {
     private int dragStartOffY = 0;
     public final ModeProperty posX = new ModeProperty("position-x", 1, new String[]{"LEFT", "MIDDLE", "RIGHT"});
     public final ModeProperty posY = new ModeProperty("position-y", 1, new String[]{"TOP", "MIDDLE", "BOTTOM"});
-    public final IntProperty offX = new IntProperty("offset-x", 0, -9999, 9999);
-    public final IntProperty offY = new IntProperty("offset-y", 40, -9999, 9999);
+    public final IntProperty offX = new IntProperty("offset-x", 0, -4096, 4096, () -> false);
+    public final IntProperty offY = new IntProperty("offset-y", 40, -4096, 4096, () -> false);
     public final BooleanProperty entity = new BooleanProperty("entity", true);
     public final BooleanProperty outline = new BooleanProperty("outline", false);
     public final BooleanProperty animations = new BooleanProperty("animations", true);

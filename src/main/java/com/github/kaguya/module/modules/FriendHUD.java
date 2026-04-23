@@ -93,7 +93,7 @@ public class FriendHUD extends Module {
 
         ScaledResolution sr = new ScaledResolution(mc);
         int fontH    = mc.fontRendererObj.FONT_HEIGHT;
-        int headSize = fontH;
+        int headSize = 8; // スキンテクスチャのヘッドは 8x8 テクセルなので 8px で描画（引き伸ばし防止）
         float rowH   = fontH + ROW_GAP;
 
         // カラム幅計算
@@ -151,17 +151,21 @@ public class FriendHUD extends Module {
 
             GlStateManager.disableDepth();
 
-            // スキンアイコン（NameTagsと同パターン）
+            // スキンアイコン
             if (friend instanceof AbstractClientPlayer) {
                 GlStateManager.enableTexture2D();
                 GlStateManager.enableBlend();
+                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GlStateManager.enableAlpha();
                 GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
                 mc.getTextureManager().bindTexture(((AbstractClientPlayer) friend).getLocationSkin());
+                // GL_NEAREST でピクセルパーフェクト描画（GL_LINEARだと引き伸ばして見える）
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
                 int headX = (int) xHead;
                 int headY = (int) textY;
-                Gui.drawScaledCustomSizeModalRect(headX, headY, 8.0f, 8.0f, 8, 8, headSize, headSize + 1, 64.0f, 64.0f);
-                Gui.drawScaledCustomSizeModalRect(headX, headY, 40.0f, 8.0f, 8, 8, headSize, headSize + 1, 64.0f, 64.0f);
+                Gui.drawScaledCustomSizeModalRect(headX, headY, 8.0f, 8.0f, 8, 8, headSize, headSize, 64.0f, 64.0f);
+                Gui.drawScaledCustomSizeModalRect(headX, headY, 40.0f, 8.0f, 8, 8, headSize, headSize, 64.0f, 64.0f);
             }
 
             GlStateManager.enableBlend();

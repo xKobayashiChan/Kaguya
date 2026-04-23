@@ -22,8 +22,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -40,10 +39,10 @@ public class HUD extends Module {
     public final ColorProperty custom1 = new ColorProperty("custom-color-1", Color.WHITE.getRGB(), () -> this.colorMode.getValue() == 3 || this.colorMode.getValue() == 4 || this.colorMode.getValue() == 5);
     public final ColorProperty custom2 = new ColorProperty("custom-color-2", Color.WHITE.getRGB(), () -> this.colorMode.getValue() == 4 || this.colorMode.getValue() == 5);
     public final ColorProperty custom3 = new ColorProperty("custom-color-3", Color.WHITE.getRGB(), () -> this.colorMode.getValue() == 5);
-    public final ModeProperty posX = new ModeProperty("position-x", 0, new String[]{"LEFT", "RIGHT"});
-    public final ModeProperty posY = new ModeProperty("position-y", 0, new String[]{"TOP", "BOTTOM"});
-    public final IntProperty offsetX = new IntProperty("offset-x", 2, 0, 9999);
-    public final IntProperty offsetY = new IntProperty("offset-y", 2, 0, 9999);
+    public final ModeProperty posX = new ModeProperty("position-x", 0, new String[]{"LEFT", "RIGHT"}, () -> false);
+    public final ModeProperty posY = new ModeProperty("position-y", 0, new String[]{"TOP", "BOTTOM"}, () -> false);
+    public final IntProperty offsetX = new IntProperty("offset-x", 2, 0, 4096, () -> false);
+    public final IntProperty offsetY = new IntProperty("offset-y", 2, 0, 4096, () -> false);
     public final FloatProperty scale = new FloatProperty("scale", 1.0F, 0.5F, 1.5F);
     public final PercentProperty background = new PercentProperty("background", 25);
     public final BooleanProperty showBar = new BooleanProperty("bar", true);
@@ -55,11 +54,26 @@ public class HUD extends Module {
     public final BooleanProperty toggleSound = new BooleanProperty("toggle-sounds", true);
     public final BooleanProperty toggleAlerts = new BooleanProperty("toggle-alerts", false);
     public final FloatProperty gap = new FloatProperty("gap", 0.0F, -2.0F, 5.0F);
+    // Animation
+    private static final float ANIM_APPEAR_SPEED = 8f;  // alpha/sec
+    private static final float ANIM_DIE_SPEED    = 6f;  // alpha/sec
+    private static final float ANIM_SLIDE_SPEED  = 120f; // px/sec
+
+    private final List<Module> renderOrder = new ArrayList<>();
+    private final Map<Module, AnimState> animStates = new HashMap<>();
+    private long lastFrameMs = -1;
+
+    private static class AnimState {
+        float alpha   = 0f;
+        float xOffset = 0f;
+        boolean dying = false;
+    }
+
     private boolean isDragging = false;
     private int dragStartMouseX = 0;
     private int dragStartMouseY = 0;
-    private int dragStartOffsetX = 0;
-    private int dragStartOffsetY = 0;
+    private int dragStartAbsX = 0;
+    private int dragStartAbsY = 0;
 
     private String getModuleName(Module module) {
         String moduleName = module.getName();
@@ -77,6 +91,11 @@ public class HUD extends Module {
             }
         }
         return moduleSuffix;
+    }
+
+    private static int withAlpha(int color, float alpha) {
+        int a = (int)(((color >> 24) & 0xFF) * alpha);
+        return (color & 0x00FFFFFF) | (a << 24);
     }
 
     private int getModuleWidth(Module module) {
@@ -191,46 +210,108 @@ public class HUD extends Module {
             }
             float startX = x;
             float startY = y;
+            // --- Animation sync ---
+            long nowMs = System.currentTimeMillis();
+            float dt = lastFrameMs < 0 ? 0f : Math.min((nowMs - lastFrameMs) / 1000f, 0.05f);
+            lastFrameMs = nowMs;
+
+            // Mark removed modules as dying
+            for (Module m : renderOrder) {
+                AnimState s = animStates.get(m);
+                if (s != null && !s.dying && !activeModules.contains(m)) {
+                    s.dying = true;
+                }
+            }
+            // Add new modules / re-enable dying ones
+            for (Module m : activeModules) {
+                if (!animStates.containsKey(m)) {
+                    AnimState s = new AnimState();
+                    animStates.put(m, s);
+                    // Insert after all non-dying modules with >= width
+                    int insertIdx = 0;
+                    int mWidth = getModuleWidth(m);
+                    for (int i = 0; i < renderOrder.size(); i++) {
+                        AnimState rs = animStates.get(renderOrder.get(i));
+                        if (rs != null && !rs.dying && getModuleWidth(renderOrder.get(i)) >= mWidth) {
+                            insertIdx = i + 1;
+                        }
+                    }
+                    renderOrder.add(insertIdx, m);
+                } else {
+                    animStates.get(m).dying = false;
+                }
+            }
+            // Update alpha/xOffset and remove dead
+            Iterator<Module> animIter = renderOrder.iterator();
+            while (animIter.hasNext()) {
+                Module m = animIter.next();
+                AnimState s = animStates.get(m);
+                if (s == null) { animIter.remove(); continue; }
+                if (s.dying) {
+                    s.alpha   = Math.max(0f, s.alpha - dt * ANIM_DIE_SPEED);
+                    s.xOffset = Math.min(s.xOffset + dt * ANIM_SLIDE_SPEED, 80f);
+                    if (s.alpha <= 0f) {
+                        animStates.remove(m);
+                        animIter.remove();
+                    }
+                } else {
+                    s.alpha   = Math.min(1f, s.alpha + dt * ANIM_APPEAR_SPEED);
+                    s.xOffset = 0f;
+                }
+            }
+            // --- End animation sync ---
+
             GlStateManager.pushMatrix();
             GlStateManager.scale(this.scale.getValue(), this.scale.getValue(), 0.0F);
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             long l = System.currentTimeMillis();
             long offset = 0L;
-            for (Module module : this.activeModules) {
+            for (Module module : renderOrder) {
+                AnimState anim = animStates.get(module);
+                if (anim == null) continue;
+                float alpha   = anim.alpha;
+                float slideX  = anim.xOffset; // screen pixels to shift rightward
+
                 String moduleName = this.getModuleName(module);
                 String[] moduleSuffix = this.getModuleSuffix(module);
                 float totalWidth = (float) (this.calculateStringWidth(moduleName, moduleSuffix) - (this.shadow.getValue() ? 0 : 1));
-                int color = this.getColor(l, offset).getRGB();
+                int color = withAlpha(this.getColor(l, offset).getRGB(), alpha);
+                // drawX: slide direction follows position-x (LEFT=left, RIGHT=right)
+                float slideDir = this.posX.getValue() == 0 ? -1f : 1f;
+                float drawX = x / this.scale.getValue() + slideX * slideDir;
                 RenderUtil.enableRenderState();
                 if (this.background.getValue() > 0) {
+                    int bgColor = new Color(0.0F, 0.0F, 0.0F, this.background.getValue().floatValue() / 100.0F * alpha).getRGB();
                     RenderUtil.drawRect(
-                            x / this.scale.getValue() - 1.0F - (this.posX.getValue() == 0 ? 0.0F : totalWidth),
+                            drawX - 1.0F - (this.posX.getValue() == 0 ? 0.0F : totalWidth),
                             y / this.scale.getValue() - (this.posY.getValue() == 0 ? (offset == 0L ? 1.0F : 0.0F) : (this.shadow.getValue() ? 1.0F : 0.0F)),
-                            x / this.scale.getValue() + 1.0F + (this.posX.getValue() == 0 ? totalWidth : 0.0F),
+                            drawX + 1.0F + (this.posX.getValue() == 0 ? totalWidth : 0.0F),
                             y / this.scale.getValue() + height + (this.posY.getValue() == 0 ? (this.shadow.getValue() ? 1.0F : 0.0F) : (offset == 0L ? 1.0F : 0.0F)),
-                            new Color(0.0F, 0.0F, 0.0F, this.background.getValue().floatValue() / 100.0F).getRGB()
+                            bgColor
                     );
                 }
                 if (this.showBar.getValue()) {
                     if (this.shadow.getValue()) {
                         RenderUtil.drawRect(
-                                x / this.scale.getValue() + (this.posX.getValue() == 0 ? -3.0F : 1.0F),
+                                drawX + (this.posX.getValue() == 0 ? -3.0F : 1.0F),
                                 y / this.scale.getValue() - (this.posY.getValue() == 0 ? (offset == 0L ? 1.0F : 0.0F) : 1.0F),
-                                x / this.scale.getValue() + (this.posX.getValue() == 0 ? -2.0F : 2.0F),
+                                drawX + (this.posX.getValue() == 0 ? -2.0F : 2.0F),
                                 y / this.scale.getValue() + height + (this.posY.getValue() == 0 ? 1.0F : (offset == 0L ? 1.0F : 0.0F)),
                                 color
                         );
                         RenderUtil.drawRect(
-                                x / this.scale.getValue() + (this.posX.getValue() == 0 ? -2.0F : 2.0F),
+                                drawX + (this.posX.getValue() == 0 ? -2.0F : 2.0F),
                                 y / this.scale.getValue() - (this.posY.getValue() == 0 ? (offset == 0L ? 1.0F : 0.0F) : 1.0F),
-                                x / this.scale.getValue() + (this.posX.getValue() == 0 ? -1.0F : 3.0F),
+                                drawX + (this.posX.getValue() == 0 ? -1.0F : 3.0F),
                                 y / this.scale.getValue() + height + (this.posY.getValue() == 0 ? 1.0F : (offset == 0L ? 1.0F : 0.0F)),
                                 (color & 16579836) >> 2 | color & 0xFF000000
                         );
                     } else {
                         RenderUtil.drawRect(
-                                x / this.scale.getValue() + (this.posX.getValue() == 0 ? -2.0F : 1.0F),
+                                drawX + (this.posX.getValue() == 0 ? -2.0F : 1.0F),
                                 y / this.scale.getValue() - (this.posY.getValue() == 0 ? (offset == 0L ? 1.0F : 0.0F) : 0.0F),
-                                x / this.scale.getValue() + (this.posX.getValue() == 0 ? -1.0F : 2.0F),
+                                drawX + (this.posX.getValue() == 0 ? -1.0F : 2.0F),
                                 y / this.scale.getValue() + height + (this.posY.getValue() == 0 ? 0.0F : (offset == 0L ? 1.0F : 0.0F)),
                                 color
                         );
@@ -240,12 +321,12 @@ public class HUD extends Module {
                 GlStateManager.disableDepth();
                 if (this.shadow.getValue()) {
                     mc.fontRendererObj
-                            .drawStringWithShadow(moduleName, x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F), y / this.scale.getValue(), color);
+                            .drawStringWithShadow(moduleName, drawX - (this.posX.getValue() == 1 ? totalWidth : 0.0F), y / this.scale.getValue(), color);
                 } else {
                     mc.fontRendererObj
                             .drawString(
                                     moduleName,
-                                    x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F),
+                                    drawX - (this.posX.getValue() == 1 ? totalWidth : 0.0F),
                                     y / this.scale.getValue() + (this.posY.getValue() == 1 ? 1.0F : 0.0F),
                                     color,
                                     false
@@ -253,31 +334,34 @@ public class HUD extends Module {
                 }
                 if (this.suffixes.getValue() && moduleSuffix.length > 0) {
                     float width = (float) mc.fontRendererObj.getStringWidth(moduleName) + 3.0F;
+                    int suffixColor = withAlpha(ChatColors.GRAY.toAwtColor(), alpha);
                     for (String string : moduleSuffix) {
                         if (this.shadow.getValue()) {
                             mc.fontRendererObj
                                     .drawStringWithShadow(
                                             string,
-                                            x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
+                                            drawX - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
                                             y / this.scale.getValue(),
-                                            ChatColors.GRAY.toAwtColor()
+                                            suffixColor
                                     );
                         } else {
                             mc.fontRendererObj
                                     .drawString(
                                             string,
-                                            x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
+                                            drawX - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
                                             y / this.scale.getValue() + (this.posY.getValue() == 1 ? 1.0F : 0.0F),
-                                            ChatColors.GRAY.toAwtColor(),
+                                            suffixColor,
                                             false
                                     );
                         }
                         width += (float) mc.fontRendererObj.getStringWidth(string) + (this.shadow.getValue() ? 3.0F : 2.0F);
                     }
                 }
-                y += (height + (this.shadow.getValue() ? 1.0F : 0.0F) + this.gap.getValue()) * this.scale.getValue() * (this.posY.getValue() == 0 ? 1.0F : -1.0F);
+                // Y step scaled by alpha: dying modules give up space proportionally
+                y += (height + (this.shadow.getValue() ? 1.0F : 0.0F) + this.gap.getValue()) * this.scale.getValue() * alpha * (this.posY.getValue() == 0 ? 1.0F : -1.0F);
                 offset++;
             }
+            GlStateManager.disableBlend();
             if (this.blinkTimer.getValue()) {
                 BlinkModules blinkingModule = Kaguya.blinkManager.getBlinkingModule();
                 if (blinkingModule != BlinkModules.NONE && blinkingModule != BlinkModules.AUTO_BLOCK) {
@@ -328,16 +412,26 @@ public class HUD extends Module {
                         this.isDragging = true;
                         this.dragStartMouseX = mouseX;
                         this.dragStartMouseY = mouseY;
-                        this.dragStartOffsetX = this.offsetX.getValue();
-                        this.dragStartOffsetY = this.offsetY.getValue();
+                        // 絶対座標で記録
+                        this.dragStartAbsX = this.posX.getValue() == 0
+                                ? this.offsetX.getValue()
+                                : scaledResolution.getScaledWidth() - this.offsetX.getValue();
+                        this.dragStartAbsY = this.posY.getValue() == 0
+                                ? this.offsetY.getValue()
+                                : scaledResolution.getScaledHeight() - this.offsetY.getValue();
                     }
                     if (this.isDragging) {
-                        int deltaX = mouseX - this.dragStartMouseX;
-                        int deltaY = mouseY - this.dragStartMouseY;
-                        int newOffsetX = this.dragStartOffsetX + (this.posX.getValue() == 1 ? -deltaX : deltaX);
-                        int newOffsetY = this.dragStartOffsetY + (this.posY.getValue() == 1 ? -deltaY : deltaY);
-                        this.offsetX.setValue(Math.max(0, newOffsetX));
-                        this.offsetY.setValue(Math.max(0, newOffsetY));
+                        int sw = scaledResolution.getScaledWidth();
+                        int sh = scaledResolution.getScaledHeight();
+                        int absX = Math.max(0, Math.min(this.dragStartAbsX + (mouseX - this.dragStartMouseX), sw));
+                        int absY = Math.max(0, Math.min(this.dragStartAbsY + (mouseY - this.dragStartMouseY), sh));
+                        // 象限でposX/posY自動切替
+                        int newPosX = absX < sw / 2 ? 0 : 1;
+                        int newPosY = absY < sh / 2 ? 0 : 1;
+                        this.posX.setValue(newPosX);
+                        this.posY.setValue(newPosY);
+                        this.offsetX.setValue(newPosX == 0 ? absX : sw - absX);
+                        this.offsetY.setValue(newPosY == 0 ? absY : sh - absY);
                     }
                 } else {
                     this.isDragging = false;

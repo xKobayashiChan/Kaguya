@@ -207,7 +207,10 @@ public class KillAura extends Module {
                     } else if (this.requirePress.getValue()) {
                         return PlayerUtil.isAttacking();
                     } else {
-                        return !this.allowMining.getValue() || !mc.objectMouseOver.typeOfHit.equals(MovingObjectType.BLOCK) || !PlayerUtil.isAttacking();
+                        if (this.allowMining.getValue() && PlayerUtil.isAttacking()) {
+                            return false;
+                        }
+                        return true;
                     }
                 }
             }
@@ -933,8 +936,12 @@ public class KillAura extends Module {
     public void onHitBlock(HitBlockEvent event) {
         if (this.isBlocking) {
             event.setCancelled(true);
-        } else {
-            if (this.isEnabled() && this.target != null && this.canAttack()) {
+        } else if (this.isEnabled() && this.target != null) {
+            // allow-mining=true かつ左クリック中（掘ろうとしている）はブロック優先
+            if (this.allowMining.getValue() && PlayerUtil.isAttacking()) {
+                return;
+            }
+            if (this.canAttack()) {
                 event.setCancelled(true);
             }
         }

@@ -21,41 +21,45 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendHUD extends Module {
+public class ClosestPlayerHUD extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private static final int ROW_PADDING_X = 5;
     private static final int ROW_PADDING_Y = 3;
     private static final int ROW_GAP = 2;
     private static final int COL_GAP = 4;
 
+    private static final int COLOR_ENEMY  = 0xFF5555;
+    private static final int COLOR_DIST   = 0xAAAAAA;
+
     private boolean isDragging = false;
     private int dragStartMouseX, dragStartMouseY;
     private int dragStartOffX, dragStartOffY;
 
-    public final IntProperty opacity = new IntProperty("opacity", 70, 0, 100);
-    public final ModeProperty posX = new ModeProperty("position-x", 0, new String[]{"LEFT", "MIDDLE", "RIGHT"});
-    public final ModeProperty posY = new ModeProperty("position-y", 0, new String[]{"TOP", "MIDDLE", "BOTTOM"});
-    public final IntProperty offX = new IntProperty("offset-x", 5, -9999, 9999);
-    public final IntProperty offY = new IntProperty("offset-y", 5, -9999, 9999);
+    public final IntProperty opacity  = new IntProperty("opacity",   70, 0, 100);
+    public final IntProperty maxCount = new IntProperty("max-count", 10, 1, 30);
+    public final ModeProperty posX    = new ModeProperty("position-x", 0, new String[]{"LEFT", "MIDDLE", "RIGHT"}, () -> false);
+    public final ModeProperty posY    = new ModeProperty("position-y", 0, new String[]{"TOP", "MIDDLE", "BOTTOM"}, () -> false);
+    public final IntProperty offX     = new IntProperty("offset-x", 5, -9999, 9999, () -> false);
+    public final IntProperty offY     = new IntProperty("offset-y", 5, -9999, 9999, () -> false);
 
-    public FriendHUD() {
-        super("FriendHUD", false, true);
+    public ClosestPlayerHUD() {
+        super("ClosestPlayerHUD", false, true);
     }
 
-    private float getDeltaY(EntityPlayer friend) {
-        return (float) (friend.posY - mc.thePlayer.posY);
+    private float getDistance(EntityPlayer p) {
+        return (float) mc.thePlayer.getDistanceToEntity(p);
     }
 
-    private float getDistance(EntityPlayer friend) {
-        return (float) mc.thePlayer.getDistanceToEntity(friend);
+    private float getDeltaY(EntityPlayer p) {
+        return (float) (p.posY - mc.thePlayer.posY);
     }
 
-    private float getDirectionAngle(EntityPlayer friend) {
-        double dx = friend.posX - mc.thePlayer.posX;
-        double dz = friend.posZ - mc.thePlayer.posZ;
-        float yawToFriend = MathHelper.wrapAngleTo180_float(
+    private float getDirectionAngle(EntityPlayer p) {
+        double dx = p.posX - mc.thePlayer.posX;
+        double dz = p.posZ - mc.thePlayer.posZ;
+        float yawToPlayer = MathHelper.wrapAngleTo180_float(
                 (float) (Math.atan2(-dx, dz) * 180.0 / Math.PI));
-        float delta = MathHelper.wrapAngleTo180_float(yawToFriend - mc.thePlayer.rotationYaw);
+        float delta = MathHelper.wrapAngleTo180_float(yawToPlayer - mc.thePlayer.rotationYaw);
         return delta - 90f;
     }
 
@@ -76,42 +80,41 @@ public class FriendHUD extends Module {
     public void onRender(Render2DEvent event) {
         if (!this.isEnabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
-        // 描画距離内のフレンドを収集
-        List<EntityPlayer> friends = new ArrayList<>();
+        List<EntityPlayer> players = new ArrayList<>();
         for (Object obj : mc.theWorld.playerEntities) {
             if (!(obj instanceof EntityPlayer)) continue;
             EntityPlayer p = (EntityPlayer) obj;
             if (p == mc.thePlayer) continue;
-            if (Kaguya.friendManager.isFriend(p.getName())) {
-                friends.add(p);
-            }
+            players.add(p);
         }
-        if (friends.isEmpty()) return;
+        if (players.isEmpty()) return;
 
-        // 距離でソート（近い順）
-        friends.sort((a, b) -> Float.compare(getDistance(a), getDistance(b)));
+        players.sort((a, b) -> Float.compare(getDistance(a), getDistance(b)));
 
-        ScaledResolution sr = new ScaledResolution(mc);
+        int limit = this.maxCount.getValue();
+        if (players.size() > limit) {
+            players = players.subList(0, limit);
+        }
+
+        ScaledResolution sr   = new ScaledResolution(mc);
         int fontH    = mc.fontRendererObj.FONT_HEIGHT;
-        int headSize = 8; // スキンテクスチャのヘッドは 8x8 テクセルなので 8px で描画（引き伸ばし防止）
+        int headSize = 8;
         float rowH   = fontH + ROW_GAP;
 
-        // カラム幅計算
         int arrowW   = mc.fontRendererObj.getStringWidth(">");
         int maxHpW   = mc.fontRendererObj.getStringWidth("20");
         int maxNameW = 0, maxDistW = 0, maxDyW = 0;
-        for (EntityPlayer friend : friends) {
-            int hw = mc.fontRendererObj.getStringWidth(String.valueOf((int) friend.getHealth()));
-            int nw = mc.fontRendererObj.getStringWidth(friend.getName());
-            int dw = mc.fontRendererObj.getStringWidth(String.valueOf((int) getDistance(friend)));
-            int yw = mc.fontRendererObj.getStringWidth(formatDeltaY(getDeltaY(friend)));
+        for (EntityPlayer p : players) {
+            int hw = mc.fontRendererObj.getStringWidth(String.valueOf((int) p.getHealth()));
+            int nw = mc.fontRendererObj.getStringWidth(p.getName());
+            int dw = mc.fontRendererObj.getStringWidth(String.valueOf((int) getDistance(p)));
+            int yw = mc.fontRendererObj.getStringWidth(formatDeltaY(getDeltaY(p)));
             if (hw > maxHpW)   maxHpW   = hw;
             if (nw > maxNameW) maxNameW = nw;
             if (dw > maxDistW) maxDistW = dw;
             if (yw > maxDyW)   maxDyW   = yw;
         }
 
-        // 固定カラム開始X（列揃え）
         float xHead  = ROW_PADDING_X;
         float xName  = xHead  + headSize  + COL_GAP;
         float xDist  = xName  + maxNameW  + COL_GAP;
@@ -120,9 +123,8 @@ public class FriendHUD extends Module {
         float xHp    = xDy    + maxDyW    + COL_GAP;
 
         float hudWidth  = xHp + maxHpW + ROW_PADDING_X;
-        float hudHeight = rowH * friends.size() + ROW_PADDING_Y * 2 - ROW_GAP;
+        float hudHeight = rowH * players.size() + ROW_PADDING_Y * 2 - ROW_GAP;
 
-        // 座標計算
         float px = this.offX.getValue().floatValue();
         switch (this.posX.getValue()) {
             case 1: px += sr.getScaledWidth() / 2f - hudWidth / 2f; break;
@@ -134,9 +136,8 @@ public class FriendHUD extends Module {
             case 2: py = sr.getScaledHeight() - hudHeight - py; break;
         }
 
-        // 背景描画
-        float alpha = this.opacity.getValue() / 100.0f;
-        int bgColor = new Color(0f, 0f, 0f, alpha).getRGB();
+        float alpha   = this.opacity.getValue() / 100.0f;
+        int bgColor   = new Color(0f, 0f, 0f, alpha).getRGB();
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(px, py, 0f);
@@ -144,22 +145,21 @@ public class FriendHUD extends Module {
         RenderUtil.drawRect(0f, 0f, hudWidth, hudHeight, bgColor);
         RenderUtil.disableRenderState();
 
-        // 各行描画
-        for (int i = 0; i < friends.size(); i++) {
-            EntityPlayer friend = friends.get(i);
+        for (int i = 0; i < players.size(); i++) {
+            EntityPlayer p = players.get(i);
             float textY = ROW_PADDING_Y + i * rowH;
+            boolean isFriend = Kaguya.friendManager.isFriend(p.getName());
 
             GlStateManager.disableDepth();
 
             // スキンアイコン
-            if (friend instanceof AbstractClientPlayer) {
+            if (p instanceof AbstractClientPlayer) {
                 GlStateManager.enableTexture2D();
                 GlStateManager.enableBlend();
                 GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GlStateManager.enableAlpha();
                 GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-                mc.getTextureManager().bindTexture(((AbstractClientPlayer) friend).getLocationSkin());
-                // GL_NEAREST でピクセルパーフェクト描画（GL_LINEARだと引き伸ばして見える）
+                mc.getTextureManager().bindTexture(((AbstractClientPlayer) p).getLocationSkin());
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
                 int headX = (int) xHead;
@@ -171,34 +171,35 @@ public class FriendHUD extends Module {
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            // プレイヤー名
-            Color friendColor = Kaguya.friendManager.getColor();
-            mc.fontRendererObj.drawString(friend.getName(), xName, textY, friendColor.getRGB(), true);
+            // プレイヤー名（フレンド=水色、敵=赤）
+            int nameColor = isFriend ? Kaguya.friendManager.getColor().getRGB() : COLOR_ENEMY;
+            mc.fontRendererObj.drawString(p.getName(), xName, textY, nameColor, true);
 
             // 3D距離（右寄せ）
-            String dist = String.valueOf((int) getDistance(friend));
+            String dist = String.valueOf((int) getDistance(p));
             int distW = mc.fontRendererObj.getStringWidth(dist);
-            mc.fontRendererObj.drawString(dist, xDist + maxDistW - distW, textY, 0xAAAAAA, true);
+            mc.fontRendererObj.drawString(dist, xDist + maxDistW - distW, textY, COLOR_DIST, true);
 
-            // 方向矢印（影なし、GL回転）
-            float angle = getDirectionAngle(friend);
+            // 方向矢印（フレンド=水色、敵=赤）
+            int arrowColor = isFriend ? Kaguya.friendManager.getColor().getRGB() : COLOR_ENEMY;
+            float angle = getDirectionAngle(p);
             GlStateManager.pushMatrix();
             GlStateManager.translate(xArrow + arrowW / 2f, textY + fontH / 2f, 0f);
             GlStateManager.rotate(angle, 0f, 0f, 1f);
-            mc.fontRendererObj.drawString(">", -arrowW / 2, -fontH / 2, 0xFFFFFF, false);
+            mc.fontRendererObj.drawString(">", -arrowW / 2, -fontH / 2, arrowColor, false);
             GlStateManager.popMatrix();
 
             // Y軸差（右寄せ）
-            String dy = formatDeltaY(getDeltaY(friend));
-            int dyW = mc.fontRendererObj.getStringWidth(dy);
-            float dyDiff = getDeltaY(friend);
-            int dyColor = dyDiff > 0.05f ? 0x55FF55 : (dyDiff < -0.05f ? 0xFF5555 : 0xAAAAAA);
+            String dy   = formatDeltaY(getDeltaY(p));
+            int dyW     = mc.fontRendererObj.getStringWidth(dy);
+            float dyDiff = getDeltaY(p);
+            int dyColor  = dyDiff > 0.05f ? 0x55FF55 : (dyDiff < -0.05f ? 0xFF5555 : 0xAAAAAA);
             mc.fontRendererObj.drawString(dy, xDy + maxDyW - dyW, textY, dyColor, true);
 
             // HP（右寄せ）
-            float hp = friend.getHealth();
+            float hp    = p.getHealth();
             String hpStr = String.valueOf((int) hp);
-            int hpW = mc.fontRendererObj.getStringWidth(hpStr);
+            int hpW     = mc.fontRendererObj.getStringWidth(hpStr);
             mc.fontRendererObj.drawString(hpStr, xHp + maxHpW - hpW, textY, hpColor(hp), true);
 
             GlStateManager.disableBlend();
@@ -215,11 +216,11 @@ public class FriendHUD extends Module {
                     && mouseY >= py && mouseY <= py + hudHeight;
             if (Mouse.isButtonDown(0)) {
                 if (!this.isDragging && mouseOver) {
-                    this.isDragging = true;
-                    this.dragStartMouseX = mouseX;
-                    this.dragStartMouseY = mouseY;
-                    this.dragStartOffX = this.offX.getValue();
-                    this.dragStartOffY = this.offY.getValue();
+                    this.isDragging       = true;
+                    this.dragStartMouseX  = mouseX;
+                    this.dragStartMouseY  = mouseY;
+                    this.dragStartOffX    = this.offX.getValue();
+                    this.dragStartOffY    = this.offY.getValue();
                 }
                 if (this.isDragging) {
                     int deltaX = mouseX - this.dragStartMouseX;

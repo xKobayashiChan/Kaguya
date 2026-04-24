@@ -11,6 +11,7 @@ import com.github.kaguya.ui.components.ModuleComponent;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -38,34 +39,59 @@ public class ClickGui extends GuiScreen {
     private static final int C_WHITE       = Color.WHITE.getRGB();
     private static final int C_DIM         = new Color(140, 140, 140).getRGB();
     private static final int C_SCROLLBAR   = new Color(255, 255, 255,  55).getRGB();
+    private static final int C_FLASH_ON    = new Color(230, 126,  34, 80).getRGB();
+    private static final int C_FLASH_OFF   = new Color( 60,  60,  60, 80).getRGB();
 
     // ---- Layout ----
-    private static final int PANEL_W  = 340;
-    private static final int PANEL_H  = 210;
-    private static final int TAB_H    = 16;
-    private static final int LIST_W   = 110;
-    private static final int ITEM_H   = 14;
-    private static final int HEADER_H = 16;
+    private static final int PANEL_W  = 460;
+    private static final int PANEL_H  = 280;
+    private static final int TAB_H    = 18;
+    private static final int LIST_W   = 130;
+    private static final int ITEM_H   = 16;
+    private static final int HEADER_H = 18;
+    private static final int BTN_W    = 70;
+    private static final int BTN_H    = 12;
+    private static final int SETT_W   = PANEL_W - LIST_W - 1;
+
+    // ---- Animation ----
+    private static final float FADE_SPEED     =  7f;
+    private static final float SLIDE_SPEED    = 14f;
+    private static final long  FLASH_DURATION = 380L;
 
     // ---- State ----
     private final ArrayList<CategoryComponent> categories;
     private int selectedTab = 0;
     private ModuleComponent selectedModule = null;
+    private ModuleComponent displayModule  = null;  // keeps last module during slide-out
 
     private int    listScroll     = 0;
     private double animListScroll = 0;
     private int    settScroll     = 0;
     private double animSettScroll = 0;
 
-    // Save button
-    private static final int BTN_W = 62;
-    private static final int BTN_H = 11;
     private long saveFlashUntil = 0;
+
+    // ---- Animation state ----
+    private long  lastFrameNs     = -1;
+    private float panelAlpha      = 0f;
+    private float tabSlideOffset  = 0f;   // horizontal offset for module list (px)
+    private float settSlideOffset = 0f;   // 0=visible, SETT_W=hidden (off to right)
+
+    private final Map<String, Long> toggleFlashMap = new HashMap<>();
 
     public ClickGui() {
         instance = this;
         categories = new ArrayList<>();
         buildCategories();
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        lastFrameNs     = -1;
+        panelAlpha      = 0f;
+        tabSlideOffset  = 0f;
+        settSlideOffset = selectedModule != null ? 0f : SETT_W;
     }
 
     private void buildCategories() {
@@ -187,19 +213,54 @@ public class ClickGui extends GuiScreen {
         categories.add(new CategoryComponent("Misc",     misc));
     }
 
-    public static ClickGui getInstance() {
-        return instance;
-    }
+    public static ClickGui getInstance() { return instance; }
 
-    // ---- coordinate helpers ----
     private int panelX(int sw) { return (sw - PANEL_W) / 2; }
     private int panelY(int sh) { return (sh - PANEL_H) / 2; }
+
+    // =====================================================================
+    // Animation helpers
+    // =====================================================================
+
+    private float getDt() {
+        long now = System.nanoTime();
+        if (lastFrameNs < 0) { lastFrameNs = now; return 0.016f; }
+        float dt = (now - lastFrameNs) / 1_000_000_000f;
+        lastFrameNs = now;
+        return Math.min(dt, 0.05f);
+    }
+
+    private static float lerp(float from, float to, float speed, float dt) {
+        float t = 1f - (float) Math.exp(-speed * dt);
+        return from + (to - from) * t;
+    }
+
+    /** panelAlpha を既存の alpha チャンネルに掛け合わせる */
+    private int a(int color) {
+        int existingA = (color >> 24) & 0xFF;
+        int newA = (int) (existingA * panelAlpha);
+        return (color & 0x00FFFFFF) | (newA << 24);
+    }
+
+    private static int mulAlpha(int color, float alpha) {
+        int existingA = (color >> 24) & 0xFF;
+        int newA = (int) (existingA * alpha);
+        return (color & 0x00FFFFFF) | (newA << 24);
+    }
 
     // =====================================================================
     // drawScreen
     // =====================================================================
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        float dt = getDt();
+
+        // Advance animations
+        panelAlpha     = lerp(panelAlpha, 1f, FADE_SPEED, dt);
+        tabSlideOffset = lerp(tabSlideOffset, 0f, SLIDE_SPEED, dt);
+        float settTarget = (selectedModule != null) ? 0f : SETT_W;
+        settSlideOffset = lerp(settSlideOffset, settTarget, SLIDE_SPEED, dt);
+
         ScaledResolution sr = new ScaledResolution(mc);
         int sw = sr.getScaledWidth();
         int sh = sr.getScaledHeight();
@@ -209,50 +270,48 @@ public class ClickGui extends GuiScreen {
         int contentY = py + TAB_H;
         int contentH = PANEL_H - TAB_H;
         int settX    = px + LIST_W + 1;
-        int settW    = PANEL_W - LIST_W - 1;
 
-        // dim the world behind
-        drawRect(0, 0, sw, sh, C_OVERLAY);
+        // ---- Overlay ----
+        drawRect(0, 0, sw, sh, a(C_OVERLAY));
 
-        // main panel
-        Gui.drawRect(px, py, px + PANEL_W, py + PANEL_H, C_PANEL);
+        // ---- Panel background ----
+        Gui.drawRect(px, py, px + PANEL_W, py + PANEL_H, a(C_PANEL));
 
-        // tab bar
+        // ---- Tab bar ----
         drawTabBar(mouseX, mouseY, px, py);
 
-        // list area
-        Gui.drawRect(px, contentY, px + LIST_W, contentY + contentH, C_LIST);
+        // ---- List area background ----
+        Gui.drawRect(px, contentY, px + LIST_W, contentY + contentH, a(C_LIST));
 
-        // divider
-        Gui.drawRect(px + LIST_W, contentY, px + LIST_W + 1, contentY + contentH, C_DIVIDER);
+        // ---- Divider ----
+        Gui.drawRect(px + LIST_W, contentY, px + LIST_W + 1, contentY + contentH, a(C_DIVIDER));
 
-        // settings area
-        Gui.drawRect(settX, contentY, px + PANEL_W, contentY + contentH, C_SETTINGS);
+        // ---- Settings area background ----
+        Gui.drawRect(settX, contentY, px + PANEL_W, contentY + contentH, a(C_SETTINGS));
 
-        // animate scroll
+        // ---- Scroll interpolation ----
         animListScroll += (listScroll - animListScroll) * 0.2;
         animSettScroll += (settScroll - animSettScroll) * 0.2;
 
-        // module list
+        // ---- Module list (with tab slide) ----
         drawModuleList(mouseX, mouseY, px, contentY, contentH, sr);
 
-        // settings panel
-        if (selectedModule != null) {
-            drawSettingsPanel(mouseX, mouseY, settX, settW, contentY, contentH, sr);
-            selectedModule.update(mouseX, mouseY);
+        // ---- Settings panel (with slide-in/out) ----
+        if (displayModule != null && settSlideOffset < SETT_W - 0.5f) {
+            drawSettingsPanel(mouseX, mouseY, settX, contentY, contentH, sr);
+            if (selectedModule != null) selectedModule.update(mouseX, mouseY);
         }
 
-        // scroll from mouse wheel
+        // ---- Mouse wheel scroll ----
         int wheel = Mouse.getDWheel();
-        if (wheel != 0) {
-            handleScroll(wheel, mouseX, mouseY, px, contentY, contentH, settX);
-        }
+        if (wheel != 0) handleScroll(wheel, mouseX, mouseY, px, contentY, contentH, settX);
 
-        // save button (bottom-right of panel)
+        // ---- Save button ----
         int btnX = px + PANEL_W - BTN_W - 4;
         int btnY = py + PANEL_H - BTN_H - 4;
         drawSaveButton(mouseX, mouseY, btnX, btnY);
 
+        // ---- Version label ----
         mc.fontRendererObj.drawStringWithShadow(
             "Kaguya " + KaguyaClient.VERSION,
             4, sh - 3 - mc.fontRendererObj.FONT_HEIGHT,
@@ -260,16 +319,17 @@ public class ClickGui extends GuiScreen {
         );
     }
 
-    // ---- tab bar ----
+    // ---- Tab bar ----
     private void drawTabBar(int mouseX, int mouseY, int px, int py) {
         int n    = categories.size();
         int tabW = PANEL_W / n;
         for (int i = 0; i < n; i++) {
-            int tx      = px + i * tabW;
+            int tx  = px + i * tabW;
             boolean act = (i == selectedTab);
             boolean hov = mouseX >= tx && mouseX < tx + tabW && mouseY >= py && mouseY < py + TAB_H;
-            Gui.drawRect(tx, py, tx + tabW, py + TAB_H, act ? C_ORANGE : (hov ? C_TAB_HOVER : C_TAB_IDLE));
-            if (i > 0) Gui.drawRect(tx, py, tx + 1, py + TAB_H, C_DIVIDER);
+            int bgColor = act ? C_ORANGE : (hov ? C_TAB_HOVER : C_TAB_IDLE);
+            Gui.drawRect(tx, py, tx + tabW, py + TAB_H, a(bgColor));
+            if (i > 0) Gui.drawRect(tx, py, tx + 1, py + TAB_H, a(C_DIVIDER));
             String name  = categories.get(i).getName();
             int    textX = tx + tabW / 2 - mc.fontRendererObj.getStringWidth(name) / 2;
             int    textY = py + TAB_H / 2 - mc.fontRendererObj.FONT_HEIGHT / 2;
@@ -277,17 +337,18 @@ public class ClickGui extends GuiScreen {
         }
     }
 
-    // ---- module list ----
+    // ---- Module list ----
     private void drawModuleList(int mouseX, int mouseY, int px, int contentY, int contentH, ScaledResolution sr) {
         CategoryComponent cat     = categories.get(selectedTab);
         List<Component>   modules = cat.getModules();
-        int totalH   = modules.size() * ITEM_H;
+        int totalH    = modules.size() * ITEM_H;
         int maxScroll = Math.max(0, totalH - contentH);
-        if (listScroll > maxScroll)     listScroll     = maxScroll;
+        if (listScroll     > maxScroll) listScroll     = maxScroll;
         if (animListScroll > maxScroll) animListScroll = maxScroll;
 
         double scale  = sr.getScaleFactor();
         int    bottom = contentY + contentH;
+
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(
             (int)(px * scale),
@@ -296,144 +357,161 @@ public class ClickGui extends GuiScreen {
             (int)(contentH * scale)
         );
 
+        // Tab slide: translate items horizontally
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(tabSlideOffset, 0, 0);
+
         for (int i = 0; i < modules.size(); i++) {
             ModuleComponent mod = (ModuleComponent) modules.get(i);
             int iy = contentY + i * ITEM_H - (int) animListScroll;
             if (iy + ITEM_H <= contentY || iy >= contentY + contentH) continue;
 
-            boolean isSel  = (selectedModule == mod);
-            boolean isHov  = mouseX >= px && mouseX < px + LIST_W && mouseY >= iy && mouseY < iy + ITEM_H;
+            boolean isSel   = (selectedModule == mod);
+            boolean isHov   = mouseX >= px && mouseX < px + LIST_W && mouseY >= iy && mouseY < iy + ITEM_H;
             boolean enabled = mod.mod.isEnabled();
 
             if (isSel) {
-                Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, C_ITEM_SEL);
-                Gui.drawRect(px, iy, px + 2,       iy + ITEM_H, C_ORANGE);
+                Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, a(C_ITEM_SEL));
+                Gui.drawRect(px, iy, px + 2,      iy + ITEM_H, a(C_ORANGE));
             } else if (isHov) {
-                Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, C_ITEM_HOVER);
+                Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, a(C_ITEM_HOVER));
             }
 
-            mc.fontRendererObj.drawStringWithShadow(mod.mod.getName(), px + 5, iy + 3, enabled ? C_WHITE : C_DIM);
+            // Toggle flash overlay
+            Long flashTime = toggleFlashMap.get(mod.mod.getName());
+            if (flashTime != null) {
+                long elapsed = System.currentTimeMillis() - flashTime;
+                if (elapsed < FLASH_DURATION) {
+                    float fp = 1f - (float) elapsed / FLASH_DURATION;
+                    fp = fp * fp; // ease-out
+                    int flashColor = mulAlpha(enabled ? C_FLASH_ON : C_FLASH_OFF, fp);
+                    Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, flashColor);
+                }
+            }
 
-            // dot固定位置、その左に<KEY>
+            int textY = iy + (ITEM_H - mc.fontRendererObj.FONT_HEIGHT) / 2;
+            mc.fontRendererObj.drawStringWithShadow(mod.mod.getName(), px + 5, textY, enabled ? C_WHITE : C_DIM);
+
+            // Enabled dot
             int dotX = px + LIST_W - 8;
             if (enabled) {
-                Gui.drawRect(dotX, iy + ITEM_H / 2 - 2,
-                             dotX + 4, iy + ITEM_H / 2 + 2, C_ORANGE);
+                Gui.drawRect(dotX, iy + ITEM_H / 2 - 2, dotX + 4, iy + ITEM_H / 2 + 2, a(C_ORANGE));
             }
 
-            // bind key label: <KEY> ← dotの左
+            // Key binding label
             int key = mod.mod.getKey();
             if (key != 0) {
                 String keyLabel = "<" + KeyBindUtil.getKeyName(key) + ">";
                 int keyW = mc.fontRendererObj.getStringWidth(keyLabel);
                 int keyX = dotX - 3 - keyW;
-                mc.fontRendererObj.drawStringWithShadow(keyLabel, keyX, iy + 3, C_WHITE);
+                mc.fontRendererObj.drawStringWithShadow(keyLabel, keyX, textY, C_DIM);
             }
         }
+
+        GlStateManager.popMatrix();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        // list scrollbar
+        // List scrollbar
         if (totalH > contentH) {
             float barY = contentY + (float) animListScroll * contentH / totalH;
             float barH = (float) contentH * contentH / totalH;
-            Gui.drawRect(px + LIST_W - 2, (int) barY,
-                         px + LIST_W,     (int)(barY + barH), C_SCROLLBAR);
+            Gui.drawRect(px + LIST_W - 2, (int) barY, px + LIST_W, (int)(barY + barH), a(C_SCROLLBAR));
         }
     }
 
-    // ---- settings panel ----
-    private void drawSettingsPanel(int mouseX, int mouseY, int settX, int settW,
-                                   int contentY, int contentH, ScaledResolution sr) {
-        // header: module name
-        String name = selectedModule.mod.getName();
-        mc.fontRendererObj.drawStringWithShadow(name, settX + 7, contentY + 4, C_ORANGE);
-
-        // HIDE / SHOW button on the right
-        boolean isHidden    = selectedModule.mod.isHidden();
-        String  hideLabel   = isHidden ? "HIDE" : "SHOW";
-        int     hideLabelW  = mc.fontRendererObj.getStringWidth(hideLabel);
-        int     hideLabelX  = settX + settW - hideLabelW - 6;
-        mc.fontRendererObj.drawStringWithShadow(hideLabel, hideLabelX, contentY + 4, isHidden ? C_DIM : C_ORANGE);
-
-        // thin separator
-        Gui.drawRect(settX + 4, contentY + HEADER_H - 1, settX + settW - 4, contentY + HEADER_H, C_SEPARATOR);
-
-        int settingsAreaTop = contentY + HEADER_H;
-        int settingsAreaH   = contentH - HEADER_H;
-
-        // total height of settings
-        int totalH    = selectedModule.getSettingsHeight();
-        int maxScroll = Math.max(0, totalH - settingsAreaH);
-        if (settScroll > maxScroll)     settScroll     = maxScroll;
-        if (animSettScroll > maxScroll) animSettScroll = maxScroll;
-
-        // point category at settings panel (used by all child components)
-        // children start at offsetY=16 (setComponentStartAt(0) → y = 0+16),
-        // so category.y = contentY puts first item at contentY+16 = settingsAreaTop
-        selectedModule.category.setX(settX + 4);
-        selectedModule.category.setY(contentY - (int) animSettScroll);
-        selectedModule.category.setWidth(settW - 8);
-        selectedModule.setComponentStartAt(0);
+    // ---- Settings panel ----
+    private void drawSettingsPanel(int mouseX, int mouseY, int settX, int contentY, int contentH, ScaledResolution sr) {
+        if (displayModule == null) return;
 
         double scale  = sr.getScaleFactor();
-        int    bottom = settingsAreaTop + settingsAreaH;
+        int    bottom = contentY + contentH;
+
+        // Settings slide: translate horizontally (0=visible, SETT_W=hidden)
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(settSlideOffset, 0, 0);
+
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(
             (int)(settX * scale),
             (int)((sr.getScaledHeight() - bottom) * scale),
-            (int)(settW * scale),
-            (int)(settingsAreaH * scale)
+            (int)(SETT_W * scale),
+            (int)(contentH * scale)
         );
 
-        selectedModule.drawSettings(new AtomicInteger(0));
+        // Header: module name
+        String name = displayModule.mod.getName();
+        mc.fontRendererObj.drawStringWithShadow(name, settX + 7, contentY + 4, C_ORANGE);
+
+        // HIDE / SHOW button
+        boolean isHidden   = displayModule.mod.isHidden();
+        String  hideLabel  = isHidden ? "HIDE" : "SHOW";
+        int hideLabelW = mc.fontRendererObj.getStringWidth(hideLabel);
+        int hideLabelX = settX + SETT_W - hideLabelW - 6;
+        mc.fontRendererObj.drawStringWithShadow(hideLabel, hideLabelX, contentY + 4, isHidden ? C_DIM : C_ORANGE);
+
+        // Separator line
+        Gui.drawRect(settX + 4, contentY + HEADER_H - 1, settX + SETT_W - 4, contentY + HEADER_H, a(C_SEPARATOR));
+
+        int settingsAreaTop = contentY + HEADER_H;
+        int settingsAreaH   = contentH - HEADER_H;
+
+        int totalH    = displayModule.getSettingsHeight();
+        int maxScroll = Math.max(0, totalH - settingsAreaH);
+        if (settScroll     > maxScroll) settScroll     = maxScroll;
+        if (animSettScroll > maxScroll) animSettScroll = maxScroll;
+
+        displayModule.category.setX(settX + 4);
+        displayModule.category.setY(contentY - (int) animSettScroll);
+        displayModule.category.setWidth(SETT_W - 8);
+        displayModule.setComponentStartAt(0);
+        displayModule.drawSettings(new AtomicInteger(0));
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        GlStateManager.popMatrix();
 
-        // settings scrollbar
+        // Settings scrollbar (outside translate so it stays fixed)
         if (totalH > settingsAreaH) {
             float barY = settingsAreaTop + (float) animSettScroll * settingsAreaH / totalH;
             float barH = (float) settingsAreaH * settingsAreaH / totalH;
-            Gui.drawRect(settX + settW - 2, (int) barY,
-                         settX + settW,     (int)(barY + barH), C_SCROLLBAR);
+            Gui.drawRect(settX + SETT_W - 2, (int) barY, settX + SETT_W, (int)(barY + barH), a(C_SCROLLBAR));
         }
     }
 
-    // ---- scroll ----
+    // ---- Save button ----
     private void drawSaveButton(int mouseX, int mouseY, int bx, int by) {
         boolean flashing = System.currentTimeMillis() < saveFlashUntil;
         boolean hovered  = mouseX >= bx && mouseX < bx + BTN_W && mouseY >= by && mouseY < by + BTN_H;
         int bg = flashing ? new Color(80, 200, 80).getRGB()
                           : (hovered ? C_TAB_HOVER : C_TAB_IDLE);
-        Gui.drawRect(bx, by, bx + BTN_W, by + BTN_H, bg);
-        // thin orange border
-        Gui.drawRect(bx, by, bx + BTN_W, by + 1, C_ORANGE);
-        Gui.drawRect(bx, by + BTN_H - 1, bx + BTN_W, by + BTN_H, C_ORANGE);
-        Gui.drawRect(bx, by, bx + 1, by + BTN_H, C_ORANGE);
-        Gui.drawRect(bx + BTN_W - 1, by, bx + BTN_W, by + BTN_H, C_ORANGE);
+        Gui.drawRect(bx,             by,             bx + BTN_W, by + BTN_H, a(bg));
+        Gui.drawRect(bx,             by,             bx + BTN_W, by + 1,     a(C_ORANGE));
+        Gui.drawRect(bx,             by + BTN_H - 1, bx + BTN_W, by + BTN_H, a(C_ORANGE));
+        Gui.drawRect(bx,             by,             bx + 1,     by + BTN_H, a(C_ORANGE));
+        Gui.drawRect(bx + BTN_W - 1, by,             bx + BTN_W, by + BTN_H, a(C_ORANGE));
         String label = flashing ? "Saved!" : "Save Config";
         int lx = bx + BTN_W / 2 - mc.fontRendererObj.getStringWidth(label) / 2;
         int ly = by + BTN_H / 2 - mc.fontRendererObj.FONT_HEIGHT / 2;
         mc.fontRendererObj.drawStringWithShadow(label, lx, ly, C_WHITE);
     }
 
+    // ---- Scroll handler ----
     private void handleScroll(int wheel, int mouseX, int mouseY,
                                int px, int contentY, int contentH, int settX) {
-        int amount = wheel > 0 ? -1 : 1; // -1 = scroll up
-        int settW  = PANEL_W - LIST_W - 1;
+        int amount = wheel > 0 ? -1 : 1;
 
         if (mouseX >= px && mouseX < px + LIST_W
                 && mouseY >= contentY && mouseY < contentY + contentH) {
             int totalH    = categories.get(selectedTab).getModules().size() * ITEM_H;
             int maxScroll = Math.max(0, totalH - contentH);
-            listScroll = Math.max(0, Math.min(listScroll + amount * 12, maxScroll));
+            listScroll = Math.max(0, Math.min(listScroll + amount * 14, maxScroll));
 
         } else if (selectedModule != null
-                && mouseX >= settX && mouseX < settX + settW
+                && mouseX >= settX && mouseX < settX + SETT_W
                 && mouseY >= contentY && mouseY < contentY + contentH) {
             int totalH    = selectedModule.getSettingsHeight();
             int avail     = contentH - HEADER_H;
             int maxScroll = Math.max(0, totalH - avail);
-            settScroll = Math.max(0, Math.min(settScroll + amount * 12, maxScroll));
+            settScroll = Math.max(0, Math.min(settScroll + amount * 14, maxScroll));
         }
     }
 
@@ -448,7 +526,7 @@ public class ClickGui extends GuiScreen {
         int px = panelX(sw);
         int py = panelY(sh);
 
-        // save button
+        // Save button
         int btnX = px + PANEL_W - BTN_W - 4;
         int btnY = py + PANEL_H - BTN_H - 4;
         if (mouseButton == 0 && x >= btnX && x < btnX + BTN_W && y >= btnY && y < btnY + BTN_H) {
@@ -460,9 +538,8 @@ public class ClickGui extends GuiScreen {
         int contentY = py + TAB_H;
         int contentH = PANEL_H - TAB_H;
         int settX    = px + LIST_W + 1;
-        int settW    = PANEL_W - LIST_W - 1;
 
-        // tab bar
+        // Tab bar
         if (y >= py && y < py + TAB_H && x >= px && x < px + PANEL_W) {
             int n    = categories.size();
             int tabW = PANEL_W / n;
@@ -470,6 +547,9 @@ public class ClickGui extends GuiScreen {
                 int tx = px + i * tabW;
                 if (x >= tx && x < tx + tabW) {
                     if (selectedTab != i) {
+                        // Slide direction: positive = new tab is to the right
+                        int dir = i > selectedTab ? 1 : -1;
+                        tabSlideOffset = dir * LIST_W * 0.7f;
                         selectedTab    = i;
                         listScroll     = 0;
                         animListScroll = 0;
@@ -480,24 +560,25 @@ public class ClickGui extends GuiScreen {
             }
         }
 
-        // settings header → HIDE/SHOW or toggle ON/OFF
+        // Settings header → HIDE/SHOW or toggle ON/OFF
         if (selectedModule != null
-                && x >= settX && x < settX + settW
+                && x >= settX && x < settX + SETT_W
                 && y >= contentY && y < contentY + HEADER_H
                 && mouseButton == 0) {
-            boolean isHid      = selectedModule.mod.isHidden();
-            String  hideLabel  = isHid ? "HIDE" : "SHOW";
-            int     hideLabelW = mc.fontRendererObj.getStringWidth(hideLabel);
-            int     hideLabelX = settX + settW - hideLabelW - 6;
+            boolean isHid     = selectedModule.mod.isHidden();
+            String  hideLabel = isHid ? "HIDE" : "SHOW";
+            int hideLabelW = mc.fontRendererObj.getStringWidth(hideLabel);
+            int hideLabelX = settX + SETT_W - hideLabelW - 6;
             if (x >= hideLabelX && x < hideLabelX + hideLabelW) {
                 selectedModule.mod.setHidden(!isHid);
             } else {
                 selectedModule.mod.toggle();
+                toggleFlashMap.put(selectedModule.mod.getName(), System.currentTimeMillis());
             }
             return;
         }
 
-        // module list → toggle + select
+        // Module list → toggle + select
         if (x >= px && x < px + LIST_W
                 && y >= contentY && y < contentY + contentH) {
             List<Component> modules = categories.get(selectedTab).getModules();
@@ -505,16 +586,19 @@ public class ClickGui extends GuiScreen {
                 ModuleComponent mod = (ModuleComponent) modules.get(i);
                 int iy = contentY + i * ITEM_H - (int) animListScroll;
                 if (y >= iy && y < iy + ITEM_H) {
-                    if (mouseButton == 0) mod.mod.toggle();
+                    if (mouseButton == 0) {
+                        mod.mod.toggle();
+                        toggleFlashMap.put(mod.mod.getName(), System.currentTimeMillis());
+                    }
                     setSelectedModule(mod);
                     return;
                 }
             }
         }
 
-        // settings panel → forward to components
+        // Settings panel → forward to components
         if (selectedModule != null
-                && x >= settX && x < settX + settW
+                && x >= settX && x < settX + SETT_W
                 && y >= contentY + HEADER_H && y < contentY + contentH) {
             selectedModule.mouseDownSettings(x, y, mouseButton);
         }
@@ -522,9 +606,7 @@ public class ClickGui extends GuiScreen {
 
     @Override
     public void mouseReleased(int x, int y, int mouseButton) {
-        if (selectedModule != null) {
-            selectedModule.mouseReleasedSettings(x, y, mouseButton);
-        }
+        if (selectedModule != null) selectedModule.mouseReleasedSettings(x, y, mouseButton);
     }
 
     @Override
@@ -541,16 +623,18 @@ public class ClickGui extends GuiScreen {
     }
 
     @Override
-    public boolean doesGuiPauseGame() {
-        return false;
-    }
+    public boolean doesGuiPauseGame() { return false; }
 
     // ---- helper ----
     private void setSelectedModule(ModuleComponent mod) {
         if (selectedModule != null) selectedModule.panelExpand = false;
-        selectedModule    = mod;
-        settScroll        = 0;
-        animSettScroll    = 0;
-        if (selectedModule != null) selectedModule.panelExpand = true;
+        selectedModule = mod;
+        settScroll     = 0;
+        animSettScroll = 0;
+        if (selectedModule != null) {
+            selectedModule.panelExpand = true;
+            displayModule = selectedModule; // update display target when selecting
+        }
+        // displayModule is kept when deselecting (for slide-out animation)
     }
 }

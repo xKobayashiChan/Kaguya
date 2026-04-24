@@ -38,6 +38,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-caches-
 
+      - name: Write firebase.properties
+        run: |
+          cat > src/main/resources/firebase.properties << 'EOF'
+          firebase.url=${{ secrets.FIREBASE_URL }}
+          firebase.secret=${{ secrets.FIREBASE_SECRET }}
+          github.token=${{ secrets.GH_PAT }}
+          github.repo=${{ secrets.GITHUB_REPO }}
+          EOF
+
       - name: Setup ForgeGradle workspace
         run: ./gradlew setupCIWorkspace
 

@@ -32,39 +32,58 @@ public class AutoUpdater {
         GITHUB_REPO  = props.getProperty("github.repo", "");
     }
 
+    // mods/ 内の更新マーカーファイル（改行区切り: 1行目=旧JARパス, 2行目=新JARの.tmpパス）
+    private static final File MARKER_FILE = new File("mods", ".kaguya_update");
+
     /**
-     * 起動時に呼ぶ。現在実行中ではない古い KaguyaClient*.jar を削除する。
+     * 起動時に呼ぶ。マーカーファイルに基づいて更新を確定し、不要ファイルを削除する。
+     * マーカーがない場合は .old ファイルの掃除のみ行う。
+     * running が特定できなくても安全（グローバルスキャン削除を行わない）。
      */
     public static void startup() {
         File modsDir = new File("mods");
         if (!modsDir.isDirectory()) return;
 
-        // 現在実行中のJARパスを取得
-        File currentJar = null;
-        try {
-            currentJar = new File(
-                AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().toURI()
-            );
-        } catch (Exception ignored) {}
-
-        final File running = currentJar;
-
-        // KaguyaClient*.jar で現在実行中でないものをすべて削除
-        File[] oldFiles = modsDir.listFiles(
-            (dir, name) -> name.startsWith("KaguyaClient") && name.endsWith(".jar")
-        );
-        if (oldFiles == null) return;
-        for (File f : oldFiles) {
-            if (running != null && f.getAbsolutePath().equals(running.getAbsolutePath())) continue;
-            f.delete();
-        }
-
-        // 旧形式の .old ファイルも念のため削除
+        // 1. .old ファイルを掃除（前回ロックで消せなかった旧JAR）
         File[] dotOld = modsDir.listFiles(
             (dir, name) -> name.startsWith("KaguyaClient") && name.endsWith(".old")
         );
         if (dotOld != null) {
             for (File f : dotOld) f.delete();
+        }
+
+        // 2. マーカーがなければ何もしない
+        if (!MARKER_FILE.exists()) return;
+
+        try {
+            String content = new String(Files.readAllBytes(MARKER_FILE.toPath()), StandardCharsets.UTF_8).trim();
+            String[] lines = content.split("\n", 2);
+            if (lines.length < 2) { MARKER_FILE.delete(); return; }
+
+            File oldJar = new File(lines[0].trim());
+            File tmpJar = new File(lines[1].trim());
+            if (!tmpJar.exists()) { MARKER_FILE.delete(); return; }
+
+            // .tmp → 正式ファイル名（.tmp を除いた名前）にリネーム
+            String tmpName = tmpJar.getName();
+            String jarName = tmpName.endsWith(".tmp") ? tmpName.substring(0, tmpName.length() - 4) : tmpName;
+            File newJar = new File(modsDir, jarName);
+            if (!tmpJar.renameTo(newJar)) {
+                // リネーム失敗なら .tmp を残してマーカーも保持（次回再試行）
+                return;
+            }
+
+            // 旧JARを削除。ロックされている場合は .old にリネームして次回起動で掃除
+            if (oldJar.exists()) {
+                if (!oldJar.delete()) {
+                    File renamed = new File(oldJar.getParentFile(), oldJar.getName() + ".old");
+                    oldJar.renameTo(renamed); // 失敗しても次の掃除で拾えるよう .old で残す
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[Kaguya] startup cleanup error: " + e.getMessage());
+        } finally {
+            MARKER_FILE.delete();
         }
     }
 
@@ -110,7 +129,18 @@ public class AutoUpdater {
     private static void downloadUpdate(String newVersion, String assetApiUrl, String fileName) {
         try {
             File modsDir = new File("mods");
-            File newJar = new File(modsDir, fileName);
+
+            // 現在実行中のJARパスを取得（マーカー用）
+            File currentJar = null;
+            try {
+                File f = new File(
+                    AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().toURI()
+                );
+                if (f.exists() && f.getName().endsWith(".jar")) currentJar = f;
+            } catch (Exception ignored) {}
+
+            // 新JARは .tmp として保存（Forge がロードしない拡張子）
+            File tmpJar = new File(modsDir, fileName + ".tmp");
 
             // GitHub release asset のダウンロード（private repo はリダイレクトが入る）
             HttpURLConnection conn = openGitHubConnection(assetApiUrl, "application/octet-stream");
@@ -127,9 +157,19 @@ public class AutoUpdater {
             }
 
             try (InputStream in = conn.getInputStream()) {
-                Files.copy(in, newJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(in, tmpJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } finally {
                 conn.disconnect();
+            }
+
+            // マーカーファイルに旧JARパスと新.tmpパスを記録（次回起動時の置換フロー用）
+            if (currentJar != null) {
+                String marker = currentJar.getAbsolutePath() + "\n" + tmpJar.getAbsolutePath();
+                Files.write(MARKER_FILE.toPath(), marker.getBytes(StandardCharsets.UTF_8));
+            } else {
+                // currentJar 不明でも .tmp は残す（startup() が .tmp リネームのみ行う）
+                String marker = "\n" + tmpJar.getAbsolutePath();
+                Files.write(MARKER_FILE.toPath(), marker.getBytes(StandardCharsets.UTF_8));
             }
 
             // プレイヤーがインゲームになるまで待ってから通知

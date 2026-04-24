@@ -41,6 +41,7 @@ configurations {
 // Configures the SpongePowered Repository
 repositories {
     maven { url 'https://repo.spongepowered.org/maven/' }
+    maven { url 'https://maven.glass-launcher.net/babric' } // babric LWJGL for Linux CI
 }
 
 def systemOs = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)

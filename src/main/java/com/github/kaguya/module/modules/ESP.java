@@ -21,11 +21,18 @@ import com.github.kaguya.property.properties.ModeProperty;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 
+import javax.imageio.ImageIO;
 import javax.vecmath.Vector4d;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,10 +40,26 @@ public class ESP extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private final OutlineShader outlineRenderer = new OutlineShader();
     private final GlowShader glowShader = new GlowShader();
+    private static ResourceLocation raitoTexture = null;
+
+    private static ResourceLocation getRaitoTexture() {
+        if (raitoTexture == null) {
+            try (java.io.InputStream is = ESP.class.getResourceAsStream("/raito.png")) {
+                if (is == null) return null;
+                BufferedImage img = ImageIO.read(is);
+                if (img == null) return null;
+                raitoTexture = mc.getTextureManager().getDynamicTextureLocation(
+                    "esp_raito", new DynamicTexture(img));
+            } catch (Exception e) {
+                System.err.println("[Kaguya] Failed to load raito.png: " + e.getMessage());
+            }
+        }
+        return raitoTexture;
+    }
     private Framebuffer framebuffer = null;
     private boolean outline = true;
     private boolean glow = true;
-    public final ModeProperty mode = new ModeProperty("mode", 2, new String[]{"NONE", "2D", "3D", "OUTLINE", "FAKECORNER", "FAKE2D"});
+    public final ModeProperty mode = new ModeProperty("mode", 2, new String[]{"NONE", "2D", "3D", "OUTLINE", "FAKECORNER", "FAKE2D", "RAITO"});
     public final ModeProperty color = new ModeProperty("color", 0, new String[]{"DEFAULT", "TEAMS", "HUD"});
     public final ModeProperty healthBar = new ModeProperty("health-bar", 0, new String[]{"NONE", "2D", "RAVEN"});
     public final BooleanProperty players = new BooleanProperty("players", true);
@@ -118,7 +141,7 @@ public class ESP extends Module {
 
     @EventTarget(Priority.HIGH)
     public void onRender(Render2DEvent event) {
-        if (this.isEnabled() && (this.mode.getValue() == 1 || this.mode.getValue() == 3 || this.healthBar.getValue() == 1)) {
+        if (this.isEnabled() && (this.mode.getValue() == 1 || this.mode.getValue() == 3 || this.mode.getValue() == 6 || this.healthBar.getValue() == 1)) {
             List<EntityPlayer> renderedEntities = TeamUtil.getLoadedEntitiesSorted().stream().filter(entity -> entity instanceof EntityPlayer && this.shouldRenderPlayer((EntityPlayer) entity)).map(EntityPlayer.class::cast).collect(Collectors.toList());
             if (!renderedEntities.isEmpty()) {
                 if (this.mode.getValue() == 3) {
@@ -189,6 +212,47 @@ public class ESP extends Module {
                     }
                     GlStateManager.popMatrix();
                     RenderUtil.disableRenderState();
+                }
+
+                // ---- RAITO mode ----
+                if (this.mode.getValue() == 6) {
+                    ResourceLocation tex = getRaitoTexture();
+                    if (tex != null) {
+                        double scaleFactor = new ScaledResolution(mc).getScaleFactor();
+                        double scale = scaleFactor / Math.pow(scaleFactor, 2.0);
+                        GlStateManager.pushMatrix();
+                        GlStateManager.scale(scale, scale, scale);
+                        GlStateManager.enableBlend();
+                        GlStateManager.blendFunc(770, 771);
+                        GlStateManager.enableTexture2D();
+                        GlStateManager.disableAlpha();
+                        GlStateManager.disableDepth();
+                        GlStateManager.color(1f, 1f, 1f, 1f);
+                        mc.getTextureManager().bindTexture(tex);
+                        for (EntityPlayer player : renderedEntities) {
+                            ((IAccessorEntityRenderer) mc.entityRenderer).callSetupCameraTransform(event.getPartialTicks(), 0);
+                            Vector4d pos = RenderUtil.projectToScreen(player, scaleFactor);
+                            mc.entityRenderer.setupOverlayRendering();
+                            if (pos != null) {
+                                float x = (float) pos.x;
+                                float y = (float) pos.y;
+                                float z = (float) pos.z;
+                                float w = (float) pos.w;
+                                Tessellator tess = Tessellator.getInstance();
+                                WorldRenderer wr = tess.getWorldRenderer();
+                                wr.begin(7, DefaultVertexFormats.POSITION_TEX);
+                                wr.pos(x, w, 0).tex(0, 1).endVertex();
+                                wr.pos(z, w, 0).tex(1, 1).endVertex();
+                                wr.pos(z, y, 0).tex(1, 0).endVertex();
+                                wr.pos(x, y, 0).tex(0, 0).endVertex();
+                                tess.draw();
+                            }
+                        }
+                        GlStateManager.enableDepth();
+                        GlStateManager.enableAlpha();
+                        GlStateManager.disableBlend();
+                        GlStateManager.popMatrix();
+                    }
                 }
             }
         }

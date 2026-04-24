@@ -4,6 +4,7 @@ import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -82,37 +83,46 @@ public class DiscordIPC {
     // -----------------------------------------------------------------------
 
     private void workerLoop() {
-        // 1. Connect
-        if (!tryConnect()) {
-            running.set(false);
-            return;
-        }
-
-        // 2. Start a reader sub-thread so reads don't block the send path
-        Thread reader = new Thread(this::readerLoop, "DiscordIPC-Reader");
-        reader.setDaemon(true);
-        reader.start();
-
-        // 3. Process outgoing queue
-        try {
-            while (running.get() && connected.get()) {
-                String payload = sendQueue.poll(1, TimeUnit.SECONDS);
-                if (payload == null) continue;
-                if (payload == POISON) break;
-                try {
-                    sendFrame(OP_FRAME, payload);
-                } catch (IOException e) {
-                    connected.set(false);
-                    break;
-                }
+        while (running.get()) {
+            // 1. Connect（失敗したら5秒待って再試行）
+            if (!tryConnect()) {
+                try { Thread.sleep(5_000); } catch (InterruptedException e) { break; }
+                continue;
             }
-        } catch (InterruptedException ignored) {
-            Thread.currentThread().interrupt();
+
+            // 2. Start a reader sub-thread so reads don't block the send path
+            Thread reader = new Thread(this::readerLoop, "DiscordIPC-Reader");
+            reader.setDaemon(true);
+            reader.start();
+
+            // 3. Process outgoing queue
+            try {
+                while (running.get() && connected.get()) {
+                    String payload = sendQueue.poll(1, TimeUnit.SECONDS);
+                    if (payload == null) continue;
+                    if (POISON.equals(payload)) { running.set(false); break; }
+                    try {
+                        sendFrame(OP_FRAME, payload);
+                    } catch (IOException e) {
+                        connected.set(false);
+                        break;
+                    }
+                }
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+
+            // 4. Close and wait before reconnect
+            closePipe();
+            reader.interrupt();
+            connected.set(false);
+
+            if (running.get()) {
+                try { Thread.sleep(5_000); } catch (InterruptedException e) { break; }
+            }
         }
 
-        // 4. Close
-        closePipe();
-        reader.interrupt();
         connected.set(false);
         running.set(false);
     }
@@ -125,13 +135,51 @@ public class DiscordIPC {
                 RandomAccessFile raf = new RandomAccessFile(path, "rw");
                 synchronized (this) { pipe = raf; }
                 sendFrame(OP_HANDSHAKE, String.format("{\"v\":1,\"client_id\":\"%s\"}", clientId));
-                connected.set(true);
-                return true;
+                // READY レスポンスを読んで接続確立を確認する
+                String ready = readOneFrame();
+                if (ready != null && ready.contains("READY")) {
+                    connected.set(true);
+                    return true;
+                }
+                // READY が来なかった場合はこのパイプを諦めて次を試す
+                closePipe();
             } catch (Exception ignored) {
-                // Pipe not available at index i – try next
+                closePipe();
             }
         }
         return false;
+    }
+
+    /**
+     * パイプから1フレーム読んで JSON ボディを返す。失敗時は null。
+     */
+    private String readOneFrame() {
+        try {
+            RandomAccessFile raf;
+            synchronized (this) { raf = pipe; }
+            if (raf == null) return null;
+            byte[] header = new byte[8];
+            int read = 0;
+            while (read < 8) {
+                int r = raf.read(header, read, 8 - read);
+                if (r < 0) return null;
+                read += r;
+            }
+            ByteBuffer buf = ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN);
+            buf.getInt(); // opcode（今は使わない）
+            int length = buf.getInt();
+            if (length <= 0 || length > 65536) return null;
+            byte[] body = new byte[length];
+            int bodyRead = 0;
+            while (bodyRead < length) {
+                int r = raf.read(body, bodyRead, length - bodyRead);
+                if (r < 0) return null;
+                bodyRead += r;
+            }
+            return new String(body, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /** Reads and discards Discord responses to keep the pipe alive. */
@@ -189,7 +237,7 @@ public class DiscordIPC {
 
     private synchronized void sendFrame(int opcode, String json) throws IOException {
         if (pipe == null) throw new IOException("pipe closed");
-        byte[] data = json.getBytes("UTF-8");
+        byte[] data = json.getBytes(StandardCharsets.UTF_8);
         ByteBuffer header = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
         header.putInt(opcode);
         header.putInt(data.length);

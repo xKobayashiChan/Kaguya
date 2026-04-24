@@ -33,16 +33,39 @@ public class AutoUpdater {
     }
 
     /**
-     * 起動時に呼ぶ。前回の更新で残った *.old ファイルを削除する。
+     * 起動時に呼ぶ。現在実行中ではない古い KaguyaClient*.jar を削除する。
      */
     public static void startup() {
         File modsDir = new File("mods");
         if (!modsDir.isDirectory()) return;
+
+        // 現在実行中のJARパスを取得
+        File currentJar = null;
+        try {
+            currentJar = new File(
+                AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().toURI()
+            );
+        } catch (Exception ignored) {}
+
+        final File running = currentJar;
+
+        // KaguyaClient*.jar で現在実行中でないものをすべて削除
         File[] oldFiles = modsDir.listFiles(
-            (dir, name) -> name.startsWith("KaguyaClient") && name.endsWith(".old")
+            (dir, name) -> name.startsWith("KaguyaClient") && name.endsWith(".jar")
         );
         if (oldFiles == null) return;
-        for (File f : oldFiles) f.delete();
+        for (File f : oldFiles) {
+            if (running != null && f.getAbsolutePath().equals(running.getAbsolutePath())) continue;
+            f.delete();
+        }
+
+        // 旧形式の .old ファイルも念のため削除
+        File[] dotOld = modsDir.listFiles(
+            (dir, name) -> name.startsWith("KaguyaClient") && name.endsWith(".old")
+        );
+        if (dotOld != null) {
+            for (File f : dotOld) f.delete();
+        }
     }
 
     /**
@@ -109,17 +132,20 @@ public class AutoUpdater {
                 conn.disconnect();
             }
 
-            // 現在のJARを .old にリネーム（次回起動時に削除）
-            renameCurrentJar();
-
-            // メインスレッドで通知
-            Minecraft.getMinecraft().addScheduledTask(() ->
-                ChatUtil.sendFormatted(
-                    Kaguya.clientName
-                    + "&a新バージョン &b" + newVersion + "&a をダウンロードしました！"
-                    + " Minecraftを再起動してください。&r"
-                )
-            );
+            // プレイヤーがインゲームになるまで待ってから通知
+            final String msg = Kaguya.clientName
+                    + "&aNew Kaguya available! &b" + newVersion + "&a was downloaded."
+                    + " Please restart Minecraft.&r";
+            new Thread(() -> {
+                Minecraft mc2 = Minecraft.getMinecraft();
+                for (int i = 0; i < 120; i++) { // 最大60秒待機
+                    if (mc2.thePlayer != null) {
+                        mc2.addScheduledTask(() -> ChatUtil.sendFormatted(msg));
+                        return;
+                    }
+                    try { Thread.sleep(500); } catch (InterruptedException ignored) { return; }
+                }
+            }, "KaguyaUpdater-Notify").start();
 
         } catch (Exception e) {
             Minecraft.getMinecraft().addScheduledTask(() ->
@@ -128,27 +154,6 @@ public class AutoUpdater {
                 )
             );
         }
-    }
-
-    private static void renameCurrentJar() {
-        try {
-            File currentJar = new File(
-                AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().toURI()
-            );
-            if (!currentJar.exists() || !currentJar.getName().endsWith(".jar")) return;
-
-            // まずリネームを試みる（非 Windows や unlocked な場合に有効）
-            File renamed = new File(currentJar.getParentFile(), currentJar.getName() + ".old");
-            boolean renameSuccess = currentJar.renameTo(renamed);
-
-            if (renameSuccess) {
-                // リネームできた .old ファイルも JVM 終了時に削除
-                renamed.deleteOnExit();
-            } else {
-                // Windows でロックされている場合: JVM 終了後に直接削除を予約
-                currentJar.deleteOnExit();
-            }
-        } catch (Exception ignored) {}
     }
 
     private static HttpURLConnection openGitHubConnection(String url, String accept) throws IOException {

@@ -436,7 +436,7 @@ public class KillAura extends Module {
             if (this.target != null) {
                 int curHurtTime = this.target.getEntity().hurtTime;
                 if (curHurtTime > this.prevTargetHurtTime) {
-                    this.damageColorTicks = 3;
+                    this.damageColorTicks = 6;
                 }
                 this.prevTargetHurtTime = curHurtTime;
             } else {

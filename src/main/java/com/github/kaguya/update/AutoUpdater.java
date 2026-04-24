@@ -116,8 +116,8 @@ public class AutoUpdater {
             Minecraft.getMinecraft().addScheduledTask(() ->
                 ChatUtil.sendFormatted(
                     Kaguya.clientName
-                    + "&a新バージョン &b" + newVersion + "&a をダウンロードしました！"
-                    + " Minecraftを再起動してください。&r"
+                    + "&aNew Kaguya available!&b" + newVersion + "&a was downloaded."
+                    + " Please restart Minecraft.&r"
                 )
             );
 

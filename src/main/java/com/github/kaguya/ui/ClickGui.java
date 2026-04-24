@@ -10,12 +10,14 @@ import com.github.kaguya.ui.components.CategoryComponent;
 import com.github.kaguya.ui.components.ModuleComponent;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -79,6 +81,11 @@ public class ClickGui extends GuiScreen {
 
     private final Map<String, Long> toggleFlashMap = new HashMap<>();
 
+    // ---- Config tab state ----
+    private int    configScroll     = 0;
+    private double animConfigScroll = 0;
+    private GuiTextField configSaveField;
+
     public ClickGui() {
         instance = this;
         categories = new ArrayList<>();
@@ -92,7 +99,18 @@ public class ClickGui extends GuiScreen {
         panelAlpha      = 0f;
         tabSlideOffset  = 0f;
         settSlideOffset = selectedModule != null ? 0f : SETT_W;
+        configSaveField = new GuiTextField(0, mc.fontRendererObj, 0, 0, SETT_W - 58, 12);
+        configSaveField.setMaxStringLength(64);
+        configSaveField.setText(Config.lastConfig != null ? Config.lastConfig : "default");
     }
+
+    @Override
+    public void updateScreen() {
+        if (configSaveField != null) configSaveField.updateCursorCounter();
+    }
+
+    private int  totalTabs()   { return categories.size() + 1; }
+    private boolean isConfigTab() { return selectedTab == categories.size(); }
 
     private void buildCategories() {
         Comparator<Module> byName = Comparator.comparing(m -> m.getName().toLowerCase());
@@ -290,26 +308,34 @@ public class ClickGui extends GuiScreen {
         Gui.drawRect(settX, contentY, px + PANEL_W, contentY + contentH, a(C_SETTINGS));
 
         // ---- Scroll interpolation ----
-        animListScroll += (listScroll - animListScroll) * 0.2;
-        animSettScroll += (settScroll - animSettScroll) * 0.2;
+        animListScroll  += (listScroll  - animListScroll)  * 0.2;
+        animSettScroll  += (settScroll  - animSettScroll)  * 0.2;
+        animConfigScroll += (configScroll - animConfigScroll) * 0.2;
 
-        // ---- Module list (with tab slide) ----
-        drawModuleList(mouseX, mouseY, px, contentY, contentH, sr);
+        if (isConfigTab()) {
+            // ---- Config tab ----
+            drawConfigTab(mouseX, mouseY, px, contentY, contentH, sr);
+        } else {
+            // ---- Module list (with tab slide) ----
+            drawModuleList(mouseX, mouseY, px, contentY, contentH, sr);
 
-        // ---- Settings panel (with slide-in/out) ----
-        if (displayModule != null && settSlideOffset < SETT_W - 0.5f) {
-            drawSettingsPanel(mouseX, mouseY, settX, contentY, contentH, sr);
-            if (selectedModule != null) selectedModule.update(mouseX, mouseY);
+            // ---- Settings panel (with slide-in/out) ----
+            if (displayModule != null && settSlideOffset < SETT_W - 0.5f) {
+                drawSettingsPanel(mouseX, mouseY, settX, contentY, contentH, sr);
+                if (selectedModule != null) selectedModule.update(mouseX, mouseY);
+            }
         }
 
         // ---- Mouse wheel scroll ----
         int wheel = Mouse.getDWheel();
         if (wheel != 0) handleScroll(wheel, mouseX, mouseY, px, contentY, contentH, settX);
 
-        // ---- Save button ----
-        int btnX = px + PANEL_W - BTN_W - 4;
-        int btnY = py + PANEL_H - BTN_H - 4;
-        drawSaveButton(mouseX, mouseY, btnX, btnY);
+        // ---- Save button (module tabs only) ----
+        if (!isConfigTab()) {
+            int btnX = px + PANEL_W - BTN_W - 4;
+            int btnY = py + PANEL_H - BTN_H - 4;
+            drawSaveButton(mouseX, mouseY, btnX, btnY);
+        }
 
         // ---- Version label ----
         mc.fontRendererObj.drawStringWithShadow(
@@ -321,7 +347,7 @@ public class ClickGui extends GuiScreen {
 
     // ---- Tab bar ----
     private void drawTabBar(int mouseX, int mouseY, int px, int py) {
-        int n    = categories.size();
+        int n    = totalTabs();
         int tabW = PANEL_W / n;
         for (int i = 0; i < n; i++) {
             int tx  = px + i * tabW;
@@ -330,7 +356,7 @@ public class ClickGui extends GuiScreen {
             int bgColor = act ? C_ORANGE : (hov ? C_TAB_HOVER : C_TAB_IDLE);
             Gui.drawRect(tx, py, tx + tabW, py + TAB_H, a(bgColor));
             if (i > 0) Gui.drawRect(tx, py, tx + 1, py + TAB_H, a(C_DIVIDER));
-            String name  = categories.get(i).getName();
+            String name  = (i < categories.size()) ? categories.get(i).getName() : "Config";
             int    textX = tx + tabW / 2 - mc.fontRendererObj.getStringWidth(name) / 2;
             int    textY = py + TAB_H / 2 - mc.fontRendererObj.FONT_HEIGHT / 2;
             mc.fontRendererObj.drawStringWithShadow(name, textX, textY, act ? C_WHITE : C_DIM);
@@ -477,6 +503,153 @@ public class ClickGui extends GuiScreen {
         }
     }
 
+    // ---- Config tab ----
+    private void drawConfigTab(int mouseX, int mouseY, int px, int contentY, int contentH, ScaledResolution sr) {
+        List<String> configs = getConfigNames();
+        int settX  = px + LIST_W + 1;
+        int bottom = contentY + contentH;
+        double scale = sr.getScaleFactor();
+
+        // -- Left: config list --
+        int totalH    = configs.size() * ITEM_H;
+        int maxScroll = Math.max(0, totalH - contentH);
+        if (configScroll     > maxScroll) configScroll     = maxScroll;
+        if (animConfigScroll > maxScroll) animConfigScroll = maxScroll;
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(
+            (int)(px * scale),
+            (int)((sr.getScaledHeight() - bottom) * scale),
+            (int)(LIST_W * scale),
+            (int)(contentH * scale)
+        );
+
+        String active = Config.lastConfig;
+        for (int i = 0; i < configs.size(); i++) {
+            String cfg = configs.get(i);
+            int iy = contentY + i * ITEM_H - (int) animConfigScroll;
+            if (iy + ITEM_H <= contentY || iy >= bottom) continue;
+
+            boolean isActive = cfg.equals(active);
+            boolean isHov    = mouseX >= px && mouseX < px + LIST_W && mouseY >= iy && mouseY < iy + ITEM_H;
+
+            if (isActive) {
+                Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, a(C_ITEM_SEL));
+                Gui.drawRect(px, iy, px + 2,      iy + ITEM_H, a(C_ORANGE));
+            } else if (isHov) {
+                Gui.drawRect(px, iy, px + LIST_W, iy + ITEM_H, a(C_ITEM_HOVER));
+            }
+
+            int textY = iy + (ITEM_H - mc.fontRendererObj.FONT_HEIGHT) / 2;
+            mc.fontRendererObj.drawStringWithShadow(cfg, px + 5, textY, isActive ? C_WHITE : C_DIM);
+        }
+
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        if (totalH > contentH) {
+            float barY = contentY + (float) animConfigScroll * contentH / totalH;
+            float barH = (float) contentH * contentH / totalH;
+            Gui.drawRect(px + LIST_W - 2, (int) barY, px + LIST_W, (int)(barY + barH), a(C_SCROLLBAR));
+        }
+
+        // -- Right: actions panel --
+        int fh = mc.fontRendererObj.FONT_HEIGHT;
+
+        // Header
+        mc.fontRendererObj.drawStringWithShadow("Config Manager", settX + 7, contentY + 4, C_ORANGE);
+        Gui.drawRect(settX + 4, contentY + HEADER_H - 1, settX + SETT_W - 4, contentY + HEADER_H, a(C_SEPARATOR));
+
+        // Active config
+        int row1 = contentY + HEADER_H + 6;
+        String activeLabel = "Active: " + (active != null ? active : "none");
+        mc.fontRendererObj.drawStringWithShadow(activeLabel, settX + 7, row1, C_DIM);
+
+        // Save-as section
+        int row2 = row1 + fh + 10;
+        mc.fontRendererObj.drawStringWithShadow("Save as:", settX + 7, row2, C_WHITE);
+
+        int fieldY  = row2 + fh + 4;
+        int fieldX  = settX + 7;
+        int fieldW  = configSaveField.width;
+        int saveBtnX = fieldX + fieldW + 6;
+        int saveBtnW = 42;
+
+        // Text field border + background
+        Gui.drawRect(fieldX - 1, fieldY - 2, fieldX + fieldW + 1, fieldY + 12, a(C_DIVIDER));
+        configSaveField.xPosition = fieldX;
+        configSaveField.yPosition = fieldY;
+        configSaveField.drawTextBox();
+
+        // Save button
+        boolean hovSave = mouseX >= saveBtnX && mouseX < saveBtnX + saveBtnW
+                       && mouseY >= fieldY - 2 && mouseY < fieldY + 12;
+        Gui.drawRect(saveBtnX, fieldY - 2, saveBtnX + saveBtnW, fieldY + 12, a(hovSave ? C_TAB_HOVER : C_TAB_IDLE));
+        String saveLbl = "Save";
+        mc.fontRendererObj.drawStringWithShadow(saveLbl,
+            saveBtnX + saveBtnW / 2 - mc.fontRendererObj.getStringWidth(saveLbl) / 2,
+            fieldY, C_WHITE);
+
+        // Separator
+        int row3 = fieldY + 18;
+        Gui.drawRect(settX + 4, row3, settX + SETT_W - 4, row3 + 1, a(C_SEPARATOR));
+
+        // Hints
+        mc.fontRendererObj.drawStringWithShadow("Left-click : Load config", settX + 7, row3 + 5, C_DIM);
+    }
+
+    private void handleConfigTabClick(int x, int y, int btn, int px, int contentY, int contentH, int settX) {
+        // Config list (left panel)
+        if (x >= px && x < px + LIST_W && y >= contentY && y < contentY + contentH) {
+            List<String> configs = getConfigNames();
+            for (int i = 0; i < configs.size(); i++) {
+                int iy = contentY + i * ITEM_H - (int) animConfigScroll;
+                if (y >= iy && y < iy + ITEM_H) {
+                    String cfg = configs.get(i);
+                    if (btn == 0) {
+                        // Left-click: load
+                        new Config(cfg, false).load();
+                        configSaveField.setText(cfg);
+                    }
+                    return;
+                }
+            }
+        }
+
+        // Right panel: text field click
+        if (x >= settX && x < settX + SETT_W) {
+            configSaveField.mouseClicked(x, y, btn);
+
+            // Save button hit test (matches drawConfigTab positioning)
+            int fh     = mc.fontRendererObj.FONT_HEIGHT;
+            int row1   = contentY + HEADER_H + 6;
+            int row2   = row1 + fh + 10;
+            int fieldY = row2 + fh + 4;
+            int fieldX = settX + 7;
+            int fieldW = configSaveField.width;
+            int saveBtnX = fieldX + fieldW + 6;
+            int saveBtnW = 42;
+
+            if (btn == 0 && x >= saveBtnX && x < saveBtnX + saveBtnW
+                         && y >= fieldY - 2 && y < fieldY + 12) {
+                String name = configSaveField.getText().trim();
+                if (!name.isEmpty()) {
+                    new Config(name, false).save();
+                }
+            }
+        }
+    }
+
+    private List<String> getConfigNames() {
+        File dir = new File("./config/Myau/");
+        List<String> names = new ArrayList<>();
+        if (!dir.isDirectory()) return names;
+        File[] files = dir.listFiles((d, n) -> n.endsWith(".json") && !n.endsWith(".tmp.json"));
+        if (files == null) return names;
+        for (File f : files) names.add(f.getName().substring(0, f.getName().length() - 5));
+        Collections.sort(names);
+        return names;
+    }
+
     // ---- Save button ----
     private void drawSaveButton(int mouseX, int mouseY, int bx, int by) {
         boolean flashing = System.currentTimeMillis() < saveFlashUntil;
@@ -501,11 +674,16 @@ public class ClickGui extends GuiScreen {
 
         if (mouseX >= px && mouseX < px + LIST_W
                 && mouseY >= contentY && mouseY < contentY + contentH) {
-            int totalH    = categories.get(selectedTab).getModules().size() * ITEM_H;
-            int maxScroll = Math.max(0, totalH - contentH);
-            listScroll = Math.max(0, Math.min(listScroll + amount * 14, maxScroll));
-
-        } else if (selectedModule != null
+            if (isConfigTab()) {
+                int totalH    = getConfigNames().size() * ITEM_H;
+                int maxScroll = Math.max(0, totalH - contentH);
+                configScroll = Math.max(0, Math.min(configScroll + amount * 14, maxScroll));
+            } else {
+                int totalH    = categories.get(selectedTab).getModules().size() * ITEM_H;
+                int maxScroll = Math.max(0, totalH - contentH);
+                listScroll = Math.max(0, Math.min(listScroll + amount * 14, maxScroll));
+            }
+        } else if (!isConfigTab() && selectedModule != null
                 && mouseX >= settX && mouseX < settX + SETT_W
                 && mouseY >= contentY && mouseY < contentY + contentH) {
             int totalH    = selectedModule.getSettingsHeight();
@@ -541,23 +719,30 @@ public class ClickGui extends GuiScreen {
 
         // Tab bar
         if (y >= py && y < py + TAB_H && x >= px && x < px + PANEL_W) {
-            int n    = categories.size();
+            int n    = totalTabs();
             int tabW = PANEL_W / n;
             for (int i = 0; i < n; i++) {
                 int tx = px + i * tabW;
                 if (x >= tx && x < tx + tabW) {
                     if (selectedTab != i) {
-                        // Slide direction: positive = new tab is to the right
                         int dir = i > selectedTab ? 1 : -1;
-                        tabSlideOffset = dir * LIST_W * 0.7f;
-                        selectedTab    = i;
-                        listScroll     = 0;
-                        animListScroll = 0;
+                        tabSlideOffset  = dir * LIST_W * 0.7f;
+                        selectedTab     = i;
+                        listScroll      = 0;
+                        animListScroll  = 0;
+                        configScroll    = 0;
+                        animConfigScroll = 0;
                         setSelectedModule(null);
                     }
                     return;
                 }
             }
+        }
+
+        // Config tab handling
+        if (isConfigTab()) {
+            handleConfigTabClick(x, y, mouseButton, px, contentY, contentH, settX);
+            return;
         }
 
         // Settings header → HIDE/SHOW or toggle ON/OFF
@@ -611,6 +796,17 @@ public class ClickGui extends GuiScreen {
 
     @Override
     public void keyTyped(char typedChar, int key) {
+        if (isConfigTab()) {
+            if (key == 1) { // ESC
+                mc.displayGuiScreen(null);
+            } else if (key == 28 && configSaveField.isFocused()) { // Enter = save
+                String name = configSaveField.getText().trim();
+                if (!name.isEmpty()) new Config(name, false).save();
+            } else {
+                configSaveField.textboxKeyTyped(typedChar, key);
+            }
+            return;
+        }
         if (key == 1) {
             if (selectedModule != null && selectedModule.isAnyBinding()) {
                 selectedModule.keyTypedSettings(typedChar, key);

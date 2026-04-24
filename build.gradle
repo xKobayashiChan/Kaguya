@@ -18,7 +18,7 @@ apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: 'org.spongepowered.mixin'
 
 //TODO: Change the version, group, and archivesBaseName to your own.
-version = "v1.7.5" // The version number of your mod.
+version = "v1.7.6" // The version number of your mod.
 group = "com.example" // This is the group of the mod (usually domain or your name -> at.manuthebyte)
 archivesBaseName = "KaguyaClient" // This is the name of the jar that is generated.
 
@@ -95,8 +95,8 @@ if (systemOs.contains("mac"))
         {
             dependencySubstitution
             {
-                substitute module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209') using module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-babric.1')
-                substitute module('org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209') using module('org.lwjgl.lwjgl:lwjgl:2.9.4-babric.1')
+                substitute module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209') with module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-babric.1')
+                substitute module('org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209') with module('org.lwjgl.lwjgl:lwjgl:2.9.4-babric.1')
             }
             force 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-babric.1'
         }

@@ -22,25 +22,27 @@ public class Cape extends Module {
     }
 
     /**
-     * Returns the custom cape texture, loading from ./config/Myau/cape.png.
-     * Automatically reloads if the file has been modified.
+     * Returns the custom cape texture.
+     * Priority: ./config/Myau/cape.png (外部) → JAR内蔵 /cape.png
+     * 外部ファイルは変更検知で自動リロードする。
      */
     public static ResourceLocation getCapeTexture() {
         if (CAPE_FILE.exists()) {
             long currentModified = CAPE_FILE.lastModified();
             if (capeTexture == null || currentModified != lastModified) {
-                loadCapeTexture();
+                loadCapeFromFile();
                 lastModified = currentModified;
             }
+        } else if (capeTexture == null) {
+            loadCapeFromJar();
         }
         return capeTexture;
     }
 
     /**
-     * Loads the cape texture from ./config/Myau/cape.png.
-     * Deletes the previous texture to avoid memory leaks.
+     * 外部ファイル ./config/Myau/cape.png からロード。
      */
-    private static void loadCapeTexture() {
+    private static void loadCapeFromFile() {
         try {
             BufferedImage image = ImageIO.read(CAPE_FILE);
             if (image == null) {
@@ -48,10 +50,27 @@ public class Cape extends Module {
                 return;
             }
             releaseTexture();
-            DynamicTexture dynamicTexture = new DynamicTexture(image);
-            capeTexture = mc.getTextureManager().getDynamicTextureLocation("kaguya_cape", dynamicTexture);
+            capeTexture = mc.getTextureManager().getDynamicTextureLocation(
+                    "kaguya_cape", new DynamicTexture(image));
         } catch (Exception e) {
             System.err.println("[Kaguya] Error loading cape texture:");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * JAR内蔵の /cape.png からロード。
+     */
+    private static void loadCapeFromJar() {
+        try (java.io.InputStream is = Cape.class.getResourceAsStream("/cape.png")) {
+            if (is == null) return; // リソースが存在しない場合は何もしない
+            BufferedImage image = ImageIO.read(is);
+            if (image == null) return;
+            releaseTexture();
+            capeTexture = mc.getTextureManager().getDynamicTextureLocation(
+                    "kaguya_cape", new DynamicTexture(image));
+        } catch (Exception e) {
+            System.err.println("[Kaguya] Error loading built-in cape texture:");
             e.printStackTrace();
         }
     }
@@ -83,7 +102,8 @@ public class Cape extends Module {
 
     @Override
     public void onEnabled() {
-        if (!CAPE_FILE.exists()) {
+        // 外部ファイルもJAR内蔵リソースも両方ない場合のみ警告
+        if (!CAPE_FILE.exists() && Cape.class.getResource("/cape.png") == null) {
             ChatUtil.sendFormatted(
                 String.format("%sCape file not found: &o%s&r", Kaguya.clientName, CAPE_FILE.getPath())
             );

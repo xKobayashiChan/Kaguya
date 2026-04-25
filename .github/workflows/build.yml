@@ -40,12 +40,12 @@ jobs:
 
       - name: Write firebase.properties
         run: |
-          cat > src/main/resources/firebase.properties << 'EOF'
-          firebase.url=${{ secrets.FIREBASE_URL }}
-          firebase.secret=${{ secrets.FIREBASE_SECRET }}
-          github.token=${{ secrets.GH_PAT }}
-          github.repo=${{ secrets.GITHUB_REPO }}
-          EOF
+          printf 'firebase.url=%s\nfirebase.secret=%s\ngithub.token=%s\ngithub.repo=%s\n' \
+            '${{ secrets.FIREBASE_URL }}' \
+            '${{ secrets.FIREBASE_SECRET }}' \
+            '${{ secrets.GH_PAT }}' \
+            '${{ secrets.GH_REPO }}' \
+            > src/main/resources/firebase.properties
 
       - name: Setup ForgeGradle workspace
         run: ./gradlew setupCIWorkspace

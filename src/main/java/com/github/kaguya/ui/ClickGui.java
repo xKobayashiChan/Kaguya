@@ -171,6 +171,7 @@ public class ClickGui extends GuiScreen {
         render.add(Kaguya.moduleManager.getModule(HUD.class));
         render.add(Kaguya.moduleManager.getModule(Health.class));
         render.add(Kaguya.moduleManager.getModule(ClientHUD.class));
+        render.add(Kaguya.moduleManager.getModule(HideClientText.class));
         render.add(Kaguya.moduleManager.getModule(GuiModule.class));
         render.add(Kaguya.moduleManager.getModule(ChestESP.class));
         render.add(Kaguya.moduleManager.getModule(Trajectories.class));

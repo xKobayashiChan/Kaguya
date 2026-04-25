@@ -83,6 +83,7 @@ public class Kaguya {
         moduleManager.modules.put(Chams.class, new Chams());
         moduleManager.modules.put(ChatCopy.class, new ChatCopy());
         moduleManager.modules.put(ClientHUD.class, new ClientHUD());
+        moduleManager.modules.put(HideClientText.class, new HideClientText());
         moduleManager.modules.put(Denick.class, new Denick());
         moduleManager.modules.put(DiscordRichPresence.class, new DiscordRichPresence());
         moduleManager.modules.put(ChestESP.class, new ChestESP());

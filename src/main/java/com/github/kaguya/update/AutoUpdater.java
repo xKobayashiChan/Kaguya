@@ -32,8 +32,23 @@ public class AutoUpdater {
         GITHUB_REPO  = props.getProperty("github.repo", "");
     }
 
-    // mods/ 内の更新マーカーファイル（改行区切り: 1行目=旧JARパス, 2行目=新JARの.tmpパス）
-    private static final File MARKER_FILE = new File("mods", ".kaguya_update");
+    // マーカーファイル名
+    private static final String MARKER_NAME = ".kaguya_update";
+
+    /** 実行中JARの場所からmodsディレクトリを特定する（CWD依存を避けるため） */
+    private static File resolveModsDir() {
+        try {
+            File jar = new File(
+                AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().toURI()
+            );
+            // JARがmods/直下にある場合: jar.getParentFile() = mods/
+            if (jar.isFile() && jar.getParentFile() != null) {
+                return jar.getParentFile();
+            }
+        } catch (Exception ignored) {}
+        // フォールバック: CWD相対
+        return new File("mods");
+    }
 
     /**
      * 起動時に呼ぶ。マーカーファイルに基づいて更新を確定し、不要ファイルを削除する。
@@ -41,7 +56,7 @@ public class AutoUpdater {
      * running が特定できなくても安全（グローバルスキャン削除を行わない）。
      */
     public static void startup() {
-        File modsDir = new File("mods");
+        File modsDir = resolveModsDir();
         if (!modsDir.isDirectory()) return;
 
         // 1. .old ファイルを掃除（前回ロックで消せなかった旧JAR）
@@ -53,23 +68,26 @@ public class AutoUpdater {
         }
 
         // 2. マーカーがなければ何もしない
-        if (!MARKER_FILE.exists()) return;
+        File markerFile = new File(modsDir, MARKER_NAME);
+        if (!markerFile.exists()) return;
 
         try {
-            String content = new String(Files.readAllBytes(MARKER_FILE.toPath()), StandardCharsets.UTF_8).trim();
+            String content = new String(Files.readAllBytes(markerFile.toPath()), StandardCharsets.UTF_8).trim();
             String[] lines = content.split("\n", 2);
-            if (lines.length < 2) { MARKER_FILE.delete(); return; }
+            if (lines.length < 2) { markerFile.delete(); return; }
 
             File oldJar = new File(lines[0].trim());
             File tmpJar = new File(lines[1].trim());
-            if (!tmpJar.exists()) { MARKER_FILE.delete(); return; }
+            if (!tmpJar.exists()) { markerFile.delete(); return; }
 
             // .tmp → 正式ファイル名（.tmp を除いた名前）にリネーム
             String tmpName = tmpJar.getName();
             String jarName = tmpName.endsWith(".tmp") ? tmpName.substring(0, tmpName.length() - 4) : tmpName;
             File newJar = new File(modsDir, jarName);
+            // 既存ファイルがあれば先に削除（Windowsではrenameto失敗する）
+            if (newJar.exists()) newJar.delete();
             if (!tmpJar.renameTo(newJar)) {
-                // リネーム失敗なら .tmp を残してマーカーも保持（次回再試行）
+                System.err.println("[Kaguya] rename failed: " + tmpJar + " -> " + newJar);
                 return;
             }
 
@@ -83,7 +101,7 @@ public class AutoUpdater {
         } catch (Exception e) {
             System.err.println("[Kaguya] startup cleanup error: " + e.getMessage());
         } finally {
-            MARKER_FILE.delete();
+            markerFile.delete();
         }
     }
 
@@ -128,9 +146,7 @@ public class AutoUpdater {
 
     private static void downloadUpdate(String newVersion, String assetApiUrl, String fileName) {
         try {
-            File modsDir = new File("mods");
-
-            // 現在実行中のJARパスを取得（マーカー用）
+            // 現在実行中のJARパスを取得
             File currentJar = null;
             try {
                 File f = new File(
@@ -138,6 +154,9 @@ public class AutoUpdater {
                 );
                 if (f.exists() && f.getName().endsWith(".jar")) currentJar = f;
             } catch (Exception ignored) {}
+
+            // modsディレクトリをJAR位置から特定（CWD依存を避ける）
+            File modsDir = (currentJar != null) ? currentJar.getParentFile() : resolveModsDir();
 
             // 新JARは .tmp として保存（Forge がロードしない拡張子）
             File tmpJar = new File(modsDir, fileName + ".tmp");
@@ -163,14 +182,10 @@ public class AutoUpdater {
             }
 
             // マーカーファイルに旧JARパスと新.tmpパスを記録（次回起動時の置換フロー用）
-            if (currentJar != null) {
-                String marker = currentJar.getAbsolutePath() + "\n" + tmpJar.getAbsolutePath();
-                Files.write(MARKER_FILE.toPath(), marker.getBytes(StandardCharsets.UTF_8));
-            } else {
-                // currentJar 不明でも .tmp は残す（startup() が .tmp リネームのみ行う）
-                String marker = "\n" + tmpJar.getAbsolutePath();
-                Files.write(MARKER_FILE.toPath(), marker.getBytes(StandardCharsets.UTF_8));
-            }
+            File markerFile = new File(modsDir, MARKER_NAME);
+            String oldPath = (currentJar != null) ? currentJar.getAbsolutePath() : "";
+            String marker = oldPath + "\n" + tmpJar.getAbsolutePath();
+            Files.write(markerFile.toPath(), marker.getBytes(StandardCharsets.UTF_8));
 
             // プレイヤーがインゲームになるまで待ってから通知
             final String msg = Kaguya.clientName

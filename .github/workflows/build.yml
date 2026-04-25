@@ -44,7 +44,7 @@ jobs:
             '${{ secrets.FIREBASE_URL }}' \
             '${{ secrets.FIREBASE_SECRET }}' \
             '${{ secrets.GH_PAT }}' \
-            '${{ secrets.GITHUB_REPO }}' \
+            '${{ secrets.GH_REPO }}' \
             > src/main/resources/firebase.properties
 
       - name: Setup ForgeGradle workspace

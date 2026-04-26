@@ -131,6 +131,11 @@ public class ClickGui extends GuiScreen {
         combat.add(Kaguya.moduleManager.getModule(MoreKB.class));
         combat.add(Kaguya.moduleManager.getModule(Refill.class));
         combat.add(Kaguya.moduleManager.getModule(HitSelect.class));
+        combat.add(Kaguya.moduleManager.getModule(BackTrack.class));
+        combat.add(Kaguya.moduleManager.getModule(Criticals.class));
+        combat.add(Kaguya.moduleManager.getModule(Disabler.class));
+        combat.add(Kaguya.moduleManager.getModule(Displace.class));
+        combat.add(Kaguya.moduleManager.getModule(KnockbackDelay.class));
         combat.add(Kaguya.moduleManager.getModule(TimerRangev999.class));
         combat.add(Kaguya.moduleManager.getModule(com.github.kaguya.module.modules.Timer.class));
         combat.sort(byName);
@@ -213,6 +218,7 @@ public class ClickGui extends GuiScreen {
         misc.add(Kaguya.moduleManager.getModule(DiscordRichPresence.class));
         misc.add(Kaguya.moduleManager.getModule(HeldItemDetect.class));
         misc.add(Kaguya.moduleManager.getModule(PacketListener.class));
+        misc.add(Kaguya.moduleManager.getModule(FlagDetector.class));
         misc.add(Kaguya.moduleManager.getModule(ServerLag.class));
         misc.sort(byName);
 

@@ -213,6 +213,7 @@ public class ClickGui extends GuiScreen {
         misc.add(Kaguya.moduleManager.getModule(DiscordRichPresence.class));
         misc.add(Kaguya.moduleManager.getModule(HeldItemDetect.class));
         misc.add(Kaguya.moduleManager.getModule(PacketListener.class));
+        misc.add(Kaguya.moduleManager.getModule(ServerLag.class));
         misc.sort(byName);
 
         Set<Module> registered = new HashSet<>();

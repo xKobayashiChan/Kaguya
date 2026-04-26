@@ -146,6 +146,7 @@ public class Kaguya {
         moduleManager.modules.put(Wtap.class, new Wtap());
         moduleManager.modules.put(Xray.class, new Xray());
         moduleManager.modules.put(BackTrack.class, new BackTrack());
+        moduleManager.modules.put(Criticals.class, new Criticals());
         moduleManager.modules.put(Disabler.class, new Disabler());
         moduleManager.modules.put(Displace.class, new Displace());
         moduleManager.modules.put(FlagDetector.class, new FlagDetector());

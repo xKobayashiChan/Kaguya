@@ -190,7 +190,7 @@ public class Disabler extends Module {
 
         if (this.grimPlace.getValue() && packet instanceof C08PacketPlayerBlockPlacement) {
             event.setCancelled(true);
-            PacketUtil.sendPacket(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
+            PacketUtil.sendPacketNoEvent(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
         }
 
         if (this.intaveFly.getValue()) {

@@ -147,6 +147,7 @@ public class Kaguya {
         moduleManager.modules.put(Xray.class, new Xray());
         moduleManager.modules.put(BackTrack.class, new BackTrack());
         moduleManager.modules.put(Disabler.class, new Disabler());
+        moduleManager.modules.put(KnockbackDelay.class, new KnockbackDelay());
         moduleManager.modules.put(TimerRangev999.class, new TimerRangev999());
         moduleManager.modules.put(Timer.class, new Timer());
         commandManager.commands.add(new BindCommand());

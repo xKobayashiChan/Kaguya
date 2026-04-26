@@ -131,6 +131,8 @@ public class ClickGui extends GuiScreen {
         combat.add(Kaguya.moduleManager.getModule(MoreKB.class));
         combat.add(Kaguya.moduleManager.getModule(Refill.class));
         combat.add(Kaguya.moduleManager.getModule(HitSelect.class));
+        combat.add(Kaguya.moduleManager.getModule(TimerRangev999.class));
+        combat.add(Kaguya.moduleManager.getModule(com.github.kaguya.module.modules.Timer.class));
         combat.sort(byName);
 
         List<Module> movement = new ArrayList<>();

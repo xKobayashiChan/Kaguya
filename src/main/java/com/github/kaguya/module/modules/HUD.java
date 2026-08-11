@@ -31,7 +31,7 @@ public class HUD extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private List<Module> activeModules = new ArrayList<>();
     public final ModeProperty colorMode = new ModeProperty(
-            "color", 3, new String[]{"RAINBOW", "CHROMA", "ASTOLFO", "CUSTOM1", "CUSTOM12", "CUSTOM123"}
+            "color", 3, new String[]{"RAINBOW", "CHROMA", "ASTOLFO", "CUSTOM1", "CUSTOM12", "CUSTOM123", "COTTONCANDY"}
     );
     public final FloatProperty colorSpeed = new FloatProperty("color-speed", 1.0F, 0.5F, 1.5F);
     public final PercentProperty colorSaturation = new PercentProperty("color-saturation", 50);
@@ -162,6 +162,20 @@ public class HUD extends Module {
                 } else {
                     color = ColorUtil.interpolate((floor - 0.5F) * 2.0F, new Color(this.custom2.getValue()), new Color(this.custom3.getValue()));
                 }
+                break;
+            case 6: { // COTTONCANDY: パステルピンク → 白 → 水色
+                Color ccPink  = new Color(0xFF, 0xB7, 0xD5); // #FFB7D5
+                Color ccWhite = new Color(0xFF, 0xF0, 0xFF); // #FFF0FF
+                Color ccBlue  = new Color(0xB0, 0xE8, 0xFF); // #B0E8FF
+                double cc = this.getColorCycle(time, offset);
+                float ccF = (float) (2.0 * Math.abs(cc - Math.floor(cc + 0.5)));
+                if (ccF <= 0.5F) {
+                    color = ColorUtil.interpolate(ccF * 2.0F, ccPink, ccWhite);
+                } else {
+                    color = ColorUtil.interpolate((ccF - 0.5F) * 2.0F, ccWhite, ccBlue);
+                }
+                break;
+            }
         }
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         return Color.getHSBColor(

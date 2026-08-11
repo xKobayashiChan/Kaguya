@@ -75,7 +75,7 @@ public class ClientHUD extends Module {
             boolean isDev = "dev".equals(BUILD_DATE);
             String partLabel = isDev ? "Development" : "Release";
             String partSep   = " - ";
-            String displayDate = isDev ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date()) : BUILD_DATE;
+            String displayDate = isDev ? new java.text.SimpleDateFormat("yyMMdd").format(new Date()) : BUILD_DATE;
             String fullText  = partLabel + partSep + displayDate + partSep + userName;
             float buildY = resolution.getScaledHeight() - mc.fontRendererObj.FONT_HEIGHT - 4.0f;
             float x = resolution.getScaledWidth() - mc.fontRendererObj.getStringWidth(fullText) - 4.0f;
@@ -102,7 +102,7 @@ public class ClientHUD extends Module {
             x += mc.fontRendererObj.getStringWidth(partSep);
 
             mc.fontRendererObj.drawStringWithShadow(displayDate, x, buildY, 0xFFFFFFFF);
-            x += mc.fontRendererObj.getStringWidth(BUILD_DATE);
+            x += mc.fontRendererObj.getStringWidth(displayDate);
 
             mc.fontRendererObj.drawStringWithShadow(partSep, x, buildY, 0xFFAAAAAA);
             x += mc.fontRendererObj.getStringWidth(partSep);

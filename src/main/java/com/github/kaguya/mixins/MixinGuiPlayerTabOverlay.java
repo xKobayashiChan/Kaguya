@@ -75,7 +75,7 @@ public abstract class MixinGuiPlayerTabOverlay {
                     String currentName = networkPlayerInfo.getGameProfile().getName();
                     if (!realName.equalsIgnoreCase(currentName)) {
                         String original = cir.getReturnValue();
-                        cir.setReturnValue(original + " §7(" + realName + ")");
+                        cir.setReturnValue(original + " §4(§6" + realName + "§4)");
                     }
                 }
             }

@@ -91,6 +91,7 @@ public class Kaguya {
         moduleManager.modules.put(Eagle.class, new Eagle());
         moduleManager.modules.put(ESP.class, new ESP());
         moduleManager.modules.put(ClosestPlayerHUD.class, new ClosestPlayerHUD());
+        moduleManager.modules.put(TeamClosestPlayerHUD.class, new TeamClosestPlayerHUD());
         moduleManager.modules.put(FriendHUD.class, new FriendHUD());
         moduleManager.modules.put(FriendTransparency.class, new FriendTransparency());
         moduleManager.modules.put(FastPlace.class, new FastPlace());

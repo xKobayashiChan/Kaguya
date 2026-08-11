@@ -156,6 +156,7 @@ public class ClickGui extends GuiScreen {
         render.add(Kaguya.moduleManager.getModule(ESP.class));
         render.add(Kaguya.moduleManager.getModule(Chams.class));
         render.add(Kaguya.moduleManager.getModule(ClosestPlayerHUD.class));
+        render.add(Kaguya.moduleManager.getModule(TeamClosestPlayerHUD.class));
         render.add(Kaguya.moduleManager.getModule(FriendHUD.class));
         render.add(Kaguya.moduleManager.getModule(FriendTransparency.class));
         render.add(Kaguya.moduleManager.getModule(FullBright.class));

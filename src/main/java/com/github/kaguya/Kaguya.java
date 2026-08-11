@@ -146,6 +146,15 @@ public class Kaguya {
         moduleManager.modules.put(Zenith.class, new Zenith());
         moduleManager.modules.put(Wtap.class, new Wtap());
         moduleManager.modules.put(Xray.class, new Xray());
+        moduleManager.modules.put(BackTrack.class, new BackTrack());
+        moduleManager.modules.put(Criticals.class, new Criticals());
+        moduleManager.modules.put(Disabler.class, new Disabler());
+        moduleManager.modules.put(Displace.class, new Displace());
+        moduleManager.modules.put(FlagDetector.class, new FlagDetector());
+        moduleManager.modules.put(KnockbackDelay.class, new KnockbackDelay());
+        moduleManager.modules.put(ServerLag.class, new ServerLag());
+        moduleManager.modules.put(TimerRangev999.class, new TimerRangev999());
+        moduleManager.modules.put(Timer.class, new Timer());
         commandManager.commands.add(new BindCommand());
         commandManager.commands.add(new ChatCopyCommand());
         commandManager.commands.add(new CnameCommand());

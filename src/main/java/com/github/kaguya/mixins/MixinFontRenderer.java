@@ -2,15 +2,20 @@ package com.github.kaguya.mixins;
 
 import com.github.kaguya.Kaguya;
 import com.github.kaguya.module.modules.AntiObfuscate;
+import com.github.kaguya.module.modules.HideClientText;
 import com.github.kaguya.module.modules.NickHider;
 import com.github.kaguya.util.LangFallback;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SideOnly(Side.CLIENT)
 @Mixin(value = {FontRenderer.class}, priority = 9999)
@@ -89,6 +94,27 @@ public abstract class MixinFontRenderer {
                 && charAt != 'F'
                 ? charAt
                 : 'r';
+    }
+
+    @Inject(
+            method = {"renderString"},
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void renderString(String text, float x, float y, int color, boolean dropShadow,
+                              CallbackInfoReturnable<Integer> cir) {
+        if (Kaguya.moduleManager == null) return;
+        HideClientText mod = (HideClientText) Kaguya.moduleManager.modules.get(HideClientText.class);
+        if (mod == null || !mod.isEnabled()) return;
+        if (HideClientText.clientHUDRendering) return;
+
+        ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        int sw = res.getScaledWidth();
+        int sh = res.getScaledHeight();
+
+        if (x >= sw - mod.thresholdX.getValue() && y >= sh - mod.thresholdY.getValue()) {
+            cir.setReturnValue(0);
+        }
     }
 
     /**

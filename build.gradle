@@ -105,7 +105,7 @@ if (systemOs.contains("mac"))
 }
 
 
-def buildDate = new Date().format('yyMMdd')
+def buildDate = System.getenv("GITHUB_ACTIONS") == "true" ? new Date().format('yyMMdd') : "dev"
 
 // ビルド時に BuildConstants.java を自動生成（バージョンをJavaコードに埋め込む）
 def generatedSrcDir = file("$buildDir/generated/java")

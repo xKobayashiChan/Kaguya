@@ -6,7 +6,9 @@ import com.github.kaguya.events.Render2DEvent;
 import com.github.kaguya.module.Module;
 import com.github.kaguya.property.properties.BooleanProperty;
 import com.github.kaguya.property.properties.ModeProperty;
+import com.github.kaguya.property.properties.PercentProperty;
 import com.github.kaguya.mixins.IAccessorMinecraft;
+import com.github.kaguya.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -23,6 +25,7 @@ public class ClientHUD extends Module {
 
     public final BooleanProperty showClientName = new BooleanProperty("client-name", true);
     public final BooleanProperty showUser = new BooleanProperty("user", true);
+    public final PercentProperty userBackground = new PercentProperty("user-background", 40, () -> this.showUser.getValue());
     public final ModeProperty infoMode = new ModeProperty(
             "info-mode", 0, new String[]{"FPS", "PING", "TIME", "NONE"}
     );
@@ -67,24 +70,45 @@ public class ClientHUD extends Module {
             }
         }
 
-        // 右下: Build - <日付> - <ユーザーID>
+        // 右下: Development/Release - [日付 -] <ユーザーID>
         if (this.showUser.getValue()) {
-            String partBuild = "Build - ";
-            String partSep = " - ";
-            String fullText = partBuild + BUILD_DATE + partSep + userName;
+            boolean isDev = "dev".equals(BUILD_DATE);
+            String partLabel = isDev ? "Development" : "Release";
+            String partSep   = " - ";
+            String displayDate = isDev ? new java.text.SimpleDateFormat("yyMMdd").format(new Date()) : BUILD_DATE;
+            String fullText  = partLabel + partSep + displayDate + partSep + userName;
             float buildY = resolution.getScaledHeight() - mc.fontRendererObj.FONT_HEIGHT - 4.0f;
             float x = resolution.getScaledWidth() - mc.fontRendererObj.getStringWidth(fullText) - 4.0f;
 
-            mc.fontRendererObj.drawStringWithShadow(partBuild, x, buildY, 0xFFAAAAAA);
-            x += mc.fontRendererObj.getStringWidth(partBuild);
+            int bgOpacity = this.userBackground.getValue();
+            if (bgOpacity > 0) {
+                int bgColor = new java.awt.Color(0f, 0f, 0f, bgOpacity / 100.0f).getRGB();
+                RenderUtil.enableRenderState();
+                RenderUtil.drawRect(
+                        x - 5,
+                        buildY - 2,
+                        x + mc.fontRendererObj.getStringWidth(fullText) + 5,
+                        buildY + mc.fontRendererObj.FONT_HEIGHT + 2,
+                        bgColor
+                );
+                RenderUtil.disableRenderState();
+            }
 
-            mc.fontRendererObj.drawStringWithShadow(BUILD_DATE, x, buildY, 0xFFFFFFFF);
-            x += mc.fontRendererObj.getStringWidth(BUILD_DATE);
+            HideClientText.clientHUDRendering = true;
+            mc.fontRendererObj.drawStringWithShadow(partLabel, x, buildY, 0xFF55FF55);
+            x += mc.fontRendererObj.getStringWidth(partLabel);
 
             mc.fontRendererObj.drawStringWithShadow(partSep, x, buildY, 0xFFAAAAAA);
             x += mc.fontRendererObj.getStringWidth(partSep);
 
-            mc.fontRendererObj.drawStringWithShadow(userName, x, buildY, 0xFF55FF55);
+            mc.fontRendererObj.drawStringWithShadow(displayDate, x, buildY, 0xFFFFFFFF);
+            x += mc.fontRendererObj.getStringWidth(displayDate);
+
+            mc.fontRendererObj.drawStringWithShadow(partSep, x, buildY, 0xFFAAAAAA);
+            x += mc.fontRendererObj.getStringWidth(partSep);
+
+            mc.fontRendererObj.drawStringWithShadow(userName, x, buildY, 0xFFFFFFFF);
+            HideClientText.clientHUDRendering = false;
         }
     }
 
@@ -93,7 +117,7 @@ public class ClientHUD extends Module {
             case 0: { // FPS
                 int fps = ((IAccessorMinecraft)(Object)mc).getDebugFPS();
                 double ms = fps > 0 ? 1000.0 / fps : 0;
-                return fps + " fps " + String.format("%.1f", ms) + "ms";
+                return fps + " fps of " + String.format("%.1f", ms) + "ms";
             }
             case 1: { // PING
                 if (mc.thePlayer != null && mc.getNetHandler() != null) {

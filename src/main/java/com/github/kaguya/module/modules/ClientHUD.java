@@ -1,6 +1,5 @@
 package com.github.kaguya.module.modules;
 
-import com.github.kaguya.auth.AuthManager;
 import com.github.kaguya.event.EventTarget;
 import com.github.kaguya.events.Render2DEvent;
 import com.github.kaguya.module.Module;
@@ -45,7 +44,7 @@ public class ClientHUD extends Module {
             return;
         }
 
-        String userName = AuthManager.isAuthenticated() ? AuthManager.getCurrentUserId() : "User";
+        String userName = "User";
         ScaledResolution resolution = new ScaledResolution(mc);
 
         // 左上: クライアント名 + info

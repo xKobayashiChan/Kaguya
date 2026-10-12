@@ -1,6 +1,5 @@
 package com.github.kaguya;
 
-import com.github.kaguya.auth.NickDetector;
 import com.github.kaguya.command.commands.*;
 import com.github.kaguya.management.*;
 import com.github.kaguya.module.modules.*;
@@ -35,7 +34,6 @@ public class Kaguya {
     public static PropertyManager propertyManager;
     public static ModuleManager moduleManager;
     public static CommandManager commandManager;
-    public static NickDetector nickDetector;
 
     public Kaguya() {
         this.init();
@@ -60,9 +58,6 @@ public class Kaguya {
         EventManager.register(lagManager);
         EventManager.register(moduleManager);
         EventManager.register(commandManager);
-        nickDetector = new NickDetector();
-        EventManager.register(nickDetector);
-        moduleManager.modules.put(AuthSync.class, new AuthSync());
         moduleManager.modules.put(AimAssist.class, new AimAssist());
         moduleManager.modules.put(AntiAFK.class, new AntiAFK());
         moduleManager.modules.put(AntiDebuff.class, new AntiDebuff());
@@ -167,7 +162,6 @@ public class Kaguya {
         commandManager.commands.add(new ItemCommand());
         commandManager.commands.add(new ListCommand());
         commandManager.commands.add(new ModuleCommand());
-        commandManager.commands.add(new NickCommand());
         commandManager.commands.add(new PlayerCommand());
         commandManager.commands.add(new ShowCommand());
         commandManager.commands.add(new TargetCommand());

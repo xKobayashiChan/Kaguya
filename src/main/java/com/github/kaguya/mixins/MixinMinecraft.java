@@ -1,8 +1,6 @@
 package com.github.kaguya.mixins;
 
 import com.github.kaguya.Kaguya;
-import com.github.kaguya.auth.AuthManager;
-import com.github.kaguya.auth.GuiLogin;
 import com.github.kaguya.events.*;
 import com.github.kaguya.init.Initializer;
 import com.github.kaguya.event.EventManager;
@@ -10,7 +8,6 @@ import com.github.kaguya.event.types.EventType;
 import com.github.kaguya.events.*;
 import com.github.kaguya.module.modules.NoHitDelay;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -40,8 +37,6 @@ public abstract class MixinMinecraft {
     )
     private void postStartGame(CallbackInfo callbackInfo) {
         new Kaguya();
-        // 認証画面を表示
-        Minecraft.getMinecraft().displayGuiScreen(new GuiLogin());
     }
 
     @Inject(
@@ -50,12 +45,6 @@ public abstract class MixinMinecraft {
     )
     private void runTick(CallbackInfo callbackInfo) {
         Minecraft mc = Minecraft.getMinecraft();
-
-        // 認証が完了していない場合、メインメニューに戻ろうとしたらログイン画面を強制表示
-        if (!AuthManager.isAuthenticated()
-                && mc.currentScreen instanceof GuiMainMenu) {
-            mc.displayGuiScreen(new GuiLogin());
-        }
 
         if (mc.theWorld != null && mc.thePlayer != null) {
             EventManager.call(new TickEvent(EventType.PRE));

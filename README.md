@@ -25,7 +25,6 @@ Download the latest version from **[GitHub Releases](https://github.com/xKobayas
 2. Download and run the installer for [Forge 1.8.9](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.8.9.html)
 3. Open your `.minecraft` folder, create a `mods` folder, and put `KaguyaClient-vX.X.X.jar` inside
 4. Open the Minecraft launcher, select the Forge 1.8.9 profile, and start the game
-5. Log in on the login screen that appears at startup (an account linked to your HWID is required)
 
 ## Features
 
@@ -78,7 +77,7 @@ AntiDebuff, AutoBlockIn, AutoHeal, AutoTool, AutoWater, ChestStealer, FastPlace,
 - **Bed Wars** - BedNuker, BedTracker, AntiObbyTrap
 - **Players** - Denick, NickHider, HeldItemDetect, LightningTracker
 - **Chat** - ChatCopy, Spammer, AntiObfuscate
-- **Utility** - AutoAnduril, InventoryClicker, NoRotate, FlagDetector, PacketListener, ServerLag, AuthSync
+- **Utility** - AutoAnduril, InventoryClicker, NoRotate, FlagDetector, PacketListener, ServerLag
 - **Discord Rich Presence** - Shows Kaguya Client as your Discord status
 
 </details>
@@ -109,7 +108,6 @@ Commands start with `.` and are typed in chat.
 | `.target <add\|remove\|list\|clear> [name]` | `.enemy`, `.e` | Manage targets |
 | `.hide <module>` / `.show <module>` | `.h` / `.s`, `.unhide` | Hide or show a module in the HUD |
 | `.cname <name\|reset>` | `.cn` | Change the client name |
-| `.nick set <name>` / `.nick clear` | `.n` | Register or clear your nick |
 | `.denick <name>` | | Look up the real name behind a nick |
 | `.ign` | `.name`, `.username` | Copy your username to the clipboard |
 | `.item` | `.itemname` | Show the held item's name |

@@ -215,33 +215,6 @@ task buildAndCopyToMods(type: Copy, dependsOn: 'build') {
     include "${archivesBaseName}*.jar"
 }
 
-// ==================== HWID Grabber ====================
-
-task compileHwidGrabber(type: JavaCompile) {
-    source = fileTree('hwid-grabber') { include '**/*.java' }
-    classpath = files()
-    destinationDir = file('build/hwid-grabber/classes')
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
-    options.encoding = 'UTF-8'
-}
-
-task buildHwidGrabber(type: Jar, dependsOn: compileHwidGrabber) {
-    from 'build/hwid-grabber/classes'
-    archiveName = 'HwidGrabber.jar'
-    destinationDir = file('build/hwid-grabber')
-    manifest {
-        attributes 'Main-Class': 'HwidGrabber'
-    }
-    doLast {
-        // ダブルクリックで起動できる .bat も生成
-        def bat = file('build/hwid-grabber/HwidGrabber.bat')
-        bat.text = "@echo off\r\njavaw -jar \"%~dp0HwidGrabber.jar\"\r\n"
-        println ">>> build/hwid-grabber/HwidGrabber.jar"
-        println ">>> build/hwid-grabber/HwidGrabber.bat"
-    }
-}
-
 // run/mods 内の古い jar を削除するタスク
 task cleanRunMods(type: Delete) {
     delete fileTree(dir: "run/mods", include: "${archivesBaseName}*.jar")

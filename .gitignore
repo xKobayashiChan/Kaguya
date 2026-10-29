@@ -36,12 +36,27 @@ bin/
 
 # Minecraft Forge / Runtime
 run/
+logs/
+crash-reports/
+eclipse/
+classes/
+
+# Mixin (refmap is generated at build time)
+*.refmap.json
+
+# Qodana
+qodana.yaml
+.qodana/
+
+# Claude Code
+.claude/settings.local.json
 
 # OS
 .DS_Store
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+$RECYCLE.BIN/
 
 # Local environment
 *.env
